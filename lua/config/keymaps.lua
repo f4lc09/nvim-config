@@ -2,18 +2,11 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
-local map = vim.keymap.set("n", "<F5>", ":GoDebugStart<CR>", { desc = "Run Go Debug" })
 local map = vim.keymap.set("n", "<F5>", function()
-  -- Проверяем, существует ли активный сеанс отладки nvim-dap
   if require("dap").session() ~= nil then
-    -- Если сеанс активен, пытаемся продолжить
-    vim.cmd(":GoDebugContinue")
+    vim.cmd(":DapContinue")
   else
-    -- Если сеанс не активен, начинаем новый
-    vim.cmd(":GoDebugStart")
-    -- Примечание: вы не можете автоматически вызвать Continue сразу после Start в
-    -- той же функции, так как Start может потребовать взаимодействия с пользователем
-    -- или времени для инициализации.
+    vim.cmd(":DapNew")
   end
 end, { desc = "Run Go Debug" })
 --local map = vim.keymap.set("n", "<F5>", ":GoDebugStart<CR>", { desc = "Run Go Debug" })
