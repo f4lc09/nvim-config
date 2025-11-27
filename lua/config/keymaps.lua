@@ -1,17 +1,20 @@
--- Keymaps are automatically loaded on the VeryLazy event
--- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
--- Add any additional keymaps here
-
-local map = vim.keymap.set("n", "<F5>", function()
-  if require("dap").session() ~= nil then
-    vim.cmd(":DapContinue")
+local dap = require("dap")
+local map = vim.keymap.set
+map("n", "<F5>", function()
+  if dap.session() ~= nil then
+    dap.continue()
   else
     vim.cmd(":DapNew")
-    -- или времени для инициализации.
   end
 end, { desc = "Run Go Debug" })
---local map = vim.keymap.set("n", "<F5>", ":GoDebugStart<CR>", { desc = "Run Go Debug" })
---local map = vim.keymap.set("n", "<F5>", ":GoDebugStart<CR>", { desc = "Run Go Debug" })
+
+map("n", "<C-M-j>", function()
+  dap.step_over()
+end, { desc = "Dap Step Over" })
+
+map("n", "<F9>", function()
+  dap.toggle_breakpoint()
+end, { desc = "Dap Breakpoint" })
 
 vim.keymap.set("n", "<F12>", function()
   vim.lsp.buf.definition()

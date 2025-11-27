@@ -7,8 +7,30 @@ return {
       "leoluz/nvim-dap-go",
     },
     config = function()
+      local dap = require("dap")
       local dapui = require("dapui")
-      dapui.setup()
+
+      ---@diagnostic disable-next-line: missing-fields
+      dapui.setup({
+        layouts = {
+          {
+            elements = {
+              { id = "scopes", size = 0.8 },
+              { id = "breakpoints", size = 0.2 },
+            },
+            size = 40, -- Ширина левой панели
+            position = "left",
+          },
+          {
+            elements = {
+              { id = "repl", size = 1 }, -- size = 1 означает 100% доступного места в нижней панели
+            },
+            size = 15, -- Высота нижней панели в строках
+            position = "bottom",
+          },
+        },
+        opened = false,
+      })
 
       require("dap").listeners.before.attach.dapui_config = function()
         dapui.open()
