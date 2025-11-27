@@ -7,6 +7,7 @@ local map = vim.keymap.set("n", "<F5>", function()
     vim.cmd(":DapContinue")
   else
     vim.cmd(":DapNew")
+    -- или времени для инициализации.
   end
 end, { desc = "Run Go Debug" })
 --local map = vim.keymap.set("n", "<F5>", ":GoDebugStart<CR>", { desc = "Run Go Debug" })
