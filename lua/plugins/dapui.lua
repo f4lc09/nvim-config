@@ -18,14 +18,14 @@ return {
               { id = "scopes", size = 0.8 },
               { id = "breakpoints", size = 0.2 },
             },
-            size = 40, -- Ширина левой панели
+            size = 40,
             position = "left",
           },
           {
             elements = {
-              { id = "repl", size = 1 }, -- size = 1 означает 100% доступного места в нижней панели
+              { id = "repl", size = 1 },
             },
-            size = 15, -- Высота нижней панели в строках
+            size = 15,
             position = "bottom",
           },
         },

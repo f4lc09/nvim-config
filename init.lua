@@ -39,3 +39,10 @@ require("conform").setup({
 vim.api.nvim_create_user_command("Dapui", function()
   require("dapui").toggle()
 end, { desc = "Toggle nvim-dap-ui visibility", nargs = 0 })
+vim.o.smartindent = false
+vim.o.autoindent = true
+
+vim.api.nvim_create_autocmd({ "FileType" }, {
+  pattern = { "http", "json", "rest", "graphql" },
+  command = "set conceallevel=0",
+})
