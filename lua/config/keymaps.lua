@@ -21,12 +21,6 @@ local function dap_new_or_continue()
     vim.cmd(":DapNew")
   end
 end
-local function lsp_definition()
-  vim.lsp.buf.definition()
-end
-local function lsp_references()
-  vim.lsp.buf.references()
-end
 local function lsp_rename()
   vim.lsp.buf.rename()
 end
