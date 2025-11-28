@@ -32,10 +32,9 @@ local function lsp_rename()
 end
 
 map("n", "<F2>", lsp_rename, { desc = "Run Go Debug" })
-map("n", "<F5>", lsp_references, { desc = "Run Go Debug" })
+-- map("n", "<F5>", lsp_references, { desc = "Run Go Debug" })
 map("n", "<F5>", dap_new_or_continue, { desc = "Run Go Debug" })
 map("n", "<F9>", dap_toggle_breakpoint, { desc = "Dap Breakpoint" })
-map("n", "<F12>", lsp_definition, { desc = "Go To Declaration", silent = true })
 map("n", "<C-M-j>", dap_step_over, { desc = "Dap Step Over" })
 map("n", "<C-M-l>", dap_step_into, { desc = "Dap Step Into" })
 map("n", "<C-M-h>", dap_step_out, { desc = "Dap Step Out" })
