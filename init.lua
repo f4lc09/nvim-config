@@ -46,3 +46,4 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
   pattern = { "http", "json", "rest", "graphql" },
   command = "set conceallevel=0",
 })
+vim.opt.tabstop = 4
