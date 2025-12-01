@@ -47,3 +47,4 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
   command = "set conceallevel=0",
 })
 vim.opt.tabstop = 4
+vim.opt.startofline = true
