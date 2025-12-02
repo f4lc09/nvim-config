@@ -33,6 +33,7 @@ map("n", "<C-M-j>", dap_step_over, { desc = "Dap Step Over" })
 map("n", "<C-M-l>", dap_step_into, { desc = "Dap Step Into" })
 map("n", "<C-M-h>", dap_step_out, { desc = "Dap Step Out" })
 map("n", "G", "G$", { noremap = true, silent = true, desc = "Go to the end of the file (last character)" })
+map("n", "<leader>p", "oq<BS><Esc>p", { noremap = true, silent = true, desc = "Paste in new line" })
 
 local function setup_http_keymaps(bufnr)
   if vim.bo[bufnr].filetype ~= "http" then
