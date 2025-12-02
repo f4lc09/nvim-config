@@ -36,15 +36,15 @@ map("n", "G", "G$", { noremap = true, silent = true, desc = "Go to the end of th
 map("n", "<leader>p", "oq<BS><Esc>p", { noremap = true, silent = true, desc = "Paste in new line" })
 
 local function setup_http_keymaps(bufnr)
-  if vim.bo[bufnr].filetype ~= "http" then
-    return
-  end
-
-  local map = vim.keymap.set("n", "<Enter>", function()
-    if require("kulala") ~= nil then
-      require("kulala").run()
+  vim.keymap.set("n", "<Enter>", function()
+    local success, kulala_module = pcall(require, "kulala")
+    if success and kulala_module then
+      kulala_module.run()
     end
-  end, { desc = "Run HTTP request" })
+  end, {
+    desc = "Run HTTP request",
+    buffer = bufnr,
+  })
 end
 
 vim.api.nvim_create_autocmd("FileType", {
