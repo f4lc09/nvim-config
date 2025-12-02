@@ -21,6 +21,10 @@ local function dap_new_or_continue()
     vim.cmd(":DapNew")
   end
 end
+local function dapui_toggle()
+  require("dapui").toggle()
+end
+
 local function lsp_rename()
   vim.lsp.buf.rename()
 end
@@ -32,6 +36,7 @@ map("n", "<F9>", dap_toggle_breakpoint, { desc = "Dap Breakpoint" })
 map("n", "<C-M-j>", dap_step_over, { desc = "Dap Step Over" })
 map("n", "<C-M-l>", dap_step_into, { desc = "Dap Step Into" })
 map("n", "<C-M-h>", dap_step_out, { desc = "Dap Step Out" })
+map("n", "<leader>dt", dapui_toggle, { desc = "Dap Toggle UI" })
 map("n", "G", "G$", { noremap = true, silent = true, desc = "Go to the end of the file (last character)" })
 map("n", "<leader>p", "oq<BS><Esc>p", { noremap = true, silent = true, desc = "Paste in new line" })
 

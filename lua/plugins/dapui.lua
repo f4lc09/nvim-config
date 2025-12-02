@@ -38,12 +38,12 @@ return {
       require("dap").listeners.before.launch.dapui_config = function()
         dapui.open()
       end
-      require("dap").listeners.before.event_terminated.dapui_config = function()
-        dapui.close()
-      end
-      require("dap").listeners.before.event_exited.dapui_config = function()
-        dapui.close()
-      end
+      -- require("dap").listeners.before.event_terminated.dapui_config = function()
+      --   dapui.close()
+      -- end
+      -- require("dap").listeners.before.event_exited.dapui_config = function()
+      --   dapui.close()
+      -- end
     end,
   },
 }
