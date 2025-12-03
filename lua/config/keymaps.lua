@@ -38,7 +38,7 @@ map("n", "<C-M-l>", dap_step_into, { desc = "Dap Step Into" })
 map("n", "<C-M-h>", dap_step_out, { desc = "Dap Step Out" })
 map("n", "<leader>dt", dapui_toggle, { desc = "Dap Toggle UI" })
 map("n", "G", "G$", { noremap = true, silent = true, desc = "Go to the end of the file (last character)" })
-map("n", "<leader>p", "oq<BS><Esc>p", { noremap = true, silent = true, desc = "Paste in new line" })
+map("n", "<leader>p", "oq<BS><Esc>P", { noremap = true, silent = true, desc = "Paste in new line" })
 
 local function setup_http_keymaps(bufnr)
   vim.keymap.set("n", "<Enter>", function()
@@ -58,3 +58,29 @@ vim.api.nvim_create_autocmd("FileType", {
     setup_http_keymaps(args.buf)
   end,
 })
+
+local function setup_go_test_keymaps(bufnr)
+  local filename = vim.fn.bufname(bufnr)
+  if filename:match("_test.go$") then
+    vim.keymap.set("n", "<F5>", function()
+      local success, dap_go_module = pcall(require, "dap-go")
+      if success and dap_go_module then
+        dap_go_module.debug_test()
+      end
+    end, {
+      desc = "Debug nearest Go test",
+      buffer = bufnr,
+    })
+  end
+end
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "go",
+  callback = function(args)
+    setup_go_test_keymaps(args.buf)
+  end,
+})
+vim.keymap.set("n", "<S-Up>", "<cmd>resize +2<cr>", { desc = "Increase Window Height" })
+vim.keymap.set("n", "<S-Down>", "<cmd>resize -2<cr>", { desc = "Decrease Window Height" })
+vim.keymap.set("n", "<S-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase Window Width" })
+vim.keymap.set("n", "<S-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease Window Width" })
