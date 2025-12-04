@@ -48,7 +48,7 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
   command = "set conceallevel=0",
 })
 vim.opt.tabstop = 4
-vim.opt.startofline = true
+-- vim.opt.startofline = true
 vim.api.nvim_set_hl(0, "DiagnosticUnnecessary", {
   fg = "#4D73A3",
 })
