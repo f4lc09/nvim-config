@@ -52,3 +52,4 @@ vim.opt.tabstop = 4
 vim.api.nvim_set_hl(0, "DiagnosticUnnecessary", {
   fg = "#4D73A3",
 })
+vim.o.fixendofline = false
