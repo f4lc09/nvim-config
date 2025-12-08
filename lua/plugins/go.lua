@@ -7,12 +7,12 @@ return {
     opts = {
       servers = {
         gopls = {
-          root_dir = util.root_pattern("go.mod"),
+          -- root_dir = require("lspconfig.util").root_pattern("go.work", "go.mod", ".git"),
+          root_dir = function(dname) end,
+          on_attach = function(client, bufnr) end,
           settings = {
             gopls = {
-              analyses = {
-                -- unusedparams = false,
-              },
+              analyses = {},
               staticcheck = true,
               gofumpt = false,
               hints = {

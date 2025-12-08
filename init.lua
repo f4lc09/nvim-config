@@ -3,6 +3,21 @@ require("config.lazy")
 vim.opt.langmap =
   "ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчняж;abcdefghijklmnopqrstuvwxyz:"
 
+local function find_go_project_root()
+  return require("lspconfig.util").root_pattern("go.mod", "go.work")(vim.fn.expand("%:p"))
+end
+
+vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
+  pattern = { "*.go", "go.mod" },
+  callback = function()
+    local root = find_go_project_root()
+    print(root)
+    if root then
+      vim.cmd("lcd " .. root)
+    end
+  end,
+})
+
 require("conform").setup({
   formatters_by_ft = {
     go = { "goimports", "gofmt" },
@@ -21,6 +36,7 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
   command = "set conceallevel=0",
 })
 vim.opt.tabstop = 4
+-- vim.opt.startofline = true
 vim.api.nvim_set_hl(0, "DiagnosticUnnecessary", {
   fg = "#4D73A3",
 })
