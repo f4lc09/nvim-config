@@ -1,4 +1,5 @@
 vim.g.go_debug_log_output = ""
+local util = require("lspconfig.util")
 
 return {
   {
@@ -6,6 +7,7 @@ return {
     opts = {
       servers = {
         gopls = {
+          root_dir = util.root_pattern("go.mod"),
           settings = {
             gopls = {
               analyses = {
