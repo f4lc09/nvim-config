@@ -18,6 +18,20 @@ return {
           },
         },
       },
+      win = {
+        input = {
+          keys = {
+            ["<C-S-CR>"] = {
+              function()
+                -- Используем команду Ex-режима для принудительного переключения окна
+                vim.cmd("wincmd p")
+              end,
+              mode = { "n", "i" },
+              desc = "Focus file tree with Ctrl+Shift+Enter",
+            },
+          },
+        },
+      },
     },
   },
 }
