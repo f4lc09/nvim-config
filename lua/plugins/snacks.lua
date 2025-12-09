@@ -3,13 +3,31 @@ return {
   opts = {
     picker = {
       sources = {
+        grep = {
+          hidden = true,
+          ignored = true,
+          exclude = {
+            "**/.git",
+            "**/.Session.vim",
+            "**/*.pb.go",
+          },
+        },
         files = {
           hidden = true,
           ignored = true,
+          exclude = {
+            "**/.git",
+            "**/.Session.vim",
+            "**/*.pb.go",
+          },
         },
         explorer = {
           hidden = true,
           ignored = true,
+          exclude = {
+            "**/.git",
+            "**/.Session.vim",
+          },
           auto_close = true,
           layout = {
             layout = {
@@ -21,9 +39,8 @@ return {
       win = {
         input = {
           keys = {
-            ["<C-S-CR>"] = {
+            ["<C-o>"] = {
               function()
-                -- Используем команду Ex-режима для принудительного переключения окна
                 vim.cmd("wincmd p")
               end,
               mode = { "n", "i" },
