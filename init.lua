@@ -1,3 +1,6 @@
+vim.o.showtabline = 2
+vim.opt.showtabline = 2
+
 require("config.lazy")
 
 vim.opt.langmap =
@@ -11,9 +14,8 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
   pattern = { "*.go", "go.mod" },
   callback = function()
     local root = find_go_project_root()
-    print(root)
     if root then
-      vim.cmd("lcd " .. root)
+      vim.cmd("cd " .. root)
     end
   end,
 })
