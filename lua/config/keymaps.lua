@@ -87,6 +87,7 @@ vim.api.nvim_create_autocmd("FileType", {
 map("n", "<S-Up>", "<cmd>resize +2<cr>", { desc = "Increase Window Height" })
 map("n", "<S-Down>", "<cmd>resize -2<cr>", { desc = "Decrease Window Height" })
 map("n", "<S-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase Window Width" })
+map("n", "<S-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease Window Width" })
 map({ "n", "v" }, "<leader>bf", ":BufferLineCycleNext<CR>", { silent = true, desc = "Next buffer" })
 map({ "n", "v" }, "<leader>bb", ":BufferLineCyclePrev<CR>", { silent = true, desc = "Previous buffer" })
 map("n", "<F13>", ":bnext<CR>", { silent = true })

@@ -72,3 +72,10 @@ vim.api.nvim_create_autocmd("DirChanged", {
     end
   end,
 })
+vim.o.wrap = true
+vim.api.nvim_create_autocmd({ "FileType" }, {
+  pattern = { "http" }, -- Add the file types you want to disable here
+  callback = function()
+    vim.b.autoformat = false
+  end,
+})
