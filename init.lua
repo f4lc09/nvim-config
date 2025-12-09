@@ -67,7 +67,7 @@ vim.api.nvim_create_autocmd("DirChanged", {
       vim.schedule(function()
         vim.cmd("syntax enable")
         vim.cmd("doautocmd BufRead")
-        Snacks.explorer()
+        vim.cmd("set showtabline=2")
       end)
     end
   end,
