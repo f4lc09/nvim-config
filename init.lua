@@ -43,3 +43,32 @@ vim.api.nvim_set_hl(0, "DiagnosticUnnecessary", {
   fg = "#4D73A3",
 })
 vim.o.fixendofline = false
+
+local function SaveSessionAtGitRoot()
+  local git_root = vim.fn.system("git rev-parse --show-toplevel 2>/dev/null"):gsub("\n", "")
+
+  if git_root ~= "" and vim.v.shell_error == 0 then
+    local session_file = git_root .. "/.Session.vim"
+    vim.cmd("silent! mksession! " .. session_file)
+  end
+end
+
+vim.api.nvim_create_autocmd("VimLeavePre", {
+  group = vim.api.nvim_create_augroup("AutoSessionGitRoot", { clear = true }),
+  callback = SaveSessionAtGitRoot,
+})
+
+vim.api.nvim_create_autocmd("DirChanged", {
+  pattern = "*",
+  callback = function()
+    local session_file = vim.fn.getcwd() .. "/.Session.vim"
+    if vim.fn.filereadable(session_file) == 1 then
+      vim.cmd("source " .. session_file)
+      vim.schedule(function()
+        vim.cmd("syntax enable")
+        vim.cmd("doautocmd BufRead")
+        Snacks.explorer()
+      end)
+    end
+  end,
+})

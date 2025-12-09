@@ -1,5 +1,0 @@
--- return {
---   "jedrzejboczar/possession.nvim",
---   dependencies = { "ibhagwan/fzf-lua" },
---   config = function() end,
--- }
