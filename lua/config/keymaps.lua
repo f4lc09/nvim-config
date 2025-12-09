@@ -91,3 +91,26 @@ map({ "n", "v" }, "<leader>bf", ":BufferLineCycleNext<CR>", { silent = true, des
 map({ "n", "v" }, "<leader>bb", ":BufferLineCyclePrev<CR>", { silent = true, desc = "Previous buffer" })
 map("n", "<F13>", ":bnext<CR>", { silent = true })
 map("i", "<C-BS>", "<C-w>", { noremap = true, silent = true })
+
+local function smart_insert_on_empty_line()
+  -- Получаем содержимое текущей строки
+  local line = vim.api.nvim_get_current_line()
+
+  -- Проверяем, пуста ли строка или содержит только пробелы
+  if line:match("^%s*$") then
+    -- Если пуста, выполняем команду "cc" (change current line) в нормальном режиме.
+    -- Это заставляет Vim пересчитать и вставить правильный отступ, как команда 'o'.
+    -- "_ означает, что удаленный контент не попадет ни в один буфер обмена.
+    return [["_cc]]
+  else
+    -- Если строка не пустая, просто работаем как обычная 'i'
+    return "i"
+  end
+end
+
+-- Переназначаем клавишу 'i' в нормальном режиме на нашу функцию
+vim.keymap.set("n", "i", smart_insert_on_empty_line, {
+  noremap = true,
+  expr = true, -- expr = true позволяет функции возвращать строку команды
+  desc = "Smart indent on empty line",
+})
