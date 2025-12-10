@@ -14,11 +14,16 @@ end
 local function dap_toggle_breakpoint()
   dap.toggle_breakpoint()
 end
-local function dap_new_or_continue()
+local function dap_new()
+  if dap.session() ~= nil then
+    dap.terminate()
+    return
+  end
+  vim.cmd(":DapNew")
+end
+local function dap_continue()
   if dap.session() ~= nil then
     dap.continue()
-  else
-    vim.cmd(":DapNew")
   end
 end
 local function dapui_toggle()
@@ -31,10 +36,11 @@ end
 
 map("n", "<F2>", lsp_rename, { desc = "Run Go Debug" })
 -- map("n", "<F5>", lsp_references, { desc = "Run Go Debug" })
-map("n", "<F5>", dap_new_or_continue, { desc = "Run Go Debug" })
+map("n", "<F5>", dap_new, { desc = "Run Go Debug" })
 map("n", "<F9>", dap_toggle_breakpoint, { desc = "Dap Breakpoint" })
 map("n", "<C-M-j>", dap_step_over, { desc = "Dap Step Over" })
 map("n", "<C-M-l>", dap_step_into, { desc = "Dap Step Into" })
+map("n", "<C-M-k>", dap_continue, { desc = "Dap Step Into" })
 map("n", "<C-M-h>", dap_step_out, { desc = "Dap Step Out" })
 map("n", "<leader>dt", dapui_toggle, { desc = "Dap Toggle UI" })
 map({ "n", "v" }, "<C-END>", "G", { noremap = true, silent = true, desc = "Go to the end of the file" })

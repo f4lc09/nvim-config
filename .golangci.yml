@@ -1,0 +1,100 @@
+version: "2"
+
+run:
+  timeout: 5m
+  modules-download-mode: readonly
+  allow-parallel-runners: true
+  allow-serial-runners: true
+  concurrency: 50
+  issues-exit-code: 1
+
+output:
+  formats:
+    text:
+      path: stdout
+      print-linter-name: true
+      print-issued-lines: true
+  path-prefix: ""
+  sort-order:
+    - linter
+    - severity
+    - file
+
+issues:
+  max-issues-per-linter: 500
+  max-same-issues: 3
+  uniq-by-line: true
+  new: false
+  new-from-merge-base: ""
+  new-from-rev: ""
+  new-from-patch: ""
+  whole-files: true
+  fix: false
+
+linters:
+  default: all
+  disable:
+    - err113
+    - exhaustruct
+    - forcetypeassert
+    - funcorder
+    - gocognit
+    - lll
+    - mnd
+    - nestif
+    - nilnil
+    - nlreturn
+    - godot
+    - intrange
+    - noinlineerr
+    - paralleltest
+    - protogetter
+    - wsl_v5
+    - wsl
+    - varnamelen
+    - funlen
+    - tagalign 
+    - dupl
+    - whitespace 
+
+  exclusions:
+    presets:
+      - comments
+      - legacy
+    paths:
+      - .git/
+      - .vendor/
+      - vendor/
+
+  settings:
+    depguard:
+      rules:
+        main:
+          list-mode: lax
+          deny:
+            - pkg: "github.com/go-resty/resty"
+              desc: "Не разрешено в WBWH"
+
+    gocritic:
+      disabled-checks:
+        - commentFormatting
+
+    revive:
+      rules:
+        - name: exported
+          disabled: true
+        - name: var-naming
+          disabled: true
+
+    tagliatelle:
+      case:
+        rules:
+          json: snake
+
+    cyclop:
+      max-complexity: 30
+      package-average: 10
+
+    gosec:
+      excludes:
+        - G101

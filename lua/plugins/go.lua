@@ -10,9 +10,10 @@ return {
           settings = {
             gopls = {
               analyses = {},
-              staticcheck = true,
+              staticcheck = false,
               gofumpt = false,
               hints = {
+                compositeLiteralFields = false,
                 parameterNames = false,
                 variableTypes = false,
                 rangeVariableTypes = false,

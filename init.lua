@@ -79,3 +79,11 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
     vim.b.autoformat = false
   end,
 })
+require("mini.pairs").setup({
+  -- Удаляем стандартный маппинг Enter из MiniPairs,
+  -- чтобы он не конфликтовал с настройками cmp или Blink
+  mappings = {
+    ["<CR>"] = nil, -- Устанавливаем в nil, чтобы отключить
+  },
+  -- ... другие настройки ...
+})
