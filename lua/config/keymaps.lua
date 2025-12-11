@@ -47,8 +47,33 @@ map({ "n", "v" }, "<C-END>", "G", { noremap = true, silent = true, desc = "Go to
 map({ "n", "v" }, "<C-HOME>", "gg", { noremap = true, silent = true, desc = "Go to the start of the file" })
 map({ "n", "v" }, "G", "G$", { noremap = true, silent = true, desc = "Go to the end of the file" })
 map({ "n", "v" }, "gg", "gg^", { noremap = true, silent = true, desc = "Go to the start of the file" })
-map({ "n", "v" }, "<leader>p", "o<Esc>P", { noremap = true, silent = true, desc = "Paste in new line" })
-map({ "n", "v" }, "<leader>P", "O<Esc>P", { noremap = true, silent = true, desc = "Paste in new line" })
+
+map("n", "p", function()
+  vim.cmd("normal! p")
+  vim.cmd("LazyFormat")
+end, { silent = true })
+map("n", "P", function()
+  vim.cmd("normal! P")
+  vim.cmd("LazyFormat")
+end, { silent = true })
+map("x", "p", function()
+  vim.cmd("normal! p")
+  vim.cmd("LazyFormat")
+end, { silent = true })
+map("x", "P", function()
+  vim.cmd("normal! P")
+  vim.cmd("LazyFormat")
+end, { silent = true })
+map({ "n", "v" }, "<leader>p", function()
+  vim.cmd("normal! o")
+  vim.cmd("normal! P")
+  vim.cmd("LazyFormat")
+end, { noremap = true, silent = true, desc = "Paste in new line" })
+map({ "n", "v" }, "<C-p>", function()
+  vim.cmd("normal! O")
+  vim.cmd("normal! P")
+  vim.cmd("LazyFormat")
+end, { noremap = true, silent = true, desc = "Paste in new line" })
 
 local function setup_http_keymaps(bufnr)
   vim.keymap.set("n", "<Enter>", function()
@@ -98,6 +123,7 @@ map({ "n", "v" }, "<leader>bf", ":BufferLineCycleNext<CR>", { silent = true, des
 map({ "n", "v" }, "<leader>bb", ":BufferLineCyclePrev<CR>", { silent = true, desc = "Previous buffer" })
 map("n", "<F13>", ":bnext<CR>", { silent = true })
 map("i", "<C-BS>", "<C-w>", { noremap = true, silent = true })
+map("x", "<leader>gB", "<cmd>GBrowse<cr>", { noremap = true, silent = true })
 
 local function smart_insert_on_empty_line()
   -- Получаем содержимое текущей строки
@@ -115,8 +141,7 @@ local function smart_insert_on_empty_line()
   end
 end
 
--- Переназначаем клавишу 'i' в нормальном режиме на нашу функцию
-vim.keymap.set("n", "i", smart_insert_on_empty_line, {
+map("n", "a", smart_insert_on_empty_line, {
   noremap = true,
   expr = true, -- expr = true позволяет функции возвращать строку команды
   desc = "Smart indent on empty line",

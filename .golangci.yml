@@ -10,10 +10,8 @@ run:
 
 output:
   formats:
-    text:
+    json:
       path: stdout
-      print-linter-name: true
-      print-issued-lines: true
   path-prefix: ""
   sort-order:
     - linter

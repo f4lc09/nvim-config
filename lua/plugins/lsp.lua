@@ -9,7 +9,18 @@ return {
         gopls = {
           settings = {
             gopls = {
-              analyses = {},
+              analyses = {
+                efaceany = false,
+                unusedparams = false,
+                -- staticcheck = false,
+                modernize = false,
+                nilness = false,
+              },
+              ui = {
+                diagnostic = {
+                  efaceany = false,
+                },
+              },
               staticcheck = false,
               gofumpt = false,
               hints = {

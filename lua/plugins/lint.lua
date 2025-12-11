@@ -1,22 +1,11 @@
 return {
-  "mfussenegger/nvim-lint",
-  opts = {
-    linters = {
-      golangcilint = {
-        cmd = "golangci-lint",
-        args = {
-          "run",
-          "--config=/home/falcon/.config/nvim/.golangci.yml",
-          "--output.json.path=stdout",
-          "--issues-exit-code=0",
-          "--show-stats=false",
-          "./...",
-        },
-        parser = require("lint.parser").from_json({}),
+  {
+    "mfussenegger/nvim-lint",
+    opts = {
+      -- Отключаем все линтеры для Go через nvim-lint
+      linters_by_ft = {
+        go = {}, -- Пустая таблица отключает все линтеры для Go
       },
-    },
-    linters_by_ft = {
-      go = { "golangcilint" }, -- ЯВНО указываем использовать ТОЛЬКО этот линтер для Go
     },
   },
 }
