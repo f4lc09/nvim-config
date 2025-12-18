@@ -69,7 +69,7 @@ return {
       win = {
         list = {
           keys = {
-            ["<C-d>"] = { "cd_to_folder", mode = { "n", "i" } },
+            ["<C-f>"] = { "cd_to_folder", mode = { "n", "i" } },
           },
         },
         input = {
