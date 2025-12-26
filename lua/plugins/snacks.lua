@@ -10,6 +10,11 @@ end
 return {
   "folke/snacks.nvim",
   opts = {
+    notifier = {
+      enabled = true,
+      style = "compact",
+      top_down = false,
+    },
     picker = {
       formatters = {
         file = {
@@ -34,6 +39,7 @@ return {
           vim.schedule(function()
             vim.cmd("%bd!")
             vim.api.nvim_set_current_dir(path)
+            Snacks.explorer()
           end)
         end,
       },
