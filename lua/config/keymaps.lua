@@ -136,6 +136,29 @@ end
 
 map("n", "a", smart_insert_on_empty_line, {
   noremap = true,
-  expr = true, -- expr = true позволяет функции возвращать строку команды
+  expr = true,
   desc = "Smart indent on empty line",
 })
+
+local Terminal = require("toggleterm.terminal").Terminal
+local lazygit = Terminal:new({
+  cmd = "lazygit",
+  dir = "git_dir",
+  direction = "float",
+  float_opts = {
+    border = "none",
+  },
+  highlights = {
+    Border = { link = "FloatBorder" },
+  },
+  on_open = function(term)
+    vim.cmd("startinsert!")
+    vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
+  end,
+})
+
+function _lazygit_toggle()
+  lazygit:toggle()
+end
+
+vim.keymap.set("n", "<leader>lg", "<cmd>lua _lazygit_toggle()<CR>", { noremap = true, silent = true })
