@@ -50,6 +50,7 @@ return {
               if item then
                 vim.fn.chdir(item.file)
               end
+              Snacks.explorer()
             end)
           end,
           format = function(item)
