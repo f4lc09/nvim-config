@@ -1,3 +1,12 @@
+local function SaveSessionAtGitRoot()
+  local git_root = vim.fn.system("git rev-parse --show-toplevel 2>/dev/null"):gsub("\n", "")
+
+  if git_root ~= "" and vim.v.shell_error == 0 then
+    local session_file = git_root .. "/.Session.vim"
+    vim.cmd("silent! mksession! " .. session_file)
+  end
+end
+
 return {
   "folke/snacks.nvim",
   opts = {
@@ -19,6 +28,7 @@ return {
             path = vim.fn.fnamemodify(path, ":p:h")
           end
 
+          SaveSessionAtGitRoot()
           picker:close()
 
           vim.schedule(function()
@@ -33,6 +43,7 @@ return {
             preview = false,
           },
           confirm = function(picker, item)
+            SaveSessionAtGitRoot()
             picker:close()
             vim.cmd("%bd!")
             vim.schedule(function()
