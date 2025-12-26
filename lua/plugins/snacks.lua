@@ -28,6 +28,32 @@ return {
         end,
       },
       sources = {
+        projects = {
+          layout = {
+            preview = false,
+          },
+          confirm = function(picker, item)
+            picker:close()
+            vim.cmd("%bd!")
+            vim.schedule(function()
+              if item then
+                vim.fn.chdir(item.file)
+              end
+            end)
+          end,
+          format = function(item)
+            local path = item.file or item.text
+            -- Convert absolute path to home-relative (e.g., /home/user -> ~)
+            local home_path = vim.fn.fnamemodify(path, ":~")
+
+            local ret = {}
+            -- Keep the default icon and name if available
+            ret[#ret + 1] = { item.name or vim.fn.fnamemodify(path, ":t"), "Normal" }
+            ret[#ret + 1] = { " " } -- Separator
+            ret[#ret + 1] = { home_path, "Directory" }
+            return ret
+          end,
+        },
         grep = {
           hidden = true,
           ignored = true,
