@@ -22,7 +22,7 @@ return {
           picker:close()
 
           vim.schedule(function()
-            vim.cmd("%db!")
+            vim.cmd("%bd!")
             vim.api.nvim_set_current_dir(path)
           end)
         end,
