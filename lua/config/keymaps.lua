@@ -152,8 +152,24 @@ local lazygit = Terminal:new({
     Border = { link = "FloatBorder" },
   },
   on_open = function(term)
-    vim.cmd("startinsert!")
-    vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(
+      term.bufnr,
+      "t", -- режим терминала
+      "q",
+      [[<C-\><C-n><cmd>lua _lazygit_toggle()<CR>]],
+      { noremap = true, silent = true }
+    )
+    -- Также для нормального режима, если вы вышли из вставки
+    vim.api.nvim_buf_set_keymap(
+      term.bufnr,
+      "n",
+      "q",
+      [[<cmd>lua _lazygit_toggle()<CR>]],
+      { noremap = true, silent = true }
+    )
+    vim.schedule(function()
+      vim.cmd("startinsert!")
+    end)
   end,
 })
 
