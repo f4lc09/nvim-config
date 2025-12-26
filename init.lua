@@ -87,4 +87,5 @@ require("mini.pairs").setup({
   },
   -- ... другие настройки ...
 })
+
 vim.opt.shada = [[!,'2000,<50,s10,h]]
