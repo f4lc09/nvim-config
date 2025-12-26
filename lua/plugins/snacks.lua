@@ -21,15 +21,10 @@ return {
 
           picker:close()
 
-          for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-            if vim.api.nvim_buf_is_loaded(bufnr) and vim.bo[bufnr].buftype == "" then
-              vim.api.nvim_buf_delete(bufnr, { force = true })
-            end
-          end
-
-          vim.api.nvim_set_current_dir(path)
-
-          print("CWD changed to: " .. path .. " (Buffers cleared)")
+          vim.schedule(function()
+            vim.cmd("%db!")
+            vim.api.nvim_set_current_dir(path)
+          end)
         end,
       },
       sources = {
