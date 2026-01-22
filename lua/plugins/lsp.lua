@@ -9,6 +9,7 @@ return {
         gopls = {
           settings = {
             gopls = {
+              usePlaceholders = false,
               analyses = {
                 efaceany = false,
                 unusedparams = false,
