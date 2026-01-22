@@ -179,3 +179,4 @@ end
 
 vim.keymap.set("n", "<leader>lg", "<cmd>lua _lazygit_toggle()<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "db", "dvb")
+vim.keymap.del("n", "<leader>l")
