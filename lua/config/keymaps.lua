@@ -155,7 +155,7 @@ local lazygit = Terminal:new({
     vim.api.nvim_buf_set_keymap(
       term.bufnr,
       "t", -- режим терминала
-      "q",
+      "<C-q>",
       [[<C-\><C-n><cmd>lua _lazygit_toggle()<CR>]],
       { noremap = true, silent = true }
     )
@@ -163,7 +163,7 @@ local lazygit = Terminal:new({
     vim.api.nvim_buf_set_keymap(
       term.bufnr,
       "n",
-      "q",
+      "<C-q>",
       [[<cmd>lua _lazygit_toggle()<CR>]],
       { noremap = true, silent = true }
     )
@@ -180,3 +180,9 @@ end
 vim.keymap.set("n", "<leader>lg", "<cmd>lua _lazygit_toggle()<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "db", "dvb")
 vim.keymap.del("n", "<leader>l")
+vim.keymap.set(
+  "t",
+  "<C-q>",
+  [[<C-\><C-n>:bd!<CR>]],
+  { desc = "Закрыть терминал и убить процесс" }
+)

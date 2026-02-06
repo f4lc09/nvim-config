@@ -4,6 +4,7 @@ return {
     formatters_by_ft = {
       json = { "deno_fmt" },
       jsonc = { "deno_fmt" },
+      yaml = {},
     },
     formatters = {
       deno_fmt = {
