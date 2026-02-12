@@ -186,3 +186,4 @@ vim.keymap.set(
   [[<C-\><C-n>:bd!<CR>]],
   { desc = "Закрыть терминал и убить процесс" }
 )
+vim.keymap.set("i", "<A-d>", "<C-o>dw", { noremap = true })
