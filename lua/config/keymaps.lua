@@ -30,12 +30,6 @@ local function dapui_toggle()
   require("dapui").toggle()
 end
 
-local function lsp_rename()
-  vim.lsp.buf.rename()
-end
-
-map("n", "<F2>", lsp_rename, { desc = "Run Go Debug" })
--- map("n", "<F5>", lsp_references, { desc = "Run Go Debug" })
 map("n", "<F5>", dap_new, { desc = "Run Go Debug" })
 map("n", "<F9>", dap_toggle_breakpoint, { desc = "Dap Breakpoint" })
 map("n", "<C-M-j>", dap_step_over, { desc = "Dap Step Over" })
@@ -76,7 +70,7 @@ map({ "n", "v" }, "<C-p>", function()
 end, { noremap = true, silent = true, desc = "Paste in new line" })
 
 local function setup_http_keymaps(bufnr)
-  vim.keymap.set("n", "<Enter>", function()
+  map("n", "<Enter>", function()
     local success, kulala_module = pcall(require, "kulala")
     if success and kulala_module then
       kulala_module.run()
@@ -97,7 +91,7 @@ vim.api.nvim_create_autocmd("FileType", {
 local function setup_go_test_keymaps(bufnr)
   local filename = vim.fn.bufname(bufnr)
   if filename:match("_test.go$") then
-    vim.keymap.set("n", "<F5>", function()
+    map("n", "<F5>", function()
       local success, dap_go_module = pcall(require, "dap-go")
       if success and dap_go_module then
         dap_go_module.debug_test()
@@ -177,13 +171,9 @@ function _lazygit_toggle()
   lazygit:toggle()
 end
 
-vim.keymap.set("n", "<leader>lg", "<cmd>lua _lazygit_toggle()<CR>", { noremap = true, silent = true })
-vim.keymap.set("n", "db", "dvb")
+map("n", "<leader>lg", "<cmd>lua _lazygit_toggle()<CR>", { noremap = true, silent = true })
+map("n", "db", "dvb")
 vim.keymap.del("n", "<leader>l")
-vim.keymap.set(
-  "t",
-  "<C-q>",
-  [[<C-\><C-n>:bd!<CR>]],
-  { desc = "Закрыть терминал и убить процесс" }
-)
-vim.keymap.set("i", "<A-d>", "<C-o>dw", { noremap = true })
+map("t", "<C-q>", [[<C-\><C-n>:bd!<CR>]], { desc = "Закрыть терминал и убить процесс" })
+map("i", "<A-d>", "<C-o>dw", { noremap = true })
+map("v", "$", "g_", { noremap = true })
