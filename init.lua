@@ -88,4 +88,4 @@ require("mini.pairs").setup({
   -- ... другие настройки ...
 })
 
-vim.opt.shada = [[!,'2000,<50,s10,h]]
+vim.opt.shada = [[!,'5000,<50,s10,h]]

@@ -118,6 +118,26 @@ map({ "n", "v" }, "<leader>bb", ":BufferLineCyclePrev<CR>", { silent = true, des
 map("n", "<F13>", ":bnext<CR>", { silent = true })
 map("i", "<C-BS>", "<C-w>", { noremap = true, silent = true })
 map("x", "<leader>gB", "<cmd>GBrowse<cr>", { noremap = true, silent = true })
+map("n", "<leader>lsr", "<cmd>LspRestart<cr>", { noremap = true, silent = true })
+map("v", "<leader>ss", function()
+  -- Копируем выделение в регистр 'h'
+  vim.cmd('normal! "hy')
+
+  -- Экранируем спецсимволы (особенно важно для прямого слеша /)
+  local raw_text = vim.fn.getreg("h")
+  local escaped_text = raw_text:gsub("([%[%]%%^%*%./%-$])", "\\%1")
+
+  -- Формируем команду: %s/текст/текст/g и двигаем курсор на 2 позиции влево (пропускаем /g)
+  local command = string.format(
+    ":%ss/%s/%s/g%s",
+    "%",
+    escaped_text,
+    escaped_text,
+    vim.api.nvim_replace_termcodes("<Left><Left>", true, false, true)
+  )
+
+  vim.api.nvim_feedkeys(command, "n", false)
+end, { desc = "Substitute current selection" })
 
 local function smart_insert_on_empty_line()
   local line = vim.api.nvim_get_current_line()
