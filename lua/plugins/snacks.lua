@@ -72,6 +72,9 @@ return {
           confirm = function(picker, item)
             SaveSessionAtGitRoot()
             picker:close()
+
+            vim.g.tmux_window_name = nil
+
             vim.cmd("%bd!")
             vim.schedule(function()
               if item then
