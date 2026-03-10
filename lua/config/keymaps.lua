@@ -206,3 +206,40 @@ map("n", "dd", '"_dd', { noremap = true, desc = "Delete line without yanking", n
 map({ "n", "x", "v", "s" }, "D", '"_D', { noremap = true, desc = "Delete without yanking", nowait = true })
 map({ "x", "n", "v" }, "c", '"_c', { noremap = true, desc = "Change without yanking", nowait = true })
 map("n", "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
+
+local function get_short_name()
+  local git_dir = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+  local project_path = (git_dir and git_dir ~= "") and git_dir or vim.fn.getcwd()
+  local name = vim.fn.fnamemodify(project_path, ":t")
+  local parent = vim.fn.fnamemodify(project_path, ":h:t")
+  local full_name = parent .. "/" .. name
+  if #full_name <= 15 then
+    return full_name
+  end
+  local short = full_name:gsub("([^%s%a][aeiouyAEIOUY])", ""):gsub("([%a])[aeiouyAEIOUY]+", "%1")
+  if #short > 16 then
+    short = short:sub(1, 10) .. ".."
+  end
+  return short
+end
+
+local function update_tmux_window()
+  if not os.getenv("TMUX") then
+    return
+  end
+  -- Если в сессии задана g:tmux_window_name, берем её, иначе генерим короткое имя
+  local name = vim.g.tmux_window_name or get_short_name()
+  vim.fn.jobstart({ "tmux", "rename-window", name })
+end
+
+function SetTmuxWindowName()
+  local new_name = vim.fn.input("Имя окна tmux: ", vim.g.tmux_window_name or "")
+  if new_name ~= "" then
+    vim.g.tmux_window_name = new_name
+    update_tmux_window()
+  end
+end
+
+vim.keymap.set("n", "<leader>rn", SetTmuxWindowName, { desc = "Rename Tmux Window" })
+
+-- TODO: Paste in visual mode without yanking

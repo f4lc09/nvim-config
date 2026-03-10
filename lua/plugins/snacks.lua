@@ -1,9 +1,28 @@
+local function update_tmux_window()
+  if not os.getenv("TMUX") then
+    return
+  end
+  -- Если в сессии задана g:tmux_window_name, берем её, иначе генерим короткое имя
+  local name = vim.g.tmux_window_name or get_short_name()
+  print("NAME: ", name)
+  vim.fn.jobstart({ "tmux", "rename-window", name })
+end
 local function SaveSessionAtGitRoot()
   local git_root = vim.fn.system("git rev-parse --show-toplevel 2>/dev/null"):gsub("\n", "")
 
   if git_root ~= "" and vim.v.shell_error == 0 then
     local session_file = git_root .. "/.Session.vim"
     vim.cmd("silent! mksession! " .. session_file)
+
+    local current_name = vim.g.tmux_window_name
+
+    if current_name and current_name ~= "" then
+      local file = io.open(session_file, "a") -- режим "a" (append) для дозаписи
+      if file then
+        file:write('\nlet g:tmux_window_name = "' .. vim.g.tmux_window_name .. '"')
+        file:close()
+      end
+    end
   end
 end
 
@@ -39,6 +58,7 @@ return {
           vim.schedule(function()
             vim.cmd("%bd!")
             vim.api.nvim_set_current_dir(path)
+            update_tmux_window()
             Snacks.explorer()
           end)
         end,
@@ -56,14 +76,6 @@ return {
               if item then
                 vim.fn.chdir(item.file)
               end
-              -- Snacks.explorer()
-              -- local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
-              -- -- Проверяем, запущены ли мы внутри tmux
-              -- if os.getenv("TMUX") then
-              --   -- Выполняем системную команду для переименования окна
-              --   os.execute("tmux rename-window " .. project_name)
-              -- end
-              --
             end)
           end,
           format = function(item)
