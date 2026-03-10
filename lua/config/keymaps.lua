@@ -199,7 +199,7 @@ map("i", "<A-d>", "<C-o>dw", { noremap = true })
 map("v", "$", "g_", { noremap = true })
 
 -- Fix yanking
-map({ "n" }, "x", '"_x', { noremap = true })
-map({ "v", "x", "s" }, "d", '"_d', { noremap = true })
-map({ "x", "n", "v" }, "c", '"_c', { noremap = true })
+map({ "n" }, "x", '"_x', { noremap = true, desc = "Закрыть терминал и убить процесс" })
+map({ "v", "x", "s" }, "d", '"_d', { noremap = true, desc = "Delete without yanking" })
+map({ "x", "n", "v" }, "c", '"_c', { noremap = true, desc = "Change without yanking" })
 map("n", "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
