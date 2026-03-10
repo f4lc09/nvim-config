@@ -197,3 +197,9 @@ vim.keymap.del("n", "<leader>l")
 map("t", "<C-q>", [[<C-\><C-n>:bd!<CR>]], { desc = "Закрыть терминал и убить процесс" })
 map("i", "<A-d>", "<C-o>dw", { noremap = true })
 map("v", "$", "g_", { noremap = true })
+
+-- Fix yanking
+map({ "n" }, "x", '"_x', { noremap = true })
+map({ "v", "x", "s" }, "d", '"_d', { noremap = true })
+map({ "x", "n", "v" }, "c", '"_c', { noremap = true })
+map("n", "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
