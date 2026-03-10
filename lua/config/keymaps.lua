@@ -200,8 +200,8 @@ map("v", "$", "g_", { noremap = true })
 
 -- Fix yanking
 map({ "n" }, "x", '"_x', { noremap = true, desc = "Закрыть терминал и убить процесс" })
-map({ "v", "x", "s" }, "d", '"_d', { noremap = true, desc = "Delete selection without yanking" })
-map("n", "d", '"_d', { noremap = true, desc = "Delete without yanking" })
-map("n", "dd", '"_dd', { noremap = true, desc = "Delete line without yanking" })
-map({ "x", "n", "v" }, "c", '"_c', { noremap = true, desc = "Change without yanking" })
+map({ "n", "v", "x", "s" }, "d", '"_d', { noremap = true, desc = "Delete without yanking", nowait = true })
+map("n", "dd", '"_dd', { noremap = true, desc = "Delete line without yanking", nowait = true })
+map({ "n", "x", "v", "s" }, "D", '"_D', { noremap = true, desc = "Delete without yanking", nowait = true })
+map({ "x", "n", "v" }, "c", '"_c', { noremap = true, desc = "Change without yanking", nowait = true })
 map("n", "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
