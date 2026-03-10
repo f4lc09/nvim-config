@@ -89,3 +89,10 @@ require("mini.pairs").setup({
 })
 
 vim.opt.shada = [[!,'5000,<50,s10,h]]
+
+vim.api.nvim_create_autocmd("BufEnter", {
+  pattern = "diffview://*",
+  callback = function()
+    vim.lsp.stop_client(vim.lsp.get_active_clients({ bufnr = 0 }))
+  end,
+})

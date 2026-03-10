@@ -99,8 +99,11 @@ return {
           },
           auto_close = true,
           layout = {
+            preset = "select",
             layout = {
-              position = "right",
+              -- position = "right",
+              width = 0.6,
+              height = 0.8,
             },
           },
         },
