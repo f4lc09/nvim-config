@@ -141,3 +141,6 @@ vim.api.nvim_create_autocmd("VimLeave", {
     end
   end,
 })
+vim.opt.shortmess:append("F")
+vim.opt.shortmess:append("A")
+vim.opt.swapfile = false

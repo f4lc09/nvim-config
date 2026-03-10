@@ -206,7 +206,7 @@ map("n", "dd", '"_dd', { noremap = true, desc = "Delete line without yanking", n
 map({ "n", "x", "v", "s" }, "D", '"_D', { noremap = true, desc = "Delete without yanking", nowait = true })
 map({ "x", "n", "v" }, "c", '"_c', { noremap = true, desc = "Change without yanking", nowait = true })
 map("n", "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
-map("x", "p", '"_dP', { noremap = true, desc = "Paste without overwriting clipboard" })
+map("x", "p", "P", { noremap = true, desc = "Paste without overwriting clipboard" })
 
 local function get_short_name()
   local git_dir = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
