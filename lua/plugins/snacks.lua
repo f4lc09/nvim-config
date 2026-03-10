@@ -39,7 +39,7 @@ return {
           vim.schedule(function()
             vim.cmd("%bd!")
             vim.api.nvim_set_current_dir(path)
-            Snacks.explorer()
+            -- Snacks.explorer()
           end)
         end,
       },
