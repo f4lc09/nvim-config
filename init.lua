@@ -144,3 +144,39 @@ vim.api.nvim_create_autocmd("VimLeave", {
 vim.opt.shortmess:append("F")
 vim.opt.shortmess:append("A")
 vim.opt.swapfile = false
+
+vim.api.nvim_create_autocmd("BufReadPost", {
+  pattern = "*/secrets/**/*enc*.yaml",
+  callback = function(args)
+    if not vim.b[args.buf].sops_first_open_done then
+      vim.schedule(function()
+        if vim.api.nvim_buf_is_valid(args.buf) then
+          vim.api.nvim_win_set_cursor(0, { 1, 0 })
+
+          vim.b[args.buf].sops_first_open_done = true
+        end
+      end)
+
+      vim.b[args.buf].autoformat = false
+    end
+  end,
+})
+
+vim.api.nvim_create_autocmd("BufLeave", {
+  group = vim.api.nvim_create_augroup("CleanLastNoName", { clear = true }),
+  callback = function()
+    local bufnr = vim.api.nvim_get_current_buf()
+
+    -- Проверяем только текущий (покидаемый) буфер
+    local name = vim.api.nvim_buf_get_name(bufnr)
+    local is_empty = vim.api.nvim_buf_line_count(bufnr) <= 1 and vim.api.nvim_buf_get_lines(bufnr, 0, 1, false)[1] == ""
+
+    if name == "" and is_empty and vim.bo[bufnr].buftype == "" and not vim.bo[bufnr].modified then
+      vim.schedule(function()
+        if vim.api.nvim_buf_is_valid(bufnr) then
+          vim.api.nvim_buf_delete(bufnr, { force = true })
+        end
+      end)
+    end
+  end,
+})
