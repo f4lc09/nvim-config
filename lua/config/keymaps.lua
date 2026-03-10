@@ -206,6 +206,7 @@ map("n", "dd", '"_dd', { noremap = true, desc = "Delete line without yanking", n
 map({ "n", "x", "v", "s" }, "D", '"_D', { noremap = true, desc = "Delete without yanking", nowait = true })
 map({ "x", "n", "v" }, "c", '"_c', { noremap = true, desc = "Change without yanking", nowait = true })
 map("n", "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
+map("x", "p", '"_dP', { noremap = true, desc = "Paste without overwriting clipboard" })
 
 local function get_short_name()
   local git_dir = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
@@ -227,7 +228,6 @@ local function update_tmux_window()
   if not os.getenv("TMUX") then
     return
   end
-  -- Если в сессии задана g:tmux_window_name, берем её, иначе генерим короткое имя
   local name = vim.g.tmux_window_name or get_short_name()
   vim.fn.jobstart({ "tmux", "rename-window", name })
 end
@@ -242,4 +242,13 @@ end
 
 vim.keymap.set("n", "<leader>rn", SetTmuxWindowName, { desc = "Rename Tmux Window" })
 
--- TODO: Paste in visual mode without yanking
+vim.on_key(function(key)
+  if key:match("[%z\1-\127]") == nil and key:match("[а-яА-ЯёЁ]") then
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
+
+    vim.notify("Смени раскладку! (Wrong language)", vim.log.levels.ERROR, {
+      title = "Keyboard Layout",
+      timeout = 500,
+    })
+  end
+end)

@@ -3,8 +3,8 @@ vim.opt.showtabline = 2
 
 require("config.lazy")
 
-vim.opt.langmap =
-  "ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчняж;abcdefghijklmnopqrstuvwxyz:"
+-- vim.opt.langmap =
+--   "ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчняж;abcdefghijklmnopqrstuvwxyz:"
 
 local function find_go_project_root()
   return require("lspconfig.util").root_pattern("go.mod", "go.work")(vim.fn.expand("%:p"))
