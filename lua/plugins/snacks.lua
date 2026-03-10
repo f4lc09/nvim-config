@@ -39,7 +39,7 @@ return {
           vim.schedule(function()
             vim.cmd("%bd!")
             vim.api.nvim_set_current_dir(path)
-            -- Snacks.explorer()
+            Snacks.explorer()
           end)
         end,
       },
@@ -56,7 +56,14 @@ return {
               if item then
                 vim.fn.chdir(item.file)
               end
-              Snacks.explorer()
+              -- Snacks.explorer()
+              -- local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+              -- -- Проверяем, запущены ли мы внутри tmux
+              -- if os.getenv("TMUX") then
+              --   -- Выполняем системную команду для переименования окна
+              --   os.execute("tmux rename-window " .. project_name)
+              -- end
+              --
             end)
           end,
           format = function(item)

@@ -96,3 +96,47 @@ vim.api.nvim_create_autocmd("BufEnter", {
     vim.lsp.stop_client(vim.lsp.get_active_clients({ bufnr = 0 }))
   end,
 })
+
+local function get_short_name()
+  -- 1. Ищем корень Git, если нет — берем CWD
+  local git_dir = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+  local project_path = (git_dir and git_dir ~= "") and git_dir or vim.fn.getcwd()
+
+  local name = vim.fn.fnamemodify(project_path, ":t")
+  local parent = vim.fn.fnamemodify(project_path, ":h:t")
+  local full_name = parent .. "/" .. name
+
+  -- Если имя короткое (до 15 симв), оставляем как есть
+  if #full_name <= 15 then
+    return full_name
+  end
+
+  -- 2. Убираем согласные (кроме первой буквы каждого слова)
+  -- Оставляем гласные для читаемости, убираем только лишнее
+  local short = full_name:gsub("([^%s%a][aeiouyAEIOUY])", ""):gsub("([%a])[aeiouyAEIOUY]+", "%1")
+
+  -- 3. Если все еще длинно (> 10), жестко режем до 10 символов
+  if #short > 16 then
+    short = short:sub(1, 10) .. ".."
+  end
+
+  return short
+end
+
+vim.api.nvim_create_autocmd({ "VimEnter", "DirChanged", "BufEnter" }, {
+  callback = function()
+    if os.getenv("TMUX") then
+      local name = get_short_name()
+      vim.fn.jobstart({ "tmux", "rename-window", name })
+    end
+  end,
+})
+
+-- Возвращать стандартное имя при выходе (опционально)
+vim.api.nvim_create_autocmd("VimLeave", {
+  callback = function()
+    if os.getenv("TMUX") then
+      os.execute("tmux set-window-option automatic-rename on")
+    end
+  end,
+})
