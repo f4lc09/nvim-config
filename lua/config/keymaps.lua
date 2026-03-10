@@ -193,7 +193,7 @@ function _lazygit_toggle()
 end
 
 map("n", "<leader>lg", "<cmd>lua _lazygit_toggle()<CR>", { noremap = true, silent = true })
-map("n", "db", "dvb")
+map("n", "db", '"_dvb', { noremap = true })
 vim.keymap.del("n", "<leader>l")
 map("t", "<C-q>", [[<C-\><C-n>:bd!<CR>]], { desc = "Закрыть терминал и убить процесс" })
 map("i", "<A-d>", "<C-o>dw", { noremap = true })
@@ -256,3 +256,4 @@ vim.on_key(function(key)
     })
   end
 end)
+vim.o.timeoutlen = 1000

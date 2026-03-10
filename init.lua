@@ -167,7 +167,6 @@ vim.api.nvim_create_autocmd("BufLeave", {
   callback = function()
     local bufnr = vim.api.nvim_get_current_buf()
 
-    -- Проверяем только текущий (покидаемый) буфер
     local name = vim.api.nvim_buf_get_name(bufnr)
     local is_empty = vim.api.nvim_buf_line_count(bufnr) <= 1 and vim.api.nvim_buf_get_lines(bufnr, 0, 1, false)[1] == ""
 
