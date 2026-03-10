@@ -55,6 +55,7 @@ return {
           SaveSessionAtGitRoot()
           picker:close()
 
+          vim.g.tmux_window_name = nil
           vim.schedule(function()
             vim.cmd("%bd!")
             vim.api.nvim_set_current_dir(path)
