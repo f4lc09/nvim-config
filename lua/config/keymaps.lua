@@ -243,6 +243,10 @@ end
 vim.keymap.set("n", "<leader>rn", SetTmuxWindowName, { desc = "Rename Tmux Window" })
 
 vim.on_key(function(key)
+  local mode = vim.api.nvim_get_mode().mode
+  if mode == "i" or mode == "R" then
+    return
+  end
   if key:match("[%z\1-\127]") == nil and key:match("[а-яА-ЯёЁ]") then
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
 
