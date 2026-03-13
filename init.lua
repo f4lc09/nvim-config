@@ -136,8 +136,9 @@ vim.api.nvim_create_autocmd("BufEnter", {
 
 vim.api.nvim_create_autocmd("VimLeave", {
   callback = function()
-    if os.getenv("TMUX") then
-      os.execute("tmux set-window-option automatic-rename on")
+    local pane = os.getenv("TMUX_PANE")
+    if pane then
+      os.execute("tmux set-window-option -t " .. pane .. " automatic-rename on")
     end
   end,
 })
