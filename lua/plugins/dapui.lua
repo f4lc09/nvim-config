@@ -31,6 +31,11 @@ return {
         },
         opened = false,
       })
+      require("dap-go").setup({
+        delve = {
+          path = vim.fn.expand("$HOME/go/bin/dlv"), -- Явный путь к свежему билду
+        },
+      })
 
       require("dap").listeners.before.attach.dapui_config = function()
         dapui.open()
