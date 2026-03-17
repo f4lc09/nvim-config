@@ -1,42 +1,20 @@
 local dap = require("dap")
+local dapui = require("dapui")
+local key_func = require("config.keymap_utils")
+
 local map = vim.keymap.set
+local unmap = vim.keymap.del
 
--- COMMON SENSE
-local function dap_step_over()
-  dap.step_over()
-end
-local function dap_step_into()
-  dap.step_into()
-end
-local function dap_step_out()
-  dap.step_out()
-end
-local function dap_toggle_breakpoint()
-  dap.toggle_breakpoint()
-end
-local function dap_new()
-  if dap.session() ~= nil then
-    dap.terminate()
-    return
-  end
-  vim.cmd(":DapNew")
-end
-local function dap_continue()
-  if dap.session() ~= nil then
-    dap.continue()
-  end
-end
-local function dapui_toggle()
-  require("dapui").toggle()
-end
+-- Dap Key Bindings
+map("n", "<F5>", key_func.DapToggleDebug, { desc = "Dap Run/Stop Debug" })
+map("n", "<F9>", dap.toggle_breakpoint, { desc = "Dap Breakpoint" })
+map("n", "<C-M-j>", dap.step_over, { desc = "Dap Step Over" })
+map("n", "<C-M-l>", dap.step_into, { desc = "Dap Step Into" })
+map("n", "<C-M-k>", dap.continue, { desc = "Dap Step Into" })
+map("n", "<C-M-h>", dap.step_out, { desc = "Dap Step Out" })
+map("n", "<leader>dt", dapui.toggle, { desc = "Dap Toggle UI" })
 
-map("n", "<F5>", dap_new, { desc = "Run Go Debug" })
-map("n", "<F9>", dap_toggle_breakpoint, { desc = "Dap Breakpoint" })
-map("n", "<C-M-j>", dap_step_over, { desc = "Dap Step Over" })
-map("n", "<C-M-l>", dap_step_into, { desc = "Dap Step Into" })
-map("n", "<C-M-k>", dap_continue, { desc = "Dap Step Into" })
-map("n", "<C-M-h>", dap_step_out, { desc = "Dap Step Out" })
-map("n", "<leader>dt", dapui_toggle, { desc = "Dap Toggle UI" })
+-- Override common moves
 map({ "n", "v" }, "<C-END>", "G", { noremap = true, silent = true, desc = "Go to the end of the file" })
 map({ "n", "v" }, "<C-HOME>", "gg", { noremap = true, silent = true, desc = "Go to the start of the file" })
 map({ "n", "v" }, "G", "G$", { noremap = true, silent = true, desc = "Go to the end of the file" })
@@ -44,7 +22,8 @@ map({ "n", "v" }, "gg", "gg^", { noremap = true, silent = true, desc = "Go to th
 
 map("n", "p", function()
   vim.cmd("normal! p")
-  vim.cmd("w")
+  -- require("LazyVim").Lazy
+  -- vim.cmd("w")
 end, { silent = true })
 map("n", "P", function()
   vim.cmd("normal! P")
@@ -192,8 +171,7 @@ function _lazygit_toggle()
 end
 
 map("n", "<C-l><C-g>", "<cmd>lua _lazygit_toggle()<CR>", { noremap = true, silent = true })
-map("n", "db", '"_dvb', { noremap = true })
-vim.keymap.del("n", "<leader>l")
+unmap("n", "<leader>l")
 map("t", "<C-c><C-c>", [[<C-\><C-n>:bd!<CR>]], { desc = "Убить терминал" })
 vim.api.nvim_create_autocmd("TermEnter", {
   pattern = "*",
@@ -209,13 +187,13 @@ vim.api.nvim_create_autocmd("TermLeave", {
   end,
 })
 map("i", "<A-d>", "<C-o>dw", { noremap = true })
-map("v", "$", "g_", { noremap = true })
+map({ "v", "x" }, "$", "g_", { noremap = true })
 
 -- Fix yanking
 map({ "n" }, "x", "d", { noremap = true, desc = "Закрыть терминал и убить процесс" })
 map({ "n" }, "<BS>", '"_cl<Esc>', { noremap = true, desc = "Удалить символ влево" })
 map({ "n" }, "<delete>", '"_x', { noremap = true, desc = "Удалить символ влево" })
-map({ "n" }, "db", "vbdh", { noremap = true, desc = "Удалить слово назад" })
+map({ "n" }, "db", key_func.DeleteBackward, { noremap = true, desc = "Удалить слово назад" })
 map("i", "<C-BS>", "<C-w>", { noremap = true, silent = true })
 map({ "n", "v", "x", "s" }, "d", '"_d', { noremap = true, desc = "Delete without yanking", nowait = true })
 map("n", "dd", '"_dd', { noremap = true, desc = "Delete line without yanking", nowait = true })
@@ -274,9 +252,9 @@ vim.on_key(function(key)
 end)
 vim.o.timeoutlen = 1000
 
-vim.keymap.del("n", "<leader>e")
-vim.keymap.del("n", "<leader>E")
-vim.keymap.del("n", "<C-/>")
+unmap("n", "<leader>e")
+unmap("n", "<leader>E")
+unmap("n", "<C-/>")
 
 map("n", "<leader>e", function()
   Snacks.explorer()

@@ -1,3 +1,5 @@
+require("config.lazy")
+
 vim.g.AutoPairs = 0
 vim.o.showtabline = 2
 vim.o.smartindent = false
@@ -12,8 +14,6 @@ vim.opt.shortmess:append("F")
 vim.opt.shortmess:append("A")
 vim.opt.swapfile = false
 
-require("config.lazy")
-
 local function find_go_project_root()
   return require("lspconfig.util").root_pattern("go.mod", "go.work")(vim.fn.expand("%:p"))
 end
@@ -25,23 +25,12 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufRead", "BufWinEnter", "LspAttach" 
     if vim.bo.buftype ~= "" then
       return
     end
-    -- print(os.time(), " Changing cwd/root", vim.fn.expand("<amatch>:p"))
 
     local root = find_go_project_root()
     if root and root ~= "" then
       vim.api.nvim_set_current_dir(root)
-      -- vim.cmd.lcd(root)
-      -- print(os.time(), "new root", root)
-      -- vim.cmd("cd " .. root)
     end
-    -- print(os.time(), " Stop changing cwd/root")
   end,
-})
-
-require("conform").setup({
-  formatters_by_ft = {
-    go = { "goimports", "gofmt" },
-  },
 })
 
 vim.api.nvim_create_user_command("Dapui", function()

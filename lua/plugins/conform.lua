@@ -5,6 +5,7 @@ return {
       json = { "deno_fmt" },
       jsonc = { "deno_fmt" },
       yaml = {},
+      go = { "goimports", "gofmt" },
     },
     formatters = {
       deno_fmt = {
