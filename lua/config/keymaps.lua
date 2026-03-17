@@ -116,7 +116,6 @@ vim.api.nvim_create_autocmd("FileType", {
 map({ "n", "v" }, "<leader>bf", ":BufferLineCycleNext<CR>", { silent = true, desc = "Next buffer" })
 map({ "n", "v" }, "<leader>bb", ":BufferLineCyclePrev<CR>", { silent = true, desc = "Previous buffer" })
 map("n", "<F13>", ":bnext<CR>", { silent = true })
-map("i", "<C-BS>", "<C-w>", { noremap = true, silent = true })
 map("x", "<leader>gB", "<cmd>GBrowse<cr>", { noremap = true, silent = true })
 map("n", "<leader>lsr", "<cmd>LspRestart<cr>", { noremap = true, silent = true })
 map("v", "<leader>ss", function()
@@ -214,12 +213,10 @@ map("v", "$", "g_", { noremap = true })
 
 -- Fix yanking
 map({ "n" }, "x", "d", { noremap = true, desc = "Закрыть терминал и убить процесс" })
-map(
-  { "n" },
-  "<BS>",
-  '"_cl<Esc>',
-  { noremap = true, desc = "Удалить символ под курсором без смещения" }
-)
+map({ "n" }, "<BS>", '"_cl<Esc>', { noremap = true, desc = "Удалить символ влево" })
+map({ "n" }, "<delete>", '"_x', { noremap = true, desc = "Удалить символ влево" })
+map({ "n" }, "db", "vbdh", { noremap = true, desc = "Удалить слово назад" })
+map("i", "<C-BS>", "<C-w>", { noremap = true, silent = true })
 map({ "n", "v", "x", "s" }, "d", '"_d', { noremap = true, desc = "Delete without yanking", nowait = true })
 map("n", "dd", '"_dd', { noremap = true, desc = "Delete line without yanking", nowait = true })
 map({ "n", "x", "v", "s" }, "D", '"_D', { noremap = true, desc = "Delete without yanking", nowait = true })

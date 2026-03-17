@@ -1,11 +1,18 @@
-vim.o.showtabline = 2
-vim.opt.showtabline = 2
 vim.g.AutoPairs = 0
+vim.o.showtabline = 2
+vim.o.smartindent = false
+vim.o.autoindent = false
+vim.o.cindent = true
+vim.o.showtabline = 2
+vim.o.shada = [[!,'5000,<50,s10,h]]
+vim.o.fixendofline = false
+vim.opt.tabstop = 4
+vim.o.wrap = true
+vim.opt.shortmess:append("F")
+vim.opt.shortmess:append("A")
+vim.opt.swapfile = false
 
 require("config.lazy")
-
--- vim.opt.langmap =
---   "ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчняж;abcdefghijklmnopqrstuvwxyz:"
 
 local function find_go_project_root()
   return require("lspconfig.util").root_pattern("go.mod", "go.work")(vim.fn.expand("%:p"))
@@ -40,20 +47,14 @@ require("conform").setup({
 vim.api.nvim_create_user_command("Dapui", function()
   require("dapui").toggle()
 end, { desc = "Toggle nvim-dap-ui visibility", nargs = 0 })
-vim.o.smartindent = false
-vim.o.autoindent = false
-vim.o.cindent = true
 
 vim.api.nvim_create_autocmd({ "FileType" }, {
   pattern = { "http", "json", "rest", "graphql" },
   command = "set conceallevel=0",
 })
-vim.opt.tabstop = 4
--- vim.opt.startofline = true
 vim.api.nvim_set_hl(0, "DiagnosticUnnecessary", {
   fg = "#4D73A3",
 })
-vim.o.fixendofline = false
 
 local function get_short_name()
   local git_dir = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
@@ -126,7 +127,6 @@ vim.api.nvim_create_autocmd("DirChanged", {
     update_tmux_window()
   end,
 })
-vim.o.wrap = true
 vim.api.nvim_create_autocmd({ "FileType" }, {
   pattern = { "http", "yaml" }, -- Add the file types you want to disable here
   callback = function()
@@ -138,8 +138,6 @@ require("mini.pairs").setup({
     ["<CR>"] = nil,
   },
 })
-
-vim.opt.shada = [[!,'5000,<50,s10,h]]
 
 vim.api.nvim_create_autocmd("BufEnter", {
   pattern = "diffview://*",
@@ -156,9 +154,6 @@ vim.api.nvim_create_autocmd("VimLeave", {
     end
   end,
 })
-vim.opt.shortmess:append("F")
-vim.opt.shortmess:append("A")
-vim.opt.swapfile = false
 
 vim.api.nvim_create_autocmd("BufReadPost", {
   pattern = "*/secrets/**/*enc*.yaml",
