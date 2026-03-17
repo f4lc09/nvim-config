@@ -63,6 +63,17 @@ return {
             Snacks.explorer()
           end)
         end,
+        copy_file_name = function(_, item)
+          local target = item.file or item.path
+          if not target then
+            print("no target")
+            return
+          end
+
+          local name = vim.fn.fnamemodify(target, ":t")
+          vim.fn.setreg("+", name)
+          Snacks.notify.info("Copied name: " .. name)
+        end,
       },
       sources = {
         projects = {
@@ -135,6 +146,8 @@ return {
         list = {
           keys = {
             ["<C-f>"] = { "cd_to_folder", mode = { "n", "i" } },
+            ["<C-y>"] = { "copy_file_name", mode = { "n", "i" } },
+            -- ["yr"] = { "copy_file_rel_path", mode = { "n", "i" } },
           },
         },
         input = {

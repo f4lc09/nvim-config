@@ -199,7 +199,7 @@ map("t", "<C-c><C-c>", [[<C-\><C-n>:bd!<CR>]], { desc = "Убить термин
 vim.api.nvim_create_autocmd("TermEnter", {
   pattern = "*",
   callback = function()
-    vim.opt_local.timeoutlen = 150 -- Даем себе 2 секунды на нажатие <C-q><C-q>
+    vim.opt_local.timeoutlen = 175 -- Даем себе 2 секунды на нажатие <C-q><C-q>
   end,
 })
 
