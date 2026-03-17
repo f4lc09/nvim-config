@@ -195,7 +195,20 @@ end
 map("n", "<leader>lg", "<cmd>lua _lazygit_toggle()<CR>", { noremap = true, silent = true })
 map("n", "db", '"_dvb', { noremap = true })
 vim.keymap.del("n", "<leader>l")
-map("t", "<C-q>", [[<C-\><C-n>:bd!<CR>]], { desc = "Закрыть терминал и убить процесс" })
+map("t", "<C-c><C-c>", [[<C-\><C-n>:bd!<CR>]], { desc = "Убить терминал" })
+vim.api.nvim_create_autocmd("TermEnter", {
+  pattern = "*",
+  callback = function()
+    vim.opt_local.timeoutlen = 150 -- Даем себе 2 секунды на нажатие <C-q><C-q>
+  end,
+})
+
+vim.api.nvim_create_autocmd("TermLeave", {
+  pattern = "*",
+  callback = function()
+    vim.opt_local.timeoutlen = 1000 -- Возвращаем стандартное значение
+  end,
+})
 map("i", "<A-d>", "<C-o>dw", { noremap = true })
 map("v", "$", "g_", { noremap = true })
 
