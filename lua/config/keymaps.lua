@@ -169,7 +169,7 @@ local lazygit = Terminal:new({
     vim.api.nvim_buf_set_keymap(
       term.bufnr,
       "t", -- режим терминала
-      "<leader>lg",
+      "<C-l><C-g>",
       [[<C-\><C-n><cmd>lua _lazygit_toggle()<CR>]],
       { noremap = true, silent = true }
     )
@@ -177,7 +177,7 @@ local lazygit = Terminal:new({
     vim.api.nvim_buf_set_keymap(
       term.bufnr,
       "n",
-      "<leader>lg",
+      "<C-l><C-g>",
       [[<cmd>lua _lazygit_toggle()<CR>]],
       { noremap = true, silent = true }
     )
@@ -192,7 +192,7 @@ function _lazygit_toggle()
   lazygit:toggle()
 end
 
-map("n", "<leader>lg", "<cmd>lua _lazygit_toggle()<CR>", { noremap = true, silent = true })
+map("n", "<C-l><C-g>", "<cmd>lua _lazygit_toggle()<CR>", { noremap = true, silent = true })
 map("n", "db", '"_dvb', { noremap = true })
 vim.keymap.del("n", "<leader>l")
 map("t", "<C-c><C-c>", [[<C-\><C-n>:bd!<CR>]], { desc = "Убить терминал" })
@@ -213,7 +213,8 @@ map("i", "<A-d>", "<C-o>dw", { noremap = true })
 map("v", "$", "g_", { noremap = true })
 
 -- Fix yanking
-map({ "n" }, "x", '"_x', { noremap = true, desc = "Закрыть терминал и убить процесс" })
+map({ "n" }, "x", "d", { noremap = true, desc = "Закрыть терминал и убить процесс" })
+map({ "n" }, "<BS>", "xh", { noremap = true, desc = "Закрыть терминал и убить процесс" })
 map({ "n", "v", "x", "s" }, "d", '"_d', { noremap = true, desc = "Delete without yanking", nowait = true })
 map("n", "dd", '"_dd', { noremap = true, desc = "Delete line without yanking", nowait = true })
 map({ "n", "x", "v", "s" }, "D", '"_D', { noremap = true, desc = "Delete without yanking", nowait = true })
