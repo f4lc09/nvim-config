@@ -46,6 +46,9 @@ vim.o.fixendofline = false
 
 local function get_short_name()
   local git_dir = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+  if git_dir == "fatal: not a git repository (or any of the parent directories): .git" then
+    git_dir = vim.fn.getcwd()
+  end
   local project_path = (git_dir and git_dir ~= "") and git_dir or vim.fn.getcwd()
   local name = vim.fn.fnamemodify(project_path, ":t")
   local parent = vim.fn.fnamemodify(project_path, ":h:t")
