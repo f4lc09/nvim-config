@@ -1,4 +1,5 @@
 local dap = require("dap")
+local bufferline = require("bufferline")
 local dapui = require("dapui")
 local key_func = require("config.keymap_utils")
 
@@ -14,126 +15,79 @@ map("n", "<C-M-k>", dap.continue, { desc = "Dap Step Into" })
 map("n", "<C-M-h>", dap.step_out, { desc = "Dap Step Out" })
 map("n", "<leader>dt", dapui.toggle, { desc = "Dap Toggle UI" })
 
+--
 -- Override common moves
 map({ "n", "v" }, "<C-END>", "G", { noremap = true, silent = true, desc = "Go to the end of the file" })
 map({ "n", "v" }, "<C-HOME>", "gg", { noremap = true, silent = true, desc = "Go to the start of the file" })
 map({ "n", "v" }, "G", "G$", { noremap = true, silent = true, desc = "Go to the end of the file" })
 map({ "n", "v" }, "gg", "gg^", { noremap = true, silent = true, desc = "Go to the start of the file" })
 
+--
+-- Paste Commands
 map("n", "p", function()
   vim.cmd("normal! p")
-  -- require("LazyVim").Lazy
-  -- vim.cmd("w")
+  LazyVim.format()
 end, { silent = true })
+
 map("n", "P", function()
   vim.cmd("normal! P")
-  vim.cmd("w")
+  LazyVim.format()
 end, { silent = true })
+
 map("x", "p", function()
   vim.cmd("normal! p")
-  vim.cmd("w")
+  LazyVim.format()
 end, { silent = true })
+
 map("x", "P", function()
   vim.cmd("normal! P")
-  vim.cmd("w")
+  LazyVim.format()
 end, { silent = true })
+
 map({ "n", "v" }, "<leader>p", function()
   vim.cmd("normal! o")
   vim.cmd("normal! P")
-  vim.cmd("w")
-end, { noremap = true, silent = true, desc = "Paste in new line" })
+  LazyVim.format()
+end, { silent = true, desc = "Paste in new line" })
+
 map({ "n", "v" }, "<C-p>", function()
   vim.cmd("normal! O")
   vim.cmd("normal! P")
   vim.cmd("w")
-end, { noremap = true, silent = true, desc = "Paste in new line" })
+end, { silent = true, desc = "Paste in new line" })
 
-local function setup_http_keymaps(bufnr)
-  map("n", "<Enter>", function()
-    local success, kulala_module = pcall(require, "kulala")
-    if success and kulala_module then
-      kulala_module.run()
-    end
-  end, {
-    desc = "Run HTTP request",
-    buffer = bufnr,
-  })
-end
+--
+-- Line joining
+map({ "n" }, "L", "J", { noremap = true })
+map({ "n" }, "H", "kJ", { noremap = true })
+map({ "n" }, "K", "k", { noremap = true })
+map({ "n", "v", "x" }, "J", "j", { noremap = true })
+map({ "n", "v", "x" }, "K", "k", { noremap = true })
 
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "http",
-  callback = function(args)
-    setup_http_keymaps(args.buf)
-  end,
-})
+--
+-- Buffer cycling
+map({ "n", "v" }, "<leader>bf", function()
+  bufferline.cycle(1)
+end, { silent = true, desc = "Next buffer" })
+map({ "n", "v" }, "<leader>bb", function()
+  bufferline.cycle(-1)
+end, { silent = true, desc = "Previous buffer" })
 
-local function setup_go_test_keymaps(bufnr)
-  local filename = vim.fn.bufname(bufnr)
-  if filename:match("_test.go$") then
-    map("n", "<F5>", function()
-      local success, dap_go_module = pcall(require, "dap-go")
-      if success and dap_go_module then
-        dap_go_module.debug_test()
-      end
-    end, {
-      desc = "Debug nearest Go test",
-      buffer = bufnr,
-    })
-  end
-end
-
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "go",
-  callback = function(args)
-    setup_go_test_keymaps(args.buf)
-  end,
-})
--- map("n", "<S-Up>", "<cmd>resize +2<cr>", { desc = "Increase Window Height" })
--- map("n", "<S-Down>", "<cmd>resize -2<cr>", { desc = "Decrease Window Height" })
--- map("n", "<S-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase Window Width" })
--- map("n", "<S-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease Window Width" })
-map({ "n", "v" }, "<leader>bf", ":BufferLineCycleNext<CR>", { silent = true, desc = "Next buffer" })
-map({ "n", "v" }, "<leader>bb", ":BufferLineCyclePrev<CR>", { silent = true, desc = "Previous buffer" })
-map("n", "<F13>", ":bnext<CR>", { silent = true })
-map("x", "<leader>gB", "<cmd>GBrowse<cr>", { noremap = true, silent = true })
-map("n", "<leader>lsr", "<cmd>LspRestart<cr>", { noremap = true, silent = true })
-map("v", "<leader>ss", function()
-  -- Копируем выделение в регистр 'h'
-  vim.cmd('normal! "hy')
-
-  -- Экранируем спецсимволы (особенно важно для прямого слеша /)
-  local raw_text = vim.fn.getreg("h")
-  local escaped_text = raw_text:gsub("([%[%]%%^%*%./%-$])", "\\%1")
-
-  -- Формируем команду: %s/текст/текст/g и двигаем курсор на 2 позиции влево (пропускаем /g)
-  local command = string.format(
-    ":%ss/%s/%s/g%s",
-    "%",
-    escaped_text,
-    escaped_text,
-    vim.api.nvim_replace_termcodes("<Left><Left>", true, false, true)
-  )
-
-  vim.api.nvim_feedkeys(command, "n", false)
-end, { desc = "Substitute current selection" })
-
-local function smart_insert_on_empty_line()
-  local line = vim.api.nvim_get_current_line()
-  if line:match("^%s*$") then
-    return [["_cc]]
-  else
-    return "a"
-  end
-end
-
-map("n", "a", smart_insert_on_empty_line, {
+map("n", "a", key_func.SmartInsertOnEmptyLine, {
   noremap = true,
   expr = true,
   desc = "Smart indent on empty line",
 })
 
+--
+-- Lazygit Toggling
 local Terminal = require("toggleterm.terminal").Terminal
-local lazygit = Terminal:new({
+local lazygit
+function ToggleLazygit()
+  lazygit.dir = vim.fn.getcwd()
+  lazygit:toggle()
+end
+lazygit = Terminal:new({
   cmd = "lazygit",
   dir = "git_dir",
   direction = "float",
@@ -146,17 +100,16 @@ local lazygit = Terminal:new({
   on_open = function(term)
     vim.api.nvim_buf_set_keymap(
       term.bufnr,
-      "t", -- режим терминала
+      "t",
       "<C-l><C-g>",
-      [[<C-\><C-n><cmd>lua _lazygit_toggle()<CR>]],
+      [[<C-\><C-n><cmd>lua ToggleLazygit()<CR>]],
       { noremap = true, silent = true }
     )
-    -- Также для нормального режима, если вы вышли из вставки
     vim.api.nvim_buf_set_keymap(
       term.bufnr,
       "n",
       "<C-l><C-g>",
-      [[<cmd>lua _lazygit_toggle()<CR>]],
+      [[<cmd>lua ToggleLazygit()<CR>]],
       { noremap = true, silent = true }
     )
     vim.schedule(function()
@@ -165,12 +118,7 @@ local lazygit = Terminal:new({
   end,
 })
 
-function _lazygit_toggle()
-  lazygit.dir = vim.fn.getcwd()
-  lazygit:toggle()
-end
-
-map("n", "<C-l><C-g>", "<cmd>lua _lazygit_toggle()<CR>", { noremap = true, silent = true })
+map("n", "<C-l><C-g>", "<cmd>lua ToggleLazygit()<CR>", { noremap = true, silent = true })
 unmap("n", "<leader>l")
 map("t", "<C-c><C-c>", [[<C-\><C-n>:bd!<CR>]], { desc = "Убить терминал" })
 vim.api.nvim_create_autocmd("TermEnter", {
@@ -250,7 +198,6 @@ vim.on_key(function(key)
     })
   end
 end)
-vim.o.timeoutlen = 1000
 
 unmap("n", "<leader>e")
 unmap("n", "<leader>E")
@@ -265,3 +212,20 @@ end, { desc = "Snacks Picker Explorer" })
 vim.keymap.set("n", "<C-_>", function()
   Snacks.terminal(nil, { cwd = vim.fn.getcwd() })
 end, { desc = "Terminal" })
+
+map("x", "<leader>gB", "<cmd>GBrowse<cr>", { noremap = true, silent = true })
+map("n", "<leader>lsr", "<cmd>LspRestart<cr>", { noremap = true, silent = true })
+map("v", "<leader>ss", function()
+  vim.cmd('normal! "hy')
+  local raw_text = vim.fn.getreg("h")
+  local escaped_text = raw_text:gsub("([%[%]%%^%*%./%-$])", "\\%1")
+  local command = string.format(
+    ":%ss/%s/%s/g%s",
+    "%",
+    escaped_text,
+    escaped_text,
+    vim.api.nvim_replace_termcodes("<Left><Left>", true, false, true)
+  )
+
+  vim.api.nvim_feedkeys(command, "n", false)
+end, { desc = "Substitute current selection" })

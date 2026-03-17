@@ -21,9 +21,7 @@ local function update_tmux_window()
   if not os.getenv("TMUX") then
     return
   end
-  -- Если в сессии задана g:tmux_window_name, берем её, иначе генерим короткое имя
   local name = vim.g.tmux_window_name or get_short_name()
-  print("NAME: ", name)
   vim.fn.jobstart({ "tmux", "rename-window", name })
 end
 
@@ -167,7 +165,6 @@ return {
           keys = {
             ["<C-f>"] = { "cd_to_folder", mode = { "n", "i" } },
             ["<C-y>"] = { "copy_file_name", mode = { "n", "i" } },
-            -- ["yr"] = { "copy_file_rel_path", mode = { "n", "i" } },
           },
         },
         input = {
