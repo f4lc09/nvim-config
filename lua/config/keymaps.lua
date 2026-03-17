@@ -214,7 +214,12 @@ map("v", "$", "g_", { noremap = true })
 
 -- Fix yanking
 map({ "n" }, "x", "d", { noremap = true, desc = "Закрыть терминал и убить процесс" })
-map({ "n" }, "<BS>", "xh", { noremap = true, desc = "Закрыть терминал и убить процесс" })
+map(
+  { "n" },
+  "<BS>",
+  '"_cl<Esc>',
+  { noremap = true, desc = "Удалить символ под курсором без смещения" }
+)
 map({ "n", "v", "x", "s" }, "d", '"_d', { noremap = true, desc = "Delete without yanking", nowait = true })
 map("n", "dd", '"_dd', { noremap = true, desc = "Delete line without yanking", nowait = true })
 map({ "n", "x", "v", "s" }, "D", '"_D', { noremap = true, desc = "Delete without yanking", nowait = true })
