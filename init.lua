@@ -1,5 +1,6 @@
 vim.o.showtabline = 2
 vim.opt.showtabline = 2
+vim.g.AutoPairs = 0
 
 require("config.lazy")
 
@@ -10,13 +11,23 @@ local function find_go_project_root()
   return require("lspconfig.util").root_pattern("go.mod", "go.work")(vim.fn.expand("%:p"))
 end
 
-vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
-  pattern = { "*.go", "go.mod" },
+vim.api.nvim_create_autocmd({ "BufEnter", "BufRead", "BufWinEnter", "LspAttach" }, {
+  group = vim.api.nvim_create_augroup("UserBufferRoot", { clear = true }),
+  pattern = "*",
   callback = function()
-    local root = find_go_project_root()
-    if root then
-      vim.cmd("cd " .. root)
+    if vim.bo.buftype ~= "" then
+      return
     end
+    -- print(os.time(), " Changing cwd/root", vim.fn.expand("<amatch>:p"))
+
+    local root = find_go_project_root()
+    if root and root ~= "" then
+      vim.api.nvim_set_current_dir(root)
+      -- vim.cmd.lcd(root)
+      -- print(os.time(), "new root", root)
+      -- vim.cmd("cd " .. root)
+    end
+    -- print(os.time(), " Stop changing cwd/root")
   end,
 })
 

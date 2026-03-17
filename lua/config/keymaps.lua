@@ -276,3 +276,17 @@ vim.on_key(function(key)
   end
 end)
 vim.o.timeoutlen = 1000
+
+vim.keymap.del("n", "<leader>e")
+vim.keymap.del("n", "<leader>E")
+vim.keymap.del("n", "<C-/>")
+
+map("n", "<leader>e", function()
+  Snacks.explorer()
+end, { desc = "Explorer Snacks (Root Dir)" })
+map("n", "<leader>E", function()
+  Snacks.picker.explorer()
+end, { desc = "Snacks Picker Explorer" })
+vim.keymap.set("n", "<C-_>", function()
+  Snacks.terminal(nil, { cwd = vim.fn.getcwd() })
+end, { desc = "Terminal" })
