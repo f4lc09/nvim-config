@@ -169,7 +169,7 @@ local lazygit = Terminal:new({
     vim.api.nvim_buf_set_keymap(
       term.bufnr,
       "t", -- режим терминала
-      "<C-q>",
+      "<Esc>",
       [[<C-\><C-n><cmd>lua _lazygit_toggle()<CR>]],
       { noremap = true, silent = true }
     )
@@ -177,7 +177,7 @@ local lazygit = Terminal:new({
     vim.api.nvim_buf_set_keymap(
       term.bufnr,
       "n",
-      "<C-q>",
+      "<Esc>",
       [[<cmd>lua _lazygit_toggle()<CR>]],
       { noremap = true, silent = true }
     )
