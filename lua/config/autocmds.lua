@@ -117,3 +117,45 @@ vim.api.nvim_create_autocmd("TermLeave", {
     vim.opt_local.timeoutlen = 1000
   end,
 })
+
+local original_normal = vim.api.nvim_get_hl(0, { name = "Normal" })
+local original_visual = vim.api.nvim_get_hl(0, { name = "Visual" })
+local visual_timer = nil
+
+vim.api.nvim_create_autocmd("ModeChanged", {
+  pattern = "*:[vV\x16]*",
+  callback = function()
+    if visual_timer then
+      visual_timer:stop()
+    end
+
+    visual_timer = vim.defer_fn(function()
+      local mode = vim.api.nvim_get_mode().mode
+      if mode:find("[vV\x16]") then
+        vim.api.nvim_set_hl(0, "Normal", { bg = "#2c323c" })
+        vim.api.nvim_set_hl(0, "Visual", { bg = "#121417", bold = true })
+        vim.cmd("redraw")
+      end
+      visual_timer = nil
+    end, 50)
+  end,
+})
+
+vim.api.nvim_create_autocmd("ModeChanged", {
+  pattern = "[vV\x16]*:*",
+  callback = function()
+    if visual_timer then
+      visual_timer:stop()
+      visual_timer = nil
+    end
+
+    vim.defer_fn(function()
+      local mode = vim.api.nvim_get_mode().mode
+      if not mode:find("[vV\x16]") then
+        vim.api.nvim_set_hl(0, "Normal", original_normal)
+        vim.api.nvim_set_hl(0, "Visual", original_visual)
+        vim.cmd("redraw")
+      end
+    end, 50)
+  end,
+})
