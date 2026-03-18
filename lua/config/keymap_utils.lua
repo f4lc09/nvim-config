@@ -101,18 +101,30 @@ function M.SetTmuxWindowName()
   end
 end
 
+local original_bg = nil
 function M.LanguageControl(key)
   local mode = vim.api.nvim_get_mode().mode
   if mode == "i" or mode == "R" then
     return
   end
+
   if key:match("[%z\1-\127]") == nil and key:match("[а-яА-ЯёЁ]") then
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
 
-    vim.notify("Смени раскладку! (Wrong language)", vim.log.levels.ERROR, {
-      title = "Keyboard Layout",
-      timeout = 500,
-    })
+    -- Сохраняем оригинал только если мы еще не в процессе «мигания»
+    if not original_bg then
+      local hl = vim.api.nvim_get_hl(0, { name = "Normal" })
+      original_bg = hl.bg or "NONE" -- Запоминаем цвет или прозрачность
+    end
+
+    -- Красим
+    vim.api.nvim_set_hl(0, "Normal", { bg = "#5f0000" })
+
+    -- Возвращаем через 100мс
+    vim.defer_fn(function()
+      vim.api.nvim_set_hl(0, "Normal", { bg = original_bg })
+      original_bg = nil -- Сбрасываем флаг
+    end, 50)
   end
 end
 
