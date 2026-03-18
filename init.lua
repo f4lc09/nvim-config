@@ -13,6 +13,4 @@ vim.o.tabstop = 4
 vim.o.wrap = true
 vim.o.swapfile = false
 
-vim.api.nvim_set_hl(0, "DiagnosticUnnecessary", {
-  fg = "#4D73A3",
-})
+vim.lsp.set_log_level("error") -- Будет показывать только ошибки
