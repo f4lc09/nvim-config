@@ -1,4 +1,4 @@
 return {
-  "windwp/nvim-autopairs",
-  enabled = false, -- Completely disable the plugin
+  "nvim-mini/mini.pairs",
+  enabled = false,
 }

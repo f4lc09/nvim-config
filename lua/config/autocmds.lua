@@ -118,8 +118,6 @@ vim.api.nvim_create_autocmd("TermLeave", {
   end,
 })
 
-local original_normal = vim.api.nvim_get_hl(0, { name = "Normal" })
-local original_visual = vim.api.nvim_get_hl(0, { name = "Visual" })
 local visual_timer = nil
 
 vim.api.nvim_create_autocmd("ModeChanged", {
@@ -132,12 +130,12 @@ vim.api.nvim_create_autocmd("ModeChanged", {
     visual_timer = vim.defer_fn(function()
       local mode = vim.api.nvim_get_mode().mode
       if mode:find("[vV\x16]") then
-        vim.api.nvim_set_hl(0, "Normal", { bg = "#2c323c" })
-        vim.api.nvim_set_hl(0, "Visual", { bg = "#121417", bold = true })
+        vim.api.nvim_set_hl(0, "Normal", { bg = "#2c323c", force = true })
+        vim.api.nvim_set_hl(0, "Visual", { bg = "#121417", bold = true, force = true })
         vim.cmd("redraw")
       end
       visual_timer = nil
-    end, 50)
+    end, 20)
   end,
 })
 
@@ -149,13 +147,13 @@ vim.api.nvim_create_autocmd("ModeChanged", {
       visual_timer = nil
     end
 
-    vim.defer_fn(function()
+    vim.schedule(function()
       local mode = vim.api.nvim_get_mode().mode
       if not mode:find("[vV\x16]") then
-        vim.api.nvim_set_hl(0, "Normal", original_normal)
-        vim.api.nvim_set_hl(0, "Visual", original_visual)
+        vim.api.nvim_set_hl(0, "Normal", { link = "Normal" })
+        vim.cmd("colorscheme " .. vim.g.colors_name)
         vim.cmd("redraw")
       end
-    end, 50)
+    end)
   end,
 })
