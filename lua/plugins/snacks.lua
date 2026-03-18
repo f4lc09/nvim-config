@@ -75,7 +75,7 @@ return {
 
           vim.g.tmux_window_name = nil
           vim.schedule(function()
-            vim.cmd("%bd!")
+            Snacks.bufdelete.all()
             vim.api.nvim_set_current_dir(path)
             update_tmux_window()
             Snacks.explorer()
@@ -104,7 +104,7 @@ return {
 
             vim.g.tmux_window_name = nil
 
-            vim.cmd("%bd!")
+            Snacks.bufdelete.all()
             vim.schedule(function()
               if item then
                 vim.fn.chdir(item.file)
