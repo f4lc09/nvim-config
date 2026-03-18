@@ -73,7 +73,7 @@ return {
           SaveSessionAtGitRoot()
           picker:close()
 
-          vim.g.tmux_window_name = nil
+          -- vim.g.tmux_window_name = nil
           vim.schedule(function()
             -- Snacks.bufdelete.all()
             -- vim.api.nvim_set_current_dir(path)
@@ -85,7 +85,7 @@ return {
               vim.opt.eventignore = old_eventignore
             end
 
-            update_tmux_window()
+            -- update_tmux_window()
             Snacks.explorer()
           end)
         end,
