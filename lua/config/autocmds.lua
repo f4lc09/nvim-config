@@ -105,3 +105,15 @@ vim.api.nvim_create_autocmd("BufEnter", {
     vim.lsp.stop_client(vim.lsp.get_active_clients({ bufnr = 0 }))
   end,
 })
+vim.api.nvim_create_autocmd("TermEnter", {
+  pattern = "*",
+  callback = function()
+    vim.opt_local.timeoutlen = 175
+  end,
+})
+vim.api.nvim_create_autocmd("TermLeave", {
+  pattern = "*",
+  callback = function()
+    vim.opt_local.timeoutlen = 1000
+  end,
+})

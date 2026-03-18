@@ -75,8 +75,8 @@ return {
 
           vim.g.tmux_window_name = nil
           vim.schedule(function()
-            Snacks.bufdelete.all()
-            vim.api.nvim_set_current_dir(path)
+            -- Snacks.bufdelete.all()
+            -- vim.api.nvim_set_current_dir(path)
 
             if path ~= vim.fn.getcwd() then
               local old_eventignore = vim.opt.eventignore:get()
