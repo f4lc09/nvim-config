@@ -77,6 +77,14 @@ return {
           vim.schedule(function()
             Snacks.bufdelete.all()
             vim.api.nvim_set_current_dir(path)
+
+            if path ~= vim.fn.getcwd() then
+              local old_eventignore = vim.opt.eventignore:get()
+              vim.opt.eventignore:append("all")
+              vim.api.nvim_set_current_dir(path)
+              vim.opt.eventignore = old_eventignore
+            end
+
             update_tmux_window()
             Snacks.explorer()
           end)

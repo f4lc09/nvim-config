@@ -10,7 +10,7 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "go",
   callback = function(args)
-    key_func.SetupKulalaKeymaps(args.buf)
+    key_func.SetupGoTestKeymaps(args.buf)
   end,
 })
 vim.api.nvim_create_autocmd({ "BufEnter", "BufRead", "BufWinEnter", "LspAttach" }, {
