@@ -16,4 +16,3 @@ vim.o.swapfile = false
 vim.api.nvim_set_hl(0, "DiagnosticUnnecessary", {
   fg = "#4D73A3",
 })
-
