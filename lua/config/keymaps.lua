@@ -121,7 +121,7 @@ function ToggleLazygit()
         Border = { link = "FloatBorder" },
       },
       -- stylua: ignore
-      on_open = function(term) 
+      on_open = function(term)
         vim.api.nvim_buf_set_keymap(
           term.bufnr, "t", "<C-l><C-g>",
           [[<C-\><C-n><cmd>lua ToggleLazygit()<CR>]], { noremap = true, silent = true })
