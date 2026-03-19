@@ -87,6 +87,7 @@ map({ "n" }, "<delete>", '"_x', { noremap = true, desc = "Удалить сим�
 map({ "x", "n", "v" }, "c", '"_c', { noremap = true, desc = "Change without yanking", nowait = true })
 map({ "x", "n", "v" }, "C", '"_VdO', { noremap = true, desc = "Change without yanking", nowait = true })
 map({ "n" }, "Y", "Vy", { noremap = true })
+map({ "n" }, "yy", "m`0y$``", { noremap = true })
 
 --
 -- Buffer cycling
