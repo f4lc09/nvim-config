@@ -26,29 +26,34 @@ map({ "n", "v" }, "<C-y>", "<cmd>%y<CR>", { noremap = true, silent = true, desc 
 --
 -- Paste Commands
 map({ "v", "x" }, "p", function()
-  vim.cmd("normal! P")
+  local reg = vim.v.register
+  vim.cmd('normal! "' .. reg .. "P")
   LazyVim.format()
 end, { silent = true })
 
 map({ "n" }, "p", function()
-  vim.cmd("normal! p")
+  local reg = vim.v.register
+  vim.cmd('normal! "' .. reg .. "p")
   LazyVim.format()
 end, { silent = true })
 
 map({ "n", "v", "x" }, "P", function()
-  vim.cmd("normal! P")
+  local reg = vim.v.register
+  vim.cmd('normal! "' .. reg .. "P")
   LazyVim.format()
 end, { silent = true })
 
 map({ "n", "v" }, "<leader>p", function()
+  local reg = vim.v.register
   vim.cmd("normal! o")
-  vim.cmd("normal! P")
+  vim.cmd('normal! "' .. reg .. "P")
   LazyVim.format()
 end, { silent = true, desc = "Paste in new line" })
 
 map({ "n", "v" }, "<C-p>", function()
+  local reg = vim.v.register
   vim.cmd("normal! O")
-  vim.cmd("normal! P")
+  vim.cmd('normal! "' .. reg .. "P")
   vim.cmd("w")
 end, { silent = true, desc = "Paste in new line" })
 
