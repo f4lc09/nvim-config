@@ -104,39 +104,40 @@ map({ "n" }, "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
 local Terminal = require("toggleterm.terminal").Terminal
 local lazygit
 function ToggleLazygit()
-  lazygit.dir = vim.fn.getcwd()
+  local cwd = vim.fn.getcwd()
+  if lazygit and not string.find(cwd, lazygit.dir, 1, true) then
+    lazygit:shutdown()
+    lazygit = nil
+  end
+  if not lazygit then
+    lazygit = Terminal:new({
+      cmd = "lazygit",
+      dir = "git_dir",
+      direction = "float",
+      float_opts = {
+        border = "none",
+      },
+      highlights = {
+        Border = { link = "FloatBorder" },
+      },
+      -- stylua: ignore
+      on_open = function(term) 
+        vim.api.nvim_buf_set_keymap(
+          term.bufnr, "t", "<C-l><C-g>",
+          [[<C-\><C-n><cmd>lua ToggleLazygit()<CR>]], { noremap = true, silent = true })
+        vim.api.nvim_buf_set_keymap(
+          term.bufnr, "n", "<C-l><C-g>",
+          [[<cmd>lua ToggleLazygit()<CR>]], { noremap = true, silent = true })
+      end,
+    })
+  end
   lazygit:toggle()
-end
-lazygit = Terminal:new({
-  cmd = "lazygit",
-  dir = "git_dir",
-  direction = "float",
-  float_opts = {
-    border = "none",
-  },
-  highlights = {
-    Border = { link = "FloatBorder" },
-  },
-  on_open = function(term)
-    vim.api.nvim_buf_set_keymap(
-      term.bufnr,
-      "t",
-      "<C-l><C-g>",
-      [[<C-\><C-n><cmd>lua ToggleLazygit()<CR>]],
-      { noremap = true, silent = true }
-    )
-    vim.api.nvim_buf_set_keymap(
-      term.bufnr,
-      "n",
-      "<C-l><C-g>",
-      [[<cmd>lua ToggleLazygit()<CR>]],
-      { noremap = true, silent = true }
-    )
-    vim.schedule(function()
+  vim.defer_fn(function()
+    if vim.bo.buftype == "terminal" then
       vim.cmd("startinsert!")
-    end)
-  end,
-})
+    end
+  end, 50)
+end
 map("n", "<C-l><C-g>", function()
   local explorer = Snacks.picker.get({ source = "explorer" })[1]
   if explorer then
