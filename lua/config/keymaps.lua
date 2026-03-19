@@ -21,11 +21,17 @@ map({ "n", "v" }, "<C-END>", "G", { noremap = true, silent = true, desc = "Go to
 map({ "n", "v" }, "<C-HOME>", "gg", { noremap = true, silent = true, desc = "Go to the start of the file" })
 map({ "n", "v" }, "G", "G$", { noremap = true, silent = true, desc = "Go to the end of the file" })
 map({ "n", "v" }, "gg", "gg^", { noremap = true, silent = true, desc = "Go to the start of the file" })
+map({ "n", "v" }, "<C-y>", "<cmd>%y<CR>", { noremap = true, silent = true, desc = "Yank whole file" })
 
 --
 -- Paste Commands
-map({ "n", "v", "x" }, "p", function()
+map({ "v", "x" }, "p", function()
   vim.cmd("normal! P")
+  LazyVim.format()
+end, { silent = true })
+
+map({ "n" }, "p", function()
+  vim.cmd("normal! p")
   LazyVim.format()
 end, { silent = true })
 
@@ -125,7 +131,13 @@ lazygit = Terminal:new({
     end)
   end,
 })
-map("n", "<C-l><C-g>", "<cmd>lua ToggleLazygit()<CR>", { noremap = true, silent = true })
+map("n", "<C-l><C-g>", function()
+  local explorer = Snacks.picker.get({ source = "explorer" })[1]
+  if explorer then
+    explorer:close()
+  end
+  ToggleLazygit()
+end, { noremap = true, silent = true })
 
 --
 -- Remap Lazy l -> lv

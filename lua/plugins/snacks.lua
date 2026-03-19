@@ -177,11 +177,11 @@ return {
         },
         input = {
           keys = {
-            ["<C-o>"] = {
+            ["<Esc>"] = {
               function()
                 vim.cmd("wincmd p")
               end,
-              mode = { "n", "i" },
+              mode = { "i" },
               desc = "Focus file tree with",
             },
           },
