@@ -172,9 +172,19 @@ map("n", "<leader>E", function()
   Snacks.picker.explorer()
 end, { desc = "Snacks Picker Explorer" })
 
-vim.keymap.set("n", "<C-_>", function()
-  Snacks.terminal(nil, { cwd = vim.fn.getcwd() })
-end, { desc = "Terminal" })
+-- vim.keymap.set("n", "<C-_>", function()
+--   Snacks.terminal(nil, { cwd = vim.fn.getcwd() })
+-- end, { desc = "Terminal" })
+local toggle_terminal = function()
+  Snacks.terminal.toggle(nil, {
+    cwd = vim.fn.getcwd(),
+  })
+end
+
+-- Привязываем к Ctrl + / и Ctrl + _ (для Windows)
+-- Режимы: n (обычный), t (внутри терминала), i (вставка)
+vim.keymap.set({ "n", "t", "i" }, "<C-/>", toggle_terminal, { desc = "Toggle Terminal" })
+vim.keymap.set({ "n", "t", "i" }, "<C-_>", toggle_terminal, { desc = "Toggle Terminal" })
 
 map("x", "<leader>gB", "<cmd>GBrowse<cr>", { noremap = true, silent = true })
 map("n", "<leader>lsr", "<cmd>LspRestart<cr>", { noremap = true, silent = true })

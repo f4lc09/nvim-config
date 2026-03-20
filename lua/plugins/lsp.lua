@@ -14,6 +14,7 @@ return {
                 efaceany = false,
                 unusedparams = false,
                 -- staticcheck = false,
+                unsafeptr = false,
                 modernize = false,
                 nilness = false,
               },
