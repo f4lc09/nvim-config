@@ -61,7 +61,6 @@ end, { silent = true, desc = "Paste in new line" })
 -- Line joining
 map({ "n" }, "L", "J", { noremap = true })
 map({ "n" }, "H", "kJ", { noremap = true })
-map({ "n" }, "K", "k", { noremap = true })
 map({ "n", "v", "x" }, "J", "j", { noremap = true })
 map({ "n", "v", "x" }, "K", "k", { noremap = true })
 
@@ -72,7 +71,8 @@ map({ "n" }, "X", "Vd", { noremap = true, desc = "Закрыть термина�
 map({ "n" }, "xb", utils.CutBackward, { noremap = true, desc = "Удалить слово назад" })
 
 map({ "n", "v", "x", "s" }, "d", '"_d', { noremap = true, desc = "Delete without yanking", nowait = true })
-map({ "n", "v", "x", "s" }, "D", 'V"_d', { noremap = true, desc = "Delete line without yanking", nowait = true })
+map({ "n" }, "D", 'V"_d', { noremap = true, desc = "Delete line without yanking", nowait = true })
+map({ "v", "x", "s" }, "D", '"_d', { noremap = true, desc = "Delete line without yanking", nowait = true })
 map({ "n" }, "db", utils.DeleteBackward, { noremap = true, desc = "Удалить слово назад" })
 map({ "n" }, "dd", "")
 map({ "n" }, "dh", "")
