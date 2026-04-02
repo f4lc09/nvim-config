@@ -11,7 +11,8 @@ end
 
 function M.DeleteBackward()
   local col = vim.fn.col(".")
-  local last_col = vim.fn.col("$")
+  local line = vim.fn.getline(".")
+  local last_col = #line
 
   if col >= last_col - 1 then
     vim.cmd('normal! vb"_d')

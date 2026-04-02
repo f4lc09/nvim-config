@@ -132,8 +132,6 @@ vim.api.nvim_create_autocmd("ModeChanged", {
       if mode:find("[vV\x16]") then
         vim.api.nvim_set_hl(0, "Normal", { bg = "#2c323c", force = true })
         vim.api.nvim_set_hl(0, "Visual", { bg = "#121417", bold = true, force = true })
-        vim.api.nvim_set_hl(0, "ScrollbarHandle", { fg = "#ff9e64", bg = "#3b4261" })
-        vim.api.nvim_set_hl(0, "ScrollbarSearch", { fg = "#ff007c", bg = "NONE" })
         vim.cmd("redraw")
       end
       visual_timer = nil
@@ -154,10 +152,14 @@ vim.api.nvim_create_autocmd("ModeChanged", {
       if not mode:find("[vV\x16]") then
         vim.api.nvim_set_hl(0, "Normal", { link = "Normal" })
         vim.cmd("colorscheme " .. vim.g.colors_name)
-        vim.api.nvim_set_hl(0, "ScrollbarHandle", { fg = "#ff9e64", bg = "#3b4261" })
-        vim.api.nvim_set_hl(0, "ScrollbarSearch", { fg = "#ff007c", bg = "NONE" })
         vim.cmd("redraw")
       end
     end)
   end,
 })
+
+for _, a in ipairs(vim.api.nvim_get_autocmds({ event = "CursorMoved" })) do
+  if a.group_name ~= "snacks_scroll" and a.id then
+    vim.api.nvim_del_autocmd(a.id)
+  end
+end

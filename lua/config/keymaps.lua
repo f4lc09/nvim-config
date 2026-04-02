@@ -191,3 +191,6 @@ map("n", "<leader>lsr", "<cmd>LspRestart<cr>", { noremap = true, silent = true }
 
 map({ "n", "v", "x" }, "<leader>rs", utils.ReplaceWithSubstituteCommand, { desc = "Replace with /s command" })
 map("v", "<leader>ra", utils.ReplaceSelectionAcrossFile, { desc = "Substitute current selection" })
+map({ "n", "v", "x" }, "<leader>mm", function()
+  require("mini.map").toggle()
+end, { noremap = true })
