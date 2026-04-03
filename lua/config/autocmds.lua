@@ -158,10 +158,11 @@ vim.api.nvim_create_autocmd("ModeChanged", {
   end,
 })
 
-vim.api.nvim_create_autocmd("VimEnter", {
+vim.api.nvim_create_autocmd("BufEnter", {
   callback = function()
     for _, a in ipairs(vim.api.nvim_get_autocmds({ event = "CursorMoved" })) do
-      if a.group_name == "trouble.section.lsp.document_symbols.1" and a.id then
+      if (a.group_name == "trouble.section.lsp.document_symbols.1" or a.group_name == "snacks_scroll") and a.id then
+        -- print("DELETED CMD", a.id, a.group_name)
         vim.api.nvim_del_autocmd(a.id)
       end
     end
