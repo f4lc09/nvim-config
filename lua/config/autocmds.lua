@@ -158,8 +158,12 @@ vim.api.nvim_create_autocmd("ModeChanged", {
   end,
 })
 
-for _, a in ipairs(vim.api.nvim_get_autocmds({ event = "CursorMoved" })) do
-  if a.group_name ~= "snacks_scroll" and a.id then
-    vim.api.nvim_del_autocmd(a.id)
-  end
-end
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    for _, a in ipairs(vim.api.nvim_get_autocmds({ event = "CursorMoved" })) do
+      if a.group_name == "trouble.section.lsp.document_symbols.1" and a.id then
+        vim.api.nvim_del_autocmd(a.id)
+      end
+    end
+  end,
+})

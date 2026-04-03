@@ -13,4 +13,4 @@ vim.o.tabstop = 4
 vim.o.wrap = true
 vim.o.swapfile = false
 
-vim.lsp.set_log_level("error") -- Будет показывать только ошибки
+vim.lsp.set_log_level("error")
