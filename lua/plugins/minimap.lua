@@ -9,7 +9,8 @@ return {
           scroll_line = "█",
           scroll_view = " ",
         },
-        windows = {
+        window = {
+          width = 6,
           show_integration_count = false,
         },
         integrations = {
