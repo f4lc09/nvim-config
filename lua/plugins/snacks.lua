@@ -46,6 +46,7 @@ end
 
 return {
   "folke/snacks.nvim",
+  ---@type snacks.Config
   opts = {
     notifier = {
       enabled = true,
@@ -59,6 +60,30 @@ return {
         },
       },
       actions = {
+        explorer_up = function(picker)
+          local item = picker:current()
+          local current_root = picker:cwd()
+
+          if not current_root then
+            return
+          end
+
+          local path = vim.fn.fnamemodify(current_root, ":h")
+
+          picker:close()
+
+          vim.schedule(function()
+            if path ~= vim.fn.getcwd() then
+              local old_eventignore = vim.opt.eventignore:get()
+              vim.opt.eventignore:append("all")
+              vim.api.nvim_set_current_dir(path)
+              vim.opt.eventignore = old_eventignore
+            end
+
+            -- Открываем проводник в новом пути
+            Snacks.explorer({ cwd = path })
+          end)
+        end,
         cd_to_folder = function(picker)
           local item = picker:current()
           if not item then

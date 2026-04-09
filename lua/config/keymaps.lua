@@ -157,7 +157,7 @@ map("t", "<C-c><C-c>", [[<C-\><C-n>:bd!<CR>]], { desc = "Убить термин
 map("i", "<A-d>", "<C-o>dw", { noremap = true })
 map({ "v", "x" }, "$", "g_", { noremap = true })
 
-vim.keymap.set("n", "<leader>rn", utils.SetTmuxWindowName, { desc = "Rename Tmux Window" })
+map("n", "<leader>rn", utils.SetTmuxWindowName, { desc = "Rename Tmux Window" })
 map("n", "a", utils.SmartInsertOnEmptyLine, { noremap = true, expr = true, desc = "Auto indent" })
 vim.on_key(utils.LanguageControl)
 
@@ -172,7 +172,7 @@ map("n", "<leader>E", function()
   Snacks.picker.explorer()
 end, { desc = "Snacks Picker Explorer" })
 
--- vim.keymap.set("n", "<C-_>", function()
+-- map("n", "<C-_>", function()
 --   Snacks.terminal(nil, { cwd = vim.fn.getcwd() })
 -- end, { desc = "Terminal" })
 local toggle_terminal = function()
@@ -183,8 +183,8 @@ end
 
 -- Привязываем к Ctrl + / и Ctrl + _ (для Windows)
 -- Режимы: n (обычный), t (внутри терминала), i (вставка)
-vim.keymap.set({ "n", "t", "i" }, "<C-/>", toggle_terminal, { desc = "Toggle Terminal" })
-vim.keymap.set({ "n", "t", "i" }, "<C-_>", toggle_terminal, { desc = "Toggle Terminal" })
+map({ "n", "t", "i" }, "<C-/>", toggle_terminal, { desc = "Toggle Terminal" })
+map({ "n", "t", "i" }, "<C-_>", toggle_terminal, { desc = "Toggle Terminal" })
 
 map("x", "<leader>gB", "<cmd>GBrowse<cr>", { noremap = true, silent = true })
 map("n", "<leader>lsr", "<cmd>LspRestart<cr>", { noremap = true, silent = true })
@@ -194,3 +194,9 @@ map("v", "<leader>ra", utils.ReplaceSelectionAcrossFile, { desc = "Substitute cu
 map({ "n", "v", "x" }, "<leader>mm", function()
   require("mini.map").toggle()
 end, { noremap = true })
+map("n", "<leader>sg", function()
+  LazyVim.pick("live_grep", { root = false })()
+end, { desc = "Grep (cwd)" })
+map("n", "<leader>sG", function()
+  LazyVim.pick("live_grep")()
+end, { desc = "Grep (Root Dir)" })

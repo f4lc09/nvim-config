@@ -14,3 +14,4 @@ vim.o.wrap = true
 vim.o.swapfile = false
 
 vim.lsp.set_log_level("error")
+vim.g.root_spec = { { ".git", "lua" }, "cwd", "lsp" }

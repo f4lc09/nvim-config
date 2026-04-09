@@ -37,6 +37,7 @@ return {
                 rangeVariableTypes = false,
                 compositeLiteralTypes = false,
                 assignVariableTypes = false,
+                functionTypeParameters = false,
               },
             },
           },
