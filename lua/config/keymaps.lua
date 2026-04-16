@@ -200,16 +200,20 @@ end, { desc = "Grep (cwd)" })
 map("n", "<leader>sG", function()
   LazyVim.pick("live_grep")()
 end, { desc = "Grep (Root Dir)" })
--- Для обычного режима (нормал)
 map("n", "<leader>tf", function()
-  -- Форматируем весь файл или текущий параграф
   vim.cmd("silent %!deno fmt --ext=md --options-line-width=2000 -")
 end, { desc = "Deno Format Markdown", nowait = true })
-
--- Для визуального режима
 map(
   "v",
   "<leader>tf",
   ":!deno fmt --ext=md --options-line-width=2000 -<cr>",
   { desc = "Deno Format Selection", nowait = true, silent = true }
 )
+vim.keymap.set("n", "<leader>op", function()
+  local path = vim.fn.system("xclip -o -selection clipboard"):gsub("%s+", "")
+  if vim.fn.filereadable(path) == 1 then
+    vim.cmd("e " .. path)
+  else
+    print("Файл не найден: " .. path)
+  end
+end, { desc = "Open file from clipboard" })
