@@ -2,6 +2,7 @@ return {
   {
     "MeanderingProgrammer/render-markdown.nvim",
     opts = {
+      enabled = false,
       heading = {
         enabled = true,
         sign = false, -- Убирает иконки на полях (если бесят)
