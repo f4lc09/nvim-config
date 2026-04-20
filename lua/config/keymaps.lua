@@ -188,6 +188,7 @@ map({ "n", "t", "i" }, "<C-_>", toggle_terminal, { desc = "Toggle Terminal" })
 
 map("x", "<leader>gB", "<cmd>GBrowse<cr>", { noremap = true, silent = true })
 map("n", "<leader>lsr", "<cmd>LspRestart<cr>", { noremap = true, silent = true })
+map("n", "<leader>lss", "<cmd>LspStop<cr>", { noremap = true, silent = true })
 
 map({ "n", "v", "x" }, "<leader>rs", utils.ReplaceWithSubstituteCommand, { desc = "Replace with /s command" })
 map("v", "<leader>ra", utils.ReplaceSelectionAcrossFile, { desc = "Substitute current selection" })
