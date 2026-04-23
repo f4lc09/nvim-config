@@ -1,48 +1,4 @@
-local function get_short_name()
-  local git_dir = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
-  if git_dir == "fatal: not a git repository (or any of the parent directories): .git" then
-    git_dir = vim.fn.getcwd()
-  end
-  local project_path = (git_dir and git_dir ~= "") and git_dir or vim.fn.getcwd()
-  local name = vim.fn.fnamemodify(project_path, ":t")
-  local parent = vim.fn.fnamemodify(project_path, ":h:t")
-  local full_name = parent .. "/" .. name
-  if #full_name <= 15 then
-    return full_name
-  end
-  local short = full_name:gsub("([^%s%a][aeiouyAEIOUY])", ""):gsub("([%a])[aeiouyAEIOUY]+", "%1")
-  if #short > 16 then
-    short = short:sub(1, 10) .. ".."
-  end
-  return short
-end
-
-local function update_tmux_window()
-  if not os.getenv("TMUX") then
-    return
-  end
-  local name = vim.g.tmux_window_name or get_short_name()
-  vim.fn.jobstart({ "tmux", "rename-window", name })
-end
-
-local function SaveSessionAtGitRoot()
-  local git_root = vim.fn.system("git rev-parse --show-toplevel 2>/dev/null"):gsub("\n", "")
-
-  if git_root ~= "" and vim.v.shell_error == 0 then
-    local session_file = git_root .. "/.Session.vim"
-    vim.cmd("silent! mksession! " .. session_file)
-
-    local current_name = vim.g.tmux_window_name
-
-    if current_name and current_name ~= "" then
-      local file = io.open(session_file, "a") -- режим "a" (append) для дозаписи
-      if file then
-        file:write('\nlet g:tmux_window_name = "' .. vim.g.tmux_window_name .. '"')
-        file:close()
-      end
-    end
-  end
-end
+local utils = require("config.autocmds_utils")
 
 return {
   "folke/snacks.nvim",
@@ -60,8 +16,21 @@ return {
         },
       },
       actions = {
+        explorer_esc = function(picker)
+          local is_explorer = picker.opts.source == "explorer"
+          local mode_info = vim.api.nvim_get_mode()
+          if is_explorer then
+            vim.cmd("wincmd p")
+            return
+          end
+          if mode_info.mode == "n" then
+            picker:close()
+            return
+          end
+          vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+        end,
         explorer_up = function(picker)
-          local item = picker:current()
+          -- local item = picker:current()
           local current_root = picker:cwd()
 
           if not current_root then
@@ -80,7 +49,6 @@ return {
               vim.opt.eventignore = old_eventignore
             end
 
-            -- Открываем проводник в новом пути
             Snacks.explorer({ cwd = path })
           end)
         end,
@@ -91,26 +59,21 @@ return {
           end
 
           local path = item.file
+          path = tostring(path)
           if vim.fn.isdirectory(path) == 0 then
             path = vim.fn.fnamemodify(path, ":p:h")
           end
 
-          SaveSessionAtGitRoot()
+          utils.SaveSessionAtGitRoot()
           picker:close()
 
-          -- vim.g.tmux_window_name = nil
           vim.schedule(function()
-            -- Snacks.bufdelete.all()
-            -- vim.api.nvim_set_current_dir(path)
-
             if path ~= vim.fn.getcwd() then
               local old_eventignore = vim.opt.eventignore:get()
               vim.opt.eventignore:append("all")
-              vim.api.nvim_set_current_dir(path)
+              vim.api.nvim_set_current_dir(tostring(path))
               vim.opt.eventignore = old_eventignore
             end
-
-            -- update_tmux_window()
             Snacks.explorer()
           end)
         end,
@@ -129,10 +92,10 @@ return {
       sources = {
         projects = {
           layout = {
-            preview = false,
+            preview = nil,
           },
           confirm = function(picker, item)
-            SaveSessionAtGitRoot()
+            utils.SaveSessionAtGitRoot()
             picker:close()
 
             vim.g.tmux_window_name = nil
@@ -199,16 +162,18 @@ return {
             ["<C-f>"] = { "cd_to_folder", mode = { "n", "i" } },
             ["<C-y>"] = { "copy_file_name", mode = { "n", "i" } },
           },
+          ["<C-BS>"] = { "null", mode = { "i" } },
+          ["<C-w>"] = { "null", mode = { "n", "i" } },
         },
         input = {
           keys = {
             ["<Esc>"] = {
-              function()
-                vim.cmd("wincmd p")
-              end,
-              mode = { "i" },
+              "explorer_esc",
+              mode = { "i", "n" },
               desc = "Focus file tree with",
             },
+            ["<C-BS>"] = { "null", mode = { "i" } },
+            ["<C-w>"] = { "null", mode = { "n", "i" } },
           },
         },
       },

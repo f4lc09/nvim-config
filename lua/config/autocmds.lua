@@ -99,12 +99,6 @@ vim.api.nvim_create_autocmd("BufLeave", {
     end
   end,
 })
-vim.api.nvim_create_autocmd("BufEnter", {
-  pattern = "diffview://*",
-  callback = function()
-    vim.lsp.stop_client(vim.lsp.get_active_clients({ bufnr = 0 }))
-  end,
-})
 vim.api.nvim_create_autocmd("TermEnter", {
   pattern = "*",
   callback = function()
