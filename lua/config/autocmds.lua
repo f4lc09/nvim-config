@@ -165,6 +165,15 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
   end,
 })
 
+local group = vim.api.nvim_create_augroup("SessionCwdRestore", { clear = true })
+
+vim.api.nvim_create_autocmd({ "BufEnter", "BufDelete" }, {
+  group = group,
+  callback = function()
+    vim.schedule(utils.RestoreCWDFromSession)
+  end,
+})
+
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
   callback = function()
