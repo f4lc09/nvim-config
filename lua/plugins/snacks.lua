@@ -88,6 +88,27 @@ return {
           vim.fn.setreg("+", name)
           Snacks.notify.info("Copied name: " .. name)
         end,
+        open_term_in_folder = function(picker)
+          print("Hello")
+          local item = picker:current()
+          if not item then
+            return
+          end
+
+          local path = item.file
+          path = tostring(path)
+          if vim.fn.isdirectory(path) == 0 then
+            path = vim.fn.fnamemodify(path, ":h")
+          end
+
+          -- Закрываем пикер перед открытием терминала
+          picker:close()
+
+          -- Открываем терминал в нужном CWD
+          Snacks.terminal.toggle(nil, {
+            cwd = path,
+          })
+        end,
       },
       sources = {
         projects = {
@@ -161,9 +182,8 @@ return {
           keys = {
             ["<C-f>"] = { "cd_to_folder", mode = { "n", "i" } },
             ["<C-y>"] = { "copy_file_name", mode = { "n", "i" } },
+            ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
           },
-          ["<C-BS>"] = { "null", mode = { "i" } },
-          ["<C-w>"] = { "null", mode = { "n", "i" } },
         },
         input = {
           keys = {
@@ -172,8 +192,7 @@ return {
               mode = { "i", "n" },
               desc = "Focus file tree with",
             },
-            ["<C-BS>"] = { "null", mode = { "i" } },
-            ["<C-w>"] = { "null", mode = { "n", "i" } },
+            ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
           },
         },
       },
