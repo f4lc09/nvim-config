@@ -210,7 +210,7 @@ map(
   ":!deno fmt --ext=md --options-line-width=2000 -<cr>",
   { desc = "Deno Format Selection", nowait = true, silent = true }
 )
-vim.keymap.set("n", "<leader>op", function()
+map("n", "<leader>op", function()
   local path = vim.fn.system("xclip -o -selection clipboard"):gsub("%s+", "")
   if vim.fn.filereadable(path) == 1 then
     vim.cmd("e " .. path)
@@ -218,3 +218,5 @@ vim.keymap.set("n", "<leader>op", function()
     print("Файл не найден: " .. path)
   end
 end, { desc = "Open file from clipboard" })
+map("n", "<leader>bmf", "<cmd>BufferLineMoveNext<CR>")
+map("n", "<leader>bmb", "<cmd>BufferLineMovePrev<CR>")
