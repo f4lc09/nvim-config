@@ -113,7 +113,7 @@ return {
       sources = {
         projects = {
           layout = {
-            preview = nil,
+            preview = false,
           },
           confirm = function(picker, item)
             utils.SaveSessionAtGitRoot()

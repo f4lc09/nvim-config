@@ -159,9 +159,9 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
         vim.api.nvim_del_autocmd(a.id)
       end
     end
-    vim.defer_fn(function()
-      require("mini.map").open()
-    end, 50)
+    -- vim.defer_fn(function()
+    --   require("mini.map").open()
+    -- end, 50)
   end,
 })
 
