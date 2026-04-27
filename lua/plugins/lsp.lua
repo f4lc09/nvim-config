@@ -1,6 +1,3 @@
-vim.g.go_debug_log_output = ""
-local util = require("lspconfig.util")
-
 return {
   {
     "neovim/nvim-lspconfig",
@@ -10,6 +7,9 @@ return {
           keys = {
             { "K", false },
           },
+        },
+        protols = {
+          enabled = false,
         },
         gopls = {
           settings = {
