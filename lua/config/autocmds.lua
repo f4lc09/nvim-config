@@ -84,14 +84,23 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 })
 vim.api.nvim_create_autocmd("BufLeave", {
   group = vim.api.nvim_create_augroup("CleanLastNoName", { clear = true }),
-  callback = function()
-    local bufnr = vim.api.nvim_get_current_buf()
+  callback = function(args)
+    local bufnr = args.buf -- буфер, который покидаем
 
     local name = vim.api.nvim_buf_get_name(bufnr)
-    local is_empty = vim.api.nvim_buf_line_count(bufnr) <= 1 and vim.api.nvim_buf_get_lines(bufnr, 0, 1, false)[1] == ""
+    local bt = vim.bo[bufnr].buftype
 
-    if name == "" and is_empty and vim.bo[bufnr].buftype == "" and not vim.bo[bufnr].modified then
+    local is_empty = vim.api.nvim_buf_line_count(bufnr) == 1 and vim.api.nvim_buf_get_lines(bufnr, 0, 1, false)[1] == ""
+
+    if name == "" and bt == "" and is_empty and not vim.bo[bufnr].modified then
       vim.schedule(function()
+        local current = vim.api.nvim_get_current_buf()
+
+        -- если перешли в терминал, не удаляем
+        if vim.bo[current].buftype == "terminal" then
+          return
+        end
+
         if vim.api.nvim_buf_is_valid(bufnr) then
           vim.api.nvim_buf_delete(bufnr, { force = true })
         end
