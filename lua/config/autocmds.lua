@@ -189,3 +189,13 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.spell = false
   end,
 })
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    vim.schedule(function()
+      if vim.fn.argc() == 0 then
+        vim.cmd("enew")
+        vim.cmd("silent! bd 1")
+      end
+    end)
+  end,
+})

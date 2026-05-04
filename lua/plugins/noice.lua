@@ -26,6 +26,13 @@ return {
           },
           opts = { skip = true },
         },
+        {
+          filter = {
+            event = "msg_show",
+            find = "gopls: 0: getting file for InlayHint",
+          },
+          opts = { skip = true },
+        },
       },
     },
   },

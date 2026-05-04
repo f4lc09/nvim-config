@@ -1,4 +1,5 @@
 require("config.lazy")
+require("config.autocmds")
 
 vim.g.AutoPairs = 0
 vim.o.showtabline = 2
