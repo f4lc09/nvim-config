@@ -123,10 +123,10 @@ function ToggleLazygit()
       -- stylua: ignore
       on_open = function(term)
         vim.api.nvim_buf_set_keymap(
-          term.bufnr, "t", "<C-l><C-g>",
+          term.bufnr, "t", "<C-g>",
           [[<C-\><C-n><cmd>lua ToggleLazygit()<CR>]], { noremap = true, silent = true })
         vim.api.nvim_buf_set_keymap(
-          term.bufnr, "n", "<C-l><C-g>",
+          term.bufnr, "n", "<C-g>",
           [[<cmd>lua ToggleLazygit()<CR>]], { noremap = true, silent = true })
       end,
     })
@@ -138,7 +138,7 @@ function ToggleLazygit()
     end
   end, 50)
 end
-map("n", "<C-l><C-g>", function()
+map("n", "<C-g>", function()
   local explorer = Snacks.picker.get({ source = "explorer" })[1]
   if explorer then
     explorer:close()
