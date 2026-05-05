@@ -89,7 +89,6 @@ return {
           Snacks.notify.info("Copied name: " .. name)
         end,
         open_term_in_folder = function(picker)
-          -- print("Hello")
           local item = picker:current()
           if not item then
             return
@@ -101,10 +100,8 @@ return {
             path = vim.fn.fnamemodify(path, ":h")
           end
 
-          -- Закрываем пикер перед открытием терминала
           picker:close()
 
-          -- Открываем терминал в нужном CWD
           Snacks.terminal.toggle(nil, {
             cwd = path,
           })
