@@ -186,7 +186,7 @@ end
 map({ "n", "t", "i" }, "<C-/>", toggle_terminal, { desc = "Toggle Terminal" })
 map({ "n", "t", "i" }, "<C-_>", toggle_terminal, { desc = "Toggle Terminal" })
 
-map("x", "<leader>gB", "<cmd>GBrowse<cr>", { noremap = true, silent = true })
+map("x", "<leader>go", "<cmd>GBrowse<cr>", { noremap = true, silent = true })
 map("n", "<leader>lsr", "<cmd>LspRestart<cr>", { noremap = true, silent = true })
 map("n", "<leader>lss", "<cmd>LspStop<cr>", { noremap = true, silent = true })
 
