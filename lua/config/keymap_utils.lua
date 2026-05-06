@@ -112,7 +112,7 @@ function M.LanguageControl(key)
   end
 
   if key:match("[%z\1-\127]") == nil and key:match("[а-яА-ЯёЁ]") then
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
+    -- vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
 
     -- Красим (используем константу вместо динамического определения)
     vim.api.nvim_set_hl(0, "Normal", { bg = "#5f0000" })
