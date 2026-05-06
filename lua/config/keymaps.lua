@@ -193,7 +193,18 @@ map(
   { noremap = true, silent = true, desc = "Git Open Remote" }
 )
 map({ "n" }, "<leader>go", "<cmd>GBrowse<cr>", { noremap = true, silent = true, desc = "Git Open Remote" })
-map({ "n" }, "<leader>gr", "<cmd>GBrowse :/<cr>", { noremap = true, silent = true, desc = "Git Repository" })
+vim.keymap.set("n", "<leader>gr", function()
+  local url = vim.fn.system("git remote get-url origin"):gsub("\n", "")
+
+  url = url:gsub("git@(.+):", "https://%1/")
+  url = url:gsub("%.git$", "")
+
+  if vim.ui.open then
+    vim.ui.open(url)
+  else
+    vim.fn.jobstart({ "open", url })
+  end
+end, { desc = "Git Remote Root (Pure URL)" })
 map("n", "<leader>lsr", "<cmd>LspRestart<cr>", { noremap = true, silent = true })
 map("n", "<leader>lss", "<cmd>LspStop<cr>", { noremap = true, silent = true })
 
