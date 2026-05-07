@@ -30,8 +30,14 @@ local function smart_scroll(direction)
     local winheight = vim.api.nvim_win_get_height(0)
     local middle = math.floor(winheight / 2)
 
-    if math.abs(winline - middle) > 1 then
-      vim.cmd("normal! zz")
+    if (winline - middle > 1 and direction == "up") or (winline - middle < -1 and direction == "down") then
+      local move = middle - winline
+      local letter = "k"
+      if direction == "down" then
+        letter = "j"
+      end
+      vim.cmd(string.format("normal! %d%s", move, letter))
+      return
     end
 
     local lines = math.floor(winheight / 2)
@@ -48,6 +54,10 @@ local function smart_scroll(direction)
         easing = "linear",
       })
     end
+
+    vim.schedule(function()
+      vim.cmd("normal! zz")
+    end)
   end
 end
 vim.keymap.set("n", "<C-d>", smart_scroll("down"))
