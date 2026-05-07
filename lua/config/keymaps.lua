@@ -30,18 +30,23 @@ local function smart_scroll(direction)
     local winheight = vim.api.nvim_win_get_height(0)
     local middle = math.floor(winheight / 2)
 
-    -- 1. Центрируем мгновенно, если не в центре
     if math.abs(winline - middle) > 1 then
       vim.cmd("normal! zz")
     end
 
-    -- 2. Плавно скроллим через API Neoscroll
-    -- Параметры: (количество строк, мув_курсор, скорость_мс)
     local lines = math.floor(winheight / 2)
     if direction == "down" then
-      require("neoscroll").scroll(lines, true, 150) -- 150мс для быстроты
+      require("neoscroll").scroll(lines, {
+        move_cursor = true,
+        duration = 150, -- время в мс
+        easing = "linear", -- тип анимации
+      })
     else
-      require("neoscroll").scroll(-lines, true, 150)
+      require("neoscroll").scroll(-lines, {
+        move_cursor = true,
+        duration = 150,
+        easing = "linear",
+      })
     end
   end
 end
