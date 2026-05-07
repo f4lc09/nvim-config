@@ -4,6 +4,9 @@ return {
   "folke/snacks.nvim",
   ---@type snacks.Config
   opts = {
+    scroll = {
+      enabled = false,
+    },
     notifier = {
       enabled = true,
       style = "compact",

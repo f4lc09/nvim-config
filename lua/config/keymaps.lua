@@ -22,6 +22,31 @@ map({ "n", "v" }, "<C-HOME>", "gg", { noremap = true, silent = true, desc = "Go 
 map({ "n", "v" }, "G", "G$", { noremap = true, silent = true, desc = "Go to the end of the file" })
 map({ "n", "v" }, "gg", "gg^", { noremap = true, silent = true, desc = "Go to the start of the file" })
 map({ "n", "v" }, "<C-y>", "<cmd>%y<CR>", { noremap = true, silent = true, desc = "Yank whole file" })
+map({ "n", "v" }, "<C-v>", "ggVG", { noremap = true, silent = true, desc = "Yank whole file" })
+-- Центрирование при прокрутке на пол-экрана вверх/вниз
+local function smart_scroll(direction)
+  return function()
+    local winline = vim.fn.winline()
+    local winheight = vim.api.nvim_win_get_height(0)
+    local middle = math.floor(winheight / 2)
+
+    -- 1. Центрируем мгновенно, если не в центре
+    if math.abs(winline - middle) > 1 then
+      vim.cmd("normal! zz")
+    end
+
+    -- 2. Плавно скроллим через API Neoscroll
+    -- Параметры: (количество строк, мув_курсор, скорость_мс)
+    local lines = math.floor(winheight / 2)
+    if direction == "down" then
+      require("neoscroll").scroll(lines, true, 150) -- 150мс для быстроты
+    else
+      require("neoscroll").scroll(-lines, true, 150)
+    end
+  end
+end
+vim.keymap.set("n", "<C-d>", smart_scroll("down"))
+vim.keymap.set("n", "<C-u>", smart_scroll("up"))
 
 --
 -- Paste Commands
