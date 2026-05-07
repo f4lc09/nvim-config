@@ -23,6 +23,7 @@ map({ "n", "v" }, "G", "G$", { noremap = true, silent = true, desc = "Go to the 
 map({ "n", "v" }, "gg", "gg^", { noremap = true, silent = true, desc = "Go to the start of the file" })
 map({ "n", "v" }, "<C-y>", "<cmd>%y<CR>", { noremap = true, silent = true, desc = "Yank whole file" })
 map({ "n", "v" }, "<C-v>", "ggVG", { noremap = true, silent = true, desc = "Yank whole file" })
+map({ "n", "v" }, "<M-v>", "<C-v>", { noremap = true, silent = true, desc = "Yank whole file" })
 -- Центрирование при прокрутке на пол-экрана вверх/вниз
 local function smart_scroll(direction)
   return function()
