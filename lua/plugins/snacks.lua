@@ -109,6 +109,22 @@ return {
             cwd = path,
           })
         end,
+        open_tmux_term_in_folder = function(picker)
+          local item = picker:current()
+          if not item then
+            return
+          end
+
+          local path = item.file
+          path = tostring(path)
+          if vim.fn.isdirectory(path) == 0 then
+            path = vim.fn.fnamemodify(path, ":h")
+          end
+
+          picker:close()
+
+          os.execute("tmux split-window -v -c " .. path)
+        end,
       },
       sources = {
         projects = {
@@ -182,6 +198,7 @@ return {
           keys = {
             ["<C-f>"] = { "cd_to_folder", mode = { "n", "i" } },
             ["<C-y>"] = { "copy_file_name", mode = { "n", "i" } },
+            ["<C-\\>"] = { "open_tmux_term_in_folder", mode = { "n", "i" } },
             ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
           },
         },
@@ -192,6 +209,7 @@ return {
               mode = { "i", "n" },
               desc = "Focus file tree with",
             },
+            ["<C-\\>"] = { "open_tmux_term_in_folder", mode = { "n", "i" } },
             ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
           },
         },

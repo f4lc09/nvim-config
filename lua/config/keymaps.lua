@@ -221,10 +221,16 @@ local toggle_terminal = function()
     cwd = vim.fn.getcwd(),
   })
 end
+local os = require("os")
+local toggle_tmux_terminal = function()
+  local cwd = vim.fn.getcwd()
+  os.execute("tmux split-window -v -c " .. cwd)
+end
 
 -- Привязываем к Ctrl + / и Ctrl + _ (для Windows)
 -- Режимы: n (обычный), t (внутри терминала), i (вставка)
 map({ "n", "t", "i" }, "<C-/>", toggle_terminal, { desc = "Toggle Terminal" })
+map({ "n", "t", "i" }, "<C-\\>", toggle_tmux_terminal, { desc = "Toggle Terminal" })
 map({ "n", "t", "i" }, "<C-_>", toggle_terminal, { desc = "Toggle Terminal" })
 
 map(
@@ -284,3 +290,4 @@ map("n", "<leader>tc", "<cmd>tabclose<CR>", { desc = "Close tab" })
 map("n", "<leader>tn", "<cmd>tabnext<CR>", { desc = "Next tab" })
 map("n", "<leader>tp", "<cmd>tabprev<CR>", { desc = "Previoues tab" })
 map("t", "<C-n>", [[<C-\><C-n>]])
+map("n", "<C-r>", "<cmd>e<cr>")
