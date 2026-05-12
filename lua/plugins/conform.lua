@@ -8,6 +8,7 @@ return {
       yaml = {},
       go = { "goimports", "gofmt" },
     },
+    lsp_format = "never",
     formatters = {
       deno_fmt_json = {
         command = "deno",
