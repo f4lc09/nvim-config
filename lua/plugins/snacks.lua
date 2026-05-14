@@ -4,6 +4,9 @@ return {
   "folke/snacks.nvim",
   ---@type snacks.Config
   opts = {
+    explorer = {
+      diagnostics = false,
+    },
     scroll = {
       enabled = false,
     },

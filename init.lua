@@ -21,4 +21,3 @@ vim.lsp.set_log_level("error")
 vim.g.root_spec = { { ".git", "lua" }, "cwd", "lsp" }
 vim.g.go_debug_log_output = ""
 vim.o.conceallevel = 0
--- vim.opt.guicursor = "n-v-c-i:blinkon1"
