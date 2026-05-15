@@ -295,3 +295,8 @@ map("n", "gR", function()
   vim.cmd('normal! "yyiw')
   Snacks.picker.grep({ search = vim.fn.getreg('"') })
 end, { desc = "Grep Word Under Cursor (Snacks)" })
+map("n", "<leader><space>", function()
+  Snacks.picker.files({
+    cwd = vim.fn.getcwd(),
+  })
+end, { desc = "Find Files (cwd)" })
