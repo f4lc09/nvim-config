@@ -300,6 +300,6 @@ map("n", "<leader><space>", function()
     cwd = vim.fn.getcwd(),
   })
 end, { desc = "Find Files (cwd)" })
-vim.keymap.set("v", "gs", function()
+vim.keymap.set("v", "gi", function()
   require("mini.surround").add("visual")
-end)
+end, { noremap = true, desc = "Wrap" })
