@@ -1,5 +1,4 @@
 local dap = require("dap")
-local bufferline = require("bufferline")
 local dapui = require("dapui")
 local utils = require("config.keymap_utils")
 
@@ -141,11 +140,11 @@ end, { desc = "Grep Word Under Cursor (Snacks)" })
 
 --
 -- Buffers and tabs
-map({ "n", "v" }, "<leader>bf", function()
-  bufferline.cycle(1)
+map({ "n", "v", "i" }, ">", function()
+  utils.BufferCycle(1)
 end, { silent = true, desc = "Next buffer" })
-map({ "n", "v" }, "<leader>bb", function()
-  bufferline.cycle(-1)
+map({ "n", "v", "i" }, "<", function()
+  utils.BufferCycle(-1)
 end, { silent = true, desc = "Previous buffer" })
 map({ "n" }, "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
 map("n", "<leader>bmf", "<cmd>BufferLineMoveNext<CR>", { desc = "Move buffer forward" })

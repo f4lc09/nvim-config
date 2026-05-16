@@ -1,4 +1,6 @@
 local dap = require("dap")
+local bufferline = require("bufferline")
+
 local M = {}
 
 function M.DapToggleDebug()
@@ -227,7 +229,11 @@ function M.Wrap(key1, key2)
 
     vim.cmd('normal! "yd')
     if mode == "v" then
-      vim.api.nvim_feedkeys("i" .. key1 .. key2 .. '"yP', "n", false)
+      vim.api.nvim_feedkeys(
+        vim.api.nvim_replace_termcodes("i" .. key1 .. key2 .. '<Esc>"yP', true, false, true),
+        "n",
+        false
+      )
       return
     end
 
@@ -245,6 +251,14 @@ function M.OpenFromClipboard()
     vim.cmd("e " .. path)
   else
     print("Файл не найден: " .. path)
+  end
+end
+
+function M.BufferCycle(num)
+  bufferline.cycle(num)
+  local mode = vim.api.nvim_get_mode().mode
+  if mode == "i" then
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
   end
 end
 
