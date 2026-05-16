@@ -80,15 +80,15 @@ map({ "n", "v", "x" }, "K", "k", { noremap = true })
 
 --
 -- Wrappers
-map("v", 'gi"', utils.Wrap('"', '"'), { noremap = true, desc = "Wrap" })
-map("v", "gi'", utils.Wrap("'", "'"), { noremap = true, desc = "Wrap" })
-map("v", "gi`", utils.Wrap("`", "`"), { noremap = true, desc = "Wrap" })
-map("v", "gi{", utils.Wrap("{", "}"), { noremap = true, desc = "Wrap" })
-map("v", "gi[", utils.Wrap("[", "]"), { noremap = true, desc = "Wrap" })
-map("v", "gi|", utils.Wrap("|", "|"), { noremap = true, desc = "Wrap" })
-map("v", "gi@", utils.Wrap("@", "@"), { noremap = true, desc = "Wrap" })
-map("v", "gi:", utils.Wrap(":", ":"), { noremap = true, desc = "Wrap" })
-map("v", "gi;", utils.Wrap(";", ";"), { noremap = true, desc = "Wrap" })
+map("v", 'gw"', utils.Wrap('"', '"'), { noremap = true, desc = "Wrap" })
+map("v", "gw'", utils.Wrap("'", "'"), { noremap = true, desc = "Wrap" })
+map("v", "gw`", utils.Wrap("`", "`"), { noremap = true, desc = "Wrap" })
+map("v", "gw{", utils.Wrap("{", "}"), { noremap = true, desc = "Wrap" })
+map("v", "gw[", utils.Wrap("[", "]"), { noremap = true, desc = "Wrap" })
+map("v", "gw|", utils.Wrap("|", "|"), { noremap = true, desc = "Wrap" })
+map("v", "gw@", utils.Wrap("@", "@"), { noremap = true, desc = "Wrap" })
+map("v", "gw:", utils.Wrap(":", ":"), { noremap = true, desc = "Wrap" })
+map("v", "gw;", utils.Wrap(";", ";"), { noremap = true, desc = "Wrap" })
 
 --
 -- Fix yanking
