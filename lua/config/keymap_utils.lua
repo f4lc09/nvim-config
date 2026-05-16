@@ -140,9 +140,112 @@ function M.ReplaceSelectionAcrossFile()
 end
 
 function M.ReplaceWithSubstituteCommand()
-  vim.cmd('normal! "hy')
-  local command = ":%s/"
+  local mode = vim.api.nvim_get_mode().mode
+  if mode ~= "n" and mode ~= "v" and mode ~= "V" and mode ~= "" then
+    return
+  end
+
+  if mode == "n" then
+    local command = ":%s/\\v"
+    vim.api.nvim_feedkeys(command, "n", false)
+    return
+  end
+
+  local command = ":s/\\v"
   vim.api.nvim_feedkeys(command, "n", false)
+end
+
+-- Центрирование при прокрутке на пол-экрана вверх/вниз
+function M.SmartScroll(direction)
+  return function()
+    local winline = vim.fn.winline()
+    local winheight = vim.api.nvim_win_get_height(0)
+    local middle = math.floor(winheight / 2)
+
+    if (winline - middle > 1 and direction == "up") or (winline - middle < -1 and direction == "down") then
+      local move = middle - winline
+      local letter = "k"
+      if direction == "down" then
+        letter = "j"
+      end
+      vim.cmd(string.format("normal! %d%s", move, letter))
+      return
+    end
+
+    local lines = math.floor(winheight / 2)
+    if direction == "down" then
+      require("neoscroll").scroll(lines, {
+        move_cursor = true,
+        duration = 150, -- время в мс
+        easing = "linear", -- тип анимации
+      })
+    else
+      require("neoscroll").scroll(-lines, {
+        move_cursor = true,
+        duration = 150,
+        easing = "linear",
+      })
+    end
+
+    vim.schedule(function()
+      vim.cmd("normal! zz")
+    end)
+  end
+end
+
+function M.ToggleTerminal()
+  Snacks.terminal.toggle(nil, {
+    cwd = vim.fn.getcwd(),
+  })
+end
+
+local os = require("os")
+function M.ToggleTmuxTerminal()
+  local cwd = vim.fn.getcwd()
+  os.execute("tmux split-window -v -c " .. cwd)
+end
+
+function M.OpenRepository()
+  local url = vim.fn.system("git remote get-url origin"):gsub("\n", "")
+
+  url = url:gsub("git@(.+):", "https://%1/")
+  url = url:gsub("%.git$", "")
+
+  if vim.ui.open then
+    vim.ui.open(url)
+  else
+    vim.fn.jobstart({ "open", url })
+  end
+end
+
+function M.Wrap(key1, key2)
+  return function()
+    local mode = vim.api.nvim_get_mode().mode
+    if mode ~= "v" and mode ~= "V" then
+      return
+    end
+
+    vim.cmd('normal! "yd')
+    if mode == "v" then
+      vim.api.nvim_feedkeys("i" .. key1 .. key2 .. '"yP', "n", false)
+      return
+    end
+
+    vim.api.nvim_feedkeys(
+      vim.api.nvim_replace_termcodes("O<Esc>i" .. key1 .. key2 .. "<Esc>i<CR><Esc>kp", true, false, true),
+      "n",
+      false
+    )
+  end
+end
+
+function M.OpenFromClipboard()
+  local path = vim.fn.system("xclip -o -selection clipboard"):gsub("%s+", "")
+  if vim.fn.filereadable(path) == 1 then
+    vim.cmd("e " .. path)
+  else
+    print("Файл не найден: " .. path)
+  end
 end
 
 return M
