@@ -15,12 +15,17 @@ function M.DeleteBackward()
   local col = vim.fn.col(".")
   local line = vim.fn.getline(".")
   local last_col = #line
+  local success, err = pcall(function()
+    if col >= last_col - 1 then
+      vim.cmd('normal! vb"_d')
+      return
+    end
+    vim.cmd('normal! vb"_dh')
+  end)
 
-  if col >= last_col - 1 then
-    vim.cmd('normal! vb"_d')
-    return
+  if not success then
+    vim.notify("Невозможно внести изменения в буфер.\n" .. err, vim.log.levels.WARN)
   end
-  vim.cmd('normal! vb"_dh')
 end
 
 function M.CutBackward()
