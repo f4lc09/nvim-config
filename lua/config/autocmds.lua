@@ -211,6 +211,16 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
 
     vim.defer_fn(function()
       vim.cmd("startinsert")
-    end, 25)
+      vim.opt.guicursor = "v:hor20-Cursor,t:ver25,c:ver20"
+    end, 10)
+  end,
+})
+vim.api.nvim_create_autocmd("BufLeave", {
+  pattern = "*",
+  callback = function()
+    if vim.bo.filetype ~= "text.kulala_ui" then
+      return
+    end
+    vim.cmd("bd!")
   end,
 })

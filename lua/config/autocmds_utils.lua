@@ -87,6 +87,10 @@ function M.SetupKulalaKeymaps(bufnr)
     local success, kulala_module = pcall(require, "kulala")
     if success and kulala_module then
       kulala_module.run()
+      kulala_module.open()
+      vim.defer_fn(function()
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-w>l", true, false, true), "n", true)
+      end, 10)
     end
   end, {
     desc = "Run HTTP request",
