@@ -220,7 +220,7 @@ vim.api.nvim_create_autocmd("BufLeave", {
   pattern = "*",
   callback = function(ev)
     local bufnr = ev.buf
-    if vim.bo[bufnr].filetype == "text.kulala_ui" then
+    if vim.bo[bufnr].filetype:match("kulala_ui$") then
       local win_id = vim.fn.bufwinid(bufnr)
       vim.schedule(function()
         if vim.api.nvim_win_is_valid(win_id) then
@@ -228,20 +228,5 @@ vim.api.nvim_create_autocmd("BufLeave", {
         end
       end)
     end
-  end,
-})
-vim.api.nvim_create_autocmd("BufEnter", {
-  pattern = "*",
-  callback = function(ev)
-    if vim.bo.filetype ~= "text.kulala_ui" then
-      return
-    end
-
-    vim.keymap.set("n", "q", function()
-      vim.cmd("bd!")
-    end, {
-      desc = "Leave",
-      buffer = ev.buf,
-    })
   end,
 })
