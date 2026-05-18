@@ -10,6 +10,6 @@ return {
     }
     vim.g.ale_go_golangci_lint_executable = "/home/falcon/go/bin/golangci-lint"
     vim.g.ale_go_golangci_lint_options = "--config=/home/falcon/.config/nvim/.golangci.yml ./..."
-    vim.g.ale_go_golangci_lint_use_json = 1
+    vim.g.ale_go_golangci_lint_use_json = 0
   end,
 }
