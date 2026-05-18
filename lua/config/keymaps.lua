@@ -25,6 +25,7 @@ map({ "n", "v" }, "gg", "gg^", { noremap = true, silent = true, desc = "Go to th
 map({ "n", "v" }, "<C-y>", "<cmd>%y<CR>", { noremap = true, silent = true, desc = "Yank whole file" })
 map({ "n", "v" }, "<C-v>", "ggVG", { noremap = true, silent = true, desc = "Yank whole file" })
 map({ "n", "v" }, "<M-v>", "<C-v>", { noremap = true, silent = true, desc = "Yank whole file" })
+map({ "n", "v" }, "gm", "`", { noremap = true, silent = true, desc = "Go mark" })
 map("n", "v", "<Esc>v", { noremap = true, silent = true })
 map("n", "<C-d>", utils.SmartScroll("down"))
 map("n", "<C-u>", utils.SmartScroll("up"))
