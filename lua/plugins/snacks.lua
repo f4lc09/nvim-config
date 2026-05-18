@@ -4,6 +4,10 @@ return {
   "folke/snacks.nvim",
   ---@type snacks.Config
   opts = {
+    terminal = {
+      auto_insert = false,
+      start_insert = true,
+    },
     explorer = {
       diagnostics = false,
     },
