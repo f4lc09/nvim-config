@@ -238,4 +238,12 @@ function M.BufferCycle(num)
   end
 end
 
+function M.BufferDelete()
+  vim.cmd("bdelete")
+  local mode = vim.api.nvim_get_mode().mode
+  if mode == "i" then
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+  end
+end
+
 return M

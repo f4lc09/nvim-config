@@ -193,3 +193,15 @@ vim.api.nvim_create_autocmd("VimLeave", {
     vim.opt.guicursor = "a:ver20"
   end,
 })
+vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
+  callback = function()
+    if vim.bo.buftype == "terminal" then
+      local current_line = vim.api.nvim_win_get_cursor(0)[1]
+      local last_line = vim.api.nvim_buf_line_count(0)
+
+      if current_line == last_line then
+        vim.cmd("startinsert")
+      end
+    end
+  end,
+})

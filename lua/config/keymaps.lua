@@ -2,6 +2,7 @@ local dap = require("dap")
 local dapui = require("dapui")
 local utils = require("config.keymap_utils")
 local lazygit = require("config.lazygit_utils")
+local bufferline = require("bufferline")
 
 local map = vim.keymap.set
 local unmap = vim.keymap.del
@@ -147,6 +148,9 @@ map({ "n", "v", "i" }, ">", function()
 end, { silent = true, desc = "Next buffer" })
 map({ "n", "v", "i" }, "<", function()
   utils.BufferCycle(-1)
+end, { silent = true, desc = "Previous buffer" })
+map({ "n", "v", "i" }, "w", function()
+  utils.BufferDelete()
 end, { silent = true, desc = "Previous buffer" })
 map({ "n" }, "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
 map("n", "<leader>bmf", "<cmd>BufferLineMoveNext<CR>", { desc = "Move buffer forward" })
