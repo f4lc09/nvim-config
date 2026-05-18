@@ -1,6 +1,7 @@
 local dap = require("dap")
 local dapui = require("dapui")
 local utils = require("config.keymap_utils")
+local lazygit = require("config.lazygit_utils")
 
 local map = vim.keymap.set
 local unmap = vim.keymap.del
@@ -158,50 +159,6 @@ map("n", "<leader><C-r>", "<cmd>e<cr>", { desc = "Reload buffer" })
 
 --
 -- GIT Comannds
-local Terminal = require("toggleterm.terminal").Terminal
-local lazygit
-function ToggleLazygit()
-  local cwd = vim.fn.getcwd()
-  if lazygit and not string.find(cwd, lazygit.dir, 1, true) then
-    lazygit:shutdown()
-    lazygit = nil
-  end
-  if not lazygit then
-    lazygit = Terminal:new({
-      cmd = "lazygit",
-      dir = "git_dir",
-      direction = "float",
-      float_opts = {
-        border = "none",
-      },
-      highlights = {
-        Border = { link = "FloatBorder" },
-      },
-      -- stylua: ignore
-      on_open = function(term)
-        vim.api.nvim_buf_set_keymap(
-          term.bufnr, "t", "<C-g>",
-          [[<C-\><C-n><cmd>lua ToggleLazygit()<CR>]], { noremap = true, silent = true })
-        vim.api.nvim_buf_set_keymap(
-          term.bufnr, "n", "<C-g>",
-          [[<cmd>lua ToggleLazygit()<CR>]], { noremap = true, silent = true })
-      end,
-    })
-  end
-  lazygit:toggle()
-  vim.defer_fn(function()
-    if vim.bo.buftype == "terminal" then
-      vim.cmd("startinsert!")
-    end
-  end, 50)
-end
-map("n", "<C-g>", function()
-  local explorer = Snacks.picker.get({ source = "explorer" })[1]
-  if explorer then
-    explorer:close()
-  end
-  ToggleLazygit()
-end, { noremap = true, silent = true })
 map({ "v", "x" }, "<leader>go", "<Esc><cmd>'<,'>GBrowse<cr>", { noremap = true, desc = "Git Open Remote" })
 map({ "n" }, "<leader>go", "<cmd>GBrowse<cr>", { noremap = true, silent = true, desc = "Git Open Remote" })
 map("n", "<leader>gr", utils.OpenRepository, { desc = "Git Remote Root" })
@@ -238,3 +195,13 @@ map(
   ":!deno fmt --ext=md --options-line-width=2000 -<cr>",
   { desc = "Deno Format Selection", nowait = true, silent = true }
 )
+
+Snacks.config.picker.actions = vim.tbl_deep_extend("force", Snacks.config.picker.actions or {}, {
+  lazygit = function()
+    local explorer = Snacks.picker.get({ source = "explorer" })[1]
+    if explorer then
+      explorer:close()
+    end
+    lazygit.ToggleLazygit()
+  end,
+})

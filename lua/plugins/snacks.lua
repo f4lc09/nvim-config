@@ -1,4 +1,4 @@
-local utils = require("config.autocmds_utils")
+local cmd_utils = require("config.autocmds_utils")
 
 return {
   "folke/snacks.nvim",
@@ -74,7 +74,7 @@ return {
             path = vim.fn.fnamemodify(path, ":p:h")
           end
 
-          utils.SaveSessionAtGitRoot()
+          cmd_utils.SaveSessionAtGitRoot()
           picker:close()
 
           vim.schedule(function()
@@ -139,7 +139,7 @@ return {
             preview = false,
           },
           confirm = function(picker, item)
-            utils.SaveSessionAtGitRoot()
+            cmd_utils.SaveSessionAtGitRoot()
             picker:close()
 
             vim.g.tmux_window_name = nil
@@ -207,6 +207,7 @@ return {
             ["<C-y>"] = { "copy_file_name", mode = { "n", "i" } },
             ["<C-\\>"] = { "open_tmux_term_in_folder", mode = { "n", "i" } },
             ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
+            ["<C-g>"] = { "lazygit", mode = { "n", "i" } },
           },
         },
         input = {
@@ -218,6 +219,7 @@ return {
             },
             ["<C-\\>"] = { "open_tmux_term_in_folder", mode = { "n", "i" } },
             ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
+            ["<C-g>"] = { "lazygit", mode = { "n", "i" } },
           },
         },
       },

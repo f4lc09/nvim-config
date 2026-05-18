@@ -81,4 +81,33 @@ function M.RestoreCWDFromSession()
   end
 end
 
+function M.SetupKulalaKeymaps(bufnr)
+  local map = vim.keymap.set
+  map("n", "<Enter>", function()
+    local success, kulala_module = pcall(require, "kulala")
+    if success and kulala_module then
+      kulala_module.run()
+    end
+  end, {
+    desc = "Run HTTP request",
+    buffer = bufnr,
+  })
+end
+
+function M.SetupGoTestKeymaps(bufnr)
+  local map = vim.keymap.set
+  local filename = vim.fn.bufname(bufnr)
+  if filename:match("_test.go$") then
+    map("n", "<F5>", function()
+      local success, dap_go_module = pcall(require, "dap-go")
+      if success and dap_go_module then
+        dap_go_module.debug_test()
+      end
+    end, {
+      desc = "Debug nearest Go test",
+      buffer = bufnr,
+    })
+  end
+end
+
 return M

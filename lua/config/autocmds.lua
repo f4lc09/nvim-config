@@ -1,16 +1,15 @@
-local key_func = require("config.keymap_utils")
 local utils = require("config.autocmds_utils")
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "http",
   callback = function(args)
-    key_func.SetupKulalaKeymaps(args.buf)
+    utils.SetupKulalaKeymaps(args.buf)
   end,
 })
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "go",
   callback = function(args)
-    key_func.SetupGoTestKeymaps(args.buf)
+    utils.SetupGoTestKeymaps(args.buf)
   end,
 })
 vim.api.nvim_create_autocmd({ "BufEnter", "BufRead", "BufWinEnter", "LspAttach" }, {
@@ -189,16 +188,6 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.spell = false
   end,
 })
--- vim.api.nvim_create_autocmd("VimEnter", {
---   callback = function()
---     vim.schedule(function()
---       if vim.fn.argc() == 0 then
---         vim.cmd("enew")
---         vim.cmd("silent! bd 1")
---       end
---     end)
---   end,
--- })
 vim.api.nvim_create_autocmd("VimLeave", {
   callback = function()
     vim.opt.guicursor = "a:ver20"
