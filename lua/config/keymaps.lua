@@ -38,6 +38,7 @@ map({ "n", "t", "i" }, "<C-/>", utils.ToggleTerminal, { desc = "Toggle Terminal"
 map({ "n", "t", "i" }, "<C-\\>", utils.ToggleTmuxTerminal, { desc = "Toggle Terminal" })
 map({ "n", "t", "i" }, "<C-_>", utils.ToggleTerminal, { desc = "Toggle Terminal" })
 map({ "t" }, "<C-n>", [[<C-\><C-n>]], { desc = "Go normanl mode from terminal" })
+map({ "t" }, "<C-u>", [[<C-\><C-n><C-u>]], { desc = "Go normanl mode from terminal" })
 map("t", "<C-c><C-c>", [[<C-\><C-n>:bd!<CR>]], { desc = "Fast kill terminal" })
 
 --
