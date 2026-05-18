@@ -51,9 +51,9 @@ linters:
     - wsl
     - varnamelen
     - funlen
-    - tagalign 
+    - tagalign
     - dupl
-    - whitespace 
+    - whitespace
 
   exclusions:
     presets:
