@@ -199,3 +199,8 @@ vim.api.nvim_create_autocmd("FileType", {
 --     end)
 --   end,
 -- })
+vim.api.nvim_create_autocmd("VimLeave", {
+  callback = function()
+    vim.opt.guicursor = "a:ver20"
+  end,
+})
