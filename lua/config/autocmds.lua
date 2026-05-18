@@ -195,13 +195,24 @@ vim.api.nvim_create_autocmd("VimLeave", {
 })
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
   callback = function()
-    if vim.bo.buftype == "terminal" then
-      local current_line = vim.api.nvim_win_get_cursor(0)[1]
-      local last_line = vim.api.nvim_buf_line_count(0)
+    if vim.bo.buftype ~= "terminal" then
+      return
+    end
 
-      if current_line == last_line then
-        vim.cmd("startinsert")
+    local current_line = vim.api.nvim_win_get_cursor(0)[1]
+    local trailing_lines = vim.api.nvim_buf_get_lines(0, current_line, -1, false)
+
+    for _, line in ipairs(trailing_lines) do
+      local clean_line = line:gsub("%s", "")
+      print(#clean_line)
+      if #clean_line > 0 then
+        print(line)
+        return
       end
     end
+
+    vim.defer_fn(function()
+      vim.cmd("startinsert")
+    end, 25)
   end,
 })
