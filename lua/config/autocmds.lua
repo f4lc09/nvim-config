@@ -204,9 +204,7 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
 
     for _, line in ipairs(trailing_lines) do
       local clean_line = line:gsub("%s", "")
-      print(#clean_line)
       if #clean_line > 0 then
-        print(line)
         return
       end
     end
