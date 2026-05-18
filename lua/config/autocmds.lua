@@ -1,4 +1,5 @@
 local utils = require("config.autocmds_utils")
+local key_utils = require("config.keymap_utils")
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "http",
@@ -211,16 +212,36 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
 
     vim.defer_fn(function()
       vim.cmd("startinsert")
-      vim.opt.guicursor = "v:hor20-Cursor,t:ver25,c:ver20"
+      vim.opt.guicursor = "v:hor20-Cursor,i:ver25,t:ver25,c:ver20"
     end, 10)
   end,
 })
 vim.api.nvim_create_autocmd("BufLeave", {
   pattern = "*",
-  callback = function()
+  callback = function(ev)
+    local bufnr = ev.buf
+    if vim.bo[bufnr].filetype == "text.kulala_ui" then
+      local win_id = vim.fn.bufwinid(bufnr)
+      vim.schedule(function()
+        if vim.api.nvim_win_is_valid(win_id) then
+          vim.api.nvim_win_close(win_id, false)
+        end
+      end)
+    end
+  end,
+})
+vim.api.nvim_create_autocmd("BufEnter", {
+  pattern = "*",
+  callback = function(ev)
     if vim.bo.filetype ~= "text.kulala_ui" then
       return
     end
-    vim.cmd("bd!")
+
+    vim.keymap.set("n", "q", function()
+      vim.cmd("bd!")
+    end, {
+      desc = "Leave",
+      buffer = ev.buf,
+    })
   end,
 })
