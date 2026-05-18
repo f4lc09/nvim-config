@@ -26,6 +26,45 @@ return {
         },
       },
       actions = {
+        explorer_paste = function(picker, item) --[[Override]]
+          local Tree = require("snacks.explorer.tree")
+          local files = vim.split(vim.fn.getreg(vim.v.register or "+") or "", "\n", { plain = true })
+          files = vim.tbl_filter(function(file)
+            return file ~= "" and vim.uv.fs_stat(file) ~= nil
+          end, files)
+          if #files == 0 then
+            return Snacks.notify.warn(("The `%s` register does not contain any files"):format(vim.v.register or "+"))
+          end
+          local dir = picker:dir()
+
+          for _, file in ipairs(files) do
+            if file == dir then
+              Snacks.notify.warn(string.format("Skip recursive copy: %s", file))
+            else
+              local dst = vim.fs.joinpath(dir, vim.fn.fnamemodify(file, ":t"))
+              local dst_unique = dst
+              local count = 0
+              while vim.uv.fs_stat(dst_unique) do
+                count = count + 1
+                dst_unique = string.format("%s (copy %d)", dst, count)
+              end
+              Snacks.picker.util.copy_path(file, dst_unique)
+            end
+          end
+
+          Tree:refresh(dir)
+          Tree:open(dir)
+          picker:update({ target = dir })
+
+          local Actions = require("snacks.explorer.actions")
+          Actions.update(picker, { refresh = true })
+
+          -- НАЙТИ И ОТКРЫТЬ ПАПКУ, ЕСЛИ ОНА ЗАКРЫТА
+          local current_item = picker:current()
+          if current_item and current_item.dir and not current_item.open then
+            picker:toggle(current_item)
+          end
+        end,
         explorer_esc = function(picker)
           local is_explorer = picker.opts.source == "explorer"
           local mode_info = vim.api.nvim_get_mode()
