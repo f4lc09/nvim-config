@@ -211,10 +211,10 @@ Snacks.config.picker.actions = vim.tbl_deep_extend("force", Snacks.config.picker
     lazygit.ToggleLazygit()
   end,
 })
-vim.keymap.set("n", "<leader>kn", function()
+map({ "n" }, "<leader>kn", function()
   require("kulala").scratchpad()
 end, { desc = "Focus Kulala Scratchpad" })
-vim.keymap.set("n", "<leader>ko", function()
+map({ "n" }, "<leader>ko", function()
   require("kulala").open()
   vim.defer_fn(function()
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-w>l", true, false, true), "n", true)
