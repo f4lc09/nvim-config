@@ -33,6 +33,13 @@ return {
           },
           opts = { skip = true },
         },
+        {
+          filter = {
+            event = "msg_show",
+            find = "buffers deleted",
+          },
+          opts = { skip = true },
+        },
       },
     },
   },

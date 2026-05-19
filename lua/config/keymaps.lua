@@ -2,7 +2,6 @@ local dap = require("dap")
 local dapui = require("dapui")
 local utils = require("config.keymap_utils")
 local lazygit = require("config.lazygit_utils")
-local bufferline = require("bufferline")
 
 local map = vim.keymap.set
 local unmap = vim.keymap.del
@@ -157,7 +156,12 @@ end, { silent = true, desc = "Previous buffer" })
 map({ "n" }, "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
 map({ "n" }, "<leader>bmf", "<cmd>BufferLineMoveNext<CR>", { desc = "Move buffer forward" })
 map({ "n" }, "<leader>bmb", "<cmd>BufferLineMovePrev<CR>", { desc = "Move buffer back" })
-map({ "n" }, "<leader>ba", "<cmd>%bd<CR>", { desc = "Close all buffers" })
+map(
+  { "n" },
+  "<leader>ba",
+  "<cmd>bufdo if &buftype == '' | bd | endif<cr>",
+  { silent = true, desc = "Close all buffers" }
+)
 map({ "n" }, "<leader>tc", "<cmd>tabclose<CR>", { desc = "Close tab" })
 map({ "n" }, "<leader>tn", "<cmd>tabnext<CR>", { desc = "Next tab" })
 map({ "n" }, "<leader>tp", "<cmd>tabprev<CR>", { desc = "Previoues tab" })
