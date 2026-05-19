@@ -3,6 +3,7 @@
 return {
   {
     "mfussenegger/nvim-dap",
+    lzay = true,
     dependencies = {
       "leoluz/nvim-dap-go",
     },
