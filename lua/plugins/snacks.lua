@@ -4,6 +4,15 @@ return {
   "folke/snacks.nvim",
   ---@type snacks.Config
   opts = {
+    dashboard = {
+      preset = {
+        keys = {
+          { icon = " ", key = "x", desc = "Lazy Extras", action = ":LazyExtras" },
+          { icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
+          { icon = " ", key = "q", desc = "Quit", action = ":qa" },
+        },
+      },
+    },
     terminal = {
       auto_insert = false,
       start_insert = true,
