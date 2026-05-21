@@ -187,6 +187,9 @@ return {
 
           os.execute("tmux split-window -v -c " .. path)
         end,
+        close_buffers = function(picker)
+          vim.api.nvim_input(vim.g.mapleader .. "bo")
+        end,
       },
       sources = {
         projects = {
@@ -263,6 +266,7 @@ return {
             ["<C-\\>"] = { "open_tmux_term_in_folder", mode = { "n", "i" } },
             ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
             ["<C-g>"] = { "lazygit", mode = { "n", "i" } },
+            ["<leader>ba"] = { "close_buffers", mode = { "n" } },
           },
         },
         input = {
@@ -275,6 +279,7 @@ return {
             ["<C-\\>"] = { "open_tmux_term_in_folder", mode = { "n", "i" } },
             ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
             ["<C-g>"] = { "lazygit", mode = { "n", "i" } },
+            ["<leader>ba"] = { "close_buffers", mode = { "n" } },
           },
         },
       },
