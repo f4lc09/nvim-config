@@ -237,7 +237,27 @@ function M.OpenFromClipboard()
 end
 
 function M.BufferCycle(num)
+  local prev_buf = vim.api.nvim_get_current_buf()
+
+  local is_empty_and_nameless = false
+  if
+    vim.api.nvim_buf_is_valid(prev_buf)
+    and vim.api.nvim_buf_get_name(prev_buf) == ""
+    and vim.bo[prev_buf].buftype == ""
+    and not vim.bo[prev_buf].modified
+  then
+    local lines = vim.api.nvim_buf_get_lines(prev_buf, 0, -1, false)
+    if #lines == 1 and lines[1] == "" then
+      is_empty_and_nameless = true
+    end
+  end
+
   bufferline.cycle(num)
+
+  if is_empty_and_nameless then
+    pcall(vim.api.nvim_buf_delete, prev_buf, { force = true })
+  end
+
   local mode = vim.api.nvim_get_mode().mode
   if mode == "i" then
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
