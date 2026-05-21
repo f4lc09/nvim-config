@@ -1,5 +1,4 @@
 local utils = require("config.autocmds_utils")
-local key_utils = require("config.keymap_utils")
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "http",
