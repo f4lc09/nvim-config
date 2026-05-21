@@ -47,26 +47,4 @@ vim.keymap.set("n", "<C-g>", function()
   M.ToggleLazygit()
 end, { noremap = true, silent = true })
 
-local resize_timer = vim.uv and vim.uv.new_timer() or vim.loop.new_timer()
-vim.api.nvim_create_autocmd({ "WinResized" }, {
-  callback = function()
-    if not (lazygit and lazygit:is_open()) then
-      return
-    end
-
-    resize_timer:stop()
-
-    resize_timer:start(
-      150,
-      0,
-      vim.schedule_wrap(function()
-        if lazygit and lazygit:is_open() then
-          M.ToggleLazygit()
-          M.ToggleLazygit()
-        end
-      end)
-    )
-  end,
-})
-
 return M
