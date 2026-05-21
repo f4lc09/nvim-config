@@ -50,7 +50,6 @@ function M.SaveSessionAtGitRoot()
 end
 
 function M.RestoreCWDFromSession()
-  -- 1. Проверяем наличие сессии
   local session_file = vim.v.this_session
   if session_file == "" then
     return
@@ -69,10 +68,9 @@ function M.RestoreCWDFromSession()
 
   -- 4. ГЛАВНОЕ УСЛОВИЕ: Если буфер не сохранен (пустое имя)
   if buf_name == "" then
-    local session_dir = vim.fn.fnamemodify(session_file, ":p:h")
-
-    -- Меняем только если путь действительно отличается
-    if vim.fn.getcwd() ~= session_dir then
+    local session_dir = vim.fn.fnamemodify(session_file, ":p:h") .. "/"
+    local current_dir = vim.fn.getcwd() .. "/"
+    if not vim.startswith(current_dir, session_dir) then
       local save_ignore = vim.opt.eventignore:get()
       vim.opt.eventignore:append("all")
       pcall(vim.api.nvim_set_current_dir, session_dir)
