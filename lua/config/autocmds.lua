@@ -85,7 +85,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 vim.api.nvim_create_autocmd("BufLeave", {
   group = vim.api.nvim_create_augroup("CleanLastNoName", { clear = true }),
   callback = function(args)
-    local bufnr = args.buf -- буфер, который покидаем
+    local bufnr = args.buf
 
     local name = vim.api.nvim_buf_get_name(bufnr)
     local bt = vim.bo[bufnr].buftype
@@ -216,17 +216,11 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
     end, 10)
   end,
 })
-vim.api.nvim_create_autocmd("BufLeave", {
+vim.api.nvim_create_autocmd("WinLeave", {
   pattern = "*",
-  callback = function(ev)
-    local bufnr = ev.buf
-    if vim.bo[bufnr].filetype:match("kulala_ui$") then
-      local win_id = vim.fn.bufwinid(bufnr)
-      vim.schedule(function()
-        if vim.api.nvim_win_is_valid(win_id) then
-          vim.api.nvim_win_close(win_id, false)
-        end
-      end)
+  callback = function()
+    if vim.bo.filetype == "json.kulala_ui" or vim.bo.filetype == "kulala_ui" then
+      vim.cmd("close")
     end
   end,
 })
