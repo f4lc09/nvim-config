@@ -46,6 +46,7 @@ return {
           end
           local dir = picker:dir()
 
+          local first_pasted_dst = nil
           for _, file in ipairs(files) do
             if file == dir then
               Snacks.notify.warn(string.format("Skip recursive copy: %s", file))
@@ -58,12 +59,14 @@ return {
                 dst_unique = string.format("%s (copy %d)", dst, count)
               end
               Snacks.picker.util.copy_path(file, dst_unique)
+              if not first_pasted_dst then
+                first_pasted_dst = dst_unique
+              end
             end
           end
 
           Tree:refresh(dir)
           Tree:open(dir)
-          picker:update({ target = dir })
 
           local Actions = require("snacks.explorer.actions")
           Actions.update(picker, { refresh = true })
@@ -72,6 +75,10 @@ return {
           local current_item = picker:current()
           if current_item and current_item.dir and not current_item.open then
             picker:toggle(current_item)
+          end
+
+          if first_pasted_dst then
+            Actions.update(picker, { target = first_pasted_dst, refresh = true })
           end
         end,
         explorer_esc = function(picker)
