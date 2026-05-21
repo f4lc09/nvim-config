@@ -219,7 +219,7 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
 vim.api.nvim_create_autocmd("WinLeave", {
   pattern = "*",
   callback = function()
-    if vim.bo.filetype == "json.kulala_ui" or vim.bo.filetype == "kulala_ui" then
+    if string.find(vim.bo.filetype, "kulala_ui") then
       vim.cmd("close")
     end
   end,
