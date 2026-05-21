@@ -220,7 +220,14 @@ vim.api.nvim_create_autocmd("WinLeave", {
   pattern = "*",
   callback = function()
     if string.find(vim.bo.filetype, "kulala_ui") then
-      vim.cmd("close")
+      local win_id = vim.api.nvim_get_current_win()
+      vim.schedule(function()
+        if vim.api.nvim_win_is_valid(win_id) then
+          pcall(function()
+            vim.api.nvim_win_close(win_id, false)
+          end)
+        end
+      end)
     end
   end,
 })
