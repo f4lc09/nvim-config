@@ -123,8 +123,35 @@ map({ "n" }, "yy", "m`0y$``", { noremap = true })
 -- Snacks
 unmap("n", "<leader>e")
 unmap("n", "<leader>E")
+local last_file = nil
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+  callback = function(args)
+    local name = vim.api.nvim_buf_get_name(args.buf)
+    if name ~= "" and vim.fn.filereadable(name) == 1 then
+      last_file = name
+    end
+  end,
+})
+local function focus_file(picker)
+  vim.schedule(function()
+    if not picker then
+      return
+    end
+    if not last_file then
+      return
+    end
+
+    local Actions = require("snacks.explorer.actions")
+    local current_file = picker:current()
+
+    if current_file ~= last_file then
+      Actions.update(picker, { target = last_file, refresh = true })
+    end
+  end)
+end
 map("n", "<leader>e", function()
-  Snacks.explorer()
+  local picker = Snacks.explorer()
+  focus_file(picker)
 end, { desc = "Snacks (Root Dir)" })
 map("n", "<leader>E", function()
   Snacks.picker.explorer()
