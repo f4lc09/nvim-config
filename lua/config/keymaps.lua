@@ -172,6 +172,15 @@ map({ "n" }, "<leader><C-r>", "<cmd>e<cr>", { desc = "Reload buffer" })
 -- GIT Comannds
 map({ "v", "x" }, "<leader>go", "<Esc><cmd>'<,'>GBrowse<cr>", { noremap = true, desc = "Git Open Remote" })
 map({ "n" }, "<leader>go", "<cmd>GBrowse<cr>", { noremap = true, silent = true, desc = "Git Open Remote" })
+map(
+  { "n" },
+  "<leader>gfh",
+  "<cmd>DiffviewFileHistory<cr>",
+  { noremap = true, silent = true, desc = "Git Open File History" }
+)
+map({ "n" }, "<leader>gfs", function()
+  vim.fn.system({ "git", "add", vim.api.nvim_buf_get_name(0) })
+end, { noremap = true, silent = true, desc = "Git Stage File" })
 map("n", "<leader>gr", utils.OpenRepository, { desc = "Git Remote Root" })
 
 --
