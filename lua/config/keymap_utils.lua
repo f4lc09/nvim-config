@@ -174,7 +174,7 @@ end
 function M.ToggleTerminal()
   local term = Snacks.terminal.get(nil, { create = false, cwd = vim.fn.getcwd() })
 
-  if term and term:valid() and vim.api.nvim_win_is_valid(term.win) then
+  if term and term:valid() and vim.api.nvim_win_is_valid(term.win) and vim.api.nvim_get_current_win() ~= term.win then
     term:focus()
     return
   end
@@ -265,16 +265,18 @@ function M.BufferCycle(num)
 end
 
 function M.BufferDelete()
-  local buf = vim.api.nvim_get_current_buf()
-  local listed = vim.fn.getbufinfo({ buflisted = 1 })
+  local bufnr = vim.api.nvim_get_current_buf()
+  local listed = vim.tbl_filter(function(b)
+    return vim.bo[b].buflisted
+  end, vim.api.nvim_list_bufs())
 
-  if #listed <= 1 then
+  if #listed == 1 then
+    vim.cmd("bdelete " .. bufnr)
     vim.cmd("enew")
   else
-    vim.cmd("bprevious")
+    vim.cmd("bp | bd #")
   end
 
-  vim.cmd("bd " .. buf)
   local mode = vim.api.nvim_get_mode().mode
   if mode == "i" then
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
