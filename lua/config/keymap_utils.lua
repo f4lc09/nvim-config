@@ -265,7 +265,16 @@ function M.BufferCycle(num)
 end
 
 function M.BufferDelete()
-  vim.cmd("bdelete")
+  local buf = vim.api.nvim_get_current_buf()
+  local listed = vim.fn.getbufinfo({ buflisted = 1 })
+
+  if #listed <= 1 then
+    vim.cmd("enew")
+  else
+    vim.cmd("bprevious")
+  end
+
+  vim.cmd("bd " .. buf)
   local mode = vim.api.nvim_get_mode().mode
   if mode == "i" then
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)

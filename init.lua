@@ -22,3 +22,12 @@ vim.g.root_spec = { { ".git", "lua" }, "cwd", "lsp" }
 vim.g.go_debug_log_output = ""
 vim.o.conceallevel = 0
 vim.opt.guicursor:append("v:hor20-Cursor,t:ver25,c:ver20")
+vim.api.nvim_create_autocmd("User", {
+  pattern = "SnacksDashboardOpened",
+  callback = function(args)
+    vim.api.nvim_clear_autocmds({
+      event = "WinResized",
+      group = "snacks_dashboard",
+    })
+  end,
+})
