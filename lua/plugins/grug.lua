@@ -5,11 +5,11 @@ return {
       {
         "<leader>sr",
         function()
-          local grug = require("grug-far")
-          grug.open({
+          require("grug-far").open({
             transient = true,
             prefills = {
               filesFilter = nil,
+              flags = "-F --multiline",
             },
           })
         end,
