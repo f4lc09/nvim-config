@@ -172,10 +172,10 @@ end, { desc = "Grep Word Under Cursor (Snacks)" })
 
 --
 -- Buffers and tabs
-map({ "n", "v", "i" }, ">", function()
+map({ "n", "v", "i" }, ">", function()
   utils.BufferCycle(1)
 end, { silent = true, desc = "Next buffer" })
-map({ "n", "v", "i" }, "<", function()
+map({ "n", "v", "i" }, "<", function()
   utils.BufferCycle(-1)
 end, { silent = true, desc = "Previous buffer" })
 map({ "n", "v", "i" }, "w", function()

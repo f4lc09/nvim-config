@@ -273,17 +273,33 @@ function M.BufferDelete()
   if #listed == 0 then
     return
   end
-  if #listed == 1 then
-    vim.cmd("bdelete " .. bufnr)
-    vim.cmd("enew")
-  else
-    vim.cmd("bp | bd #")
-  end
 
-  local mode = vim.api.nvim_get_mode().mode
-  if mode == "i" then
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+  function force_delete()
+    local mode = vim.api.nvim_get_mode().mode
+    if mode == "i" then
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+    end
+
+    if #listed == 1 then
+      vim.cmd("bdelete " .. bufnr)
+      vim.cmd("enew")
+    else
+      vim.cmd("bp | bd #")
+    end
   end
+  if vim.bo[bufnr].modified then
+    local choice = vim.fn.confirm("File is modified! Save changes?", "&Yes\n&No\n&Cancel", 1)
+
+    if choice == 1 then
+      vim.cmd("write")
+      force_delete()
+    elseif choice == 2 then
+      vim.cmd("setlocal nomodified")
+      force_delete()
+    end
+    return
+  end
+  force_delete()
 end
 
 return M
