@@ -270,6 +270,9 @@ function M.BufferDelete()
     return vim.bo[b].buflisted
   end, vim.api.nvim_list_bufs())
 
+  if #listed == 0 then
+    return
+  end
   if #listed == 1 then
     vim.cmd("bdelete " .. bufnr)
     vim.cmd("enew")
