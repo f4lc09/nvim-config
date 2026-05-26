@@ -178,7 +178,7 @@ end, { silent = true, desc = "Next buffer" })
 map({ "n", "v", "i" }, "<", function()
   utils.BufferCycle(-1)
 end, { silent = true, desc = "Previous buffer" })
-map({ "n", "v", "i" }, "w", function()
+map({ "n", "v", "i" }, "w", function()
   utils.BufferDelete()
 end, { silent = true, desc = "Delete buffer" })
 map({ "n" }, "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
@@ -187,7 +187,7 @@ map({ "n" }, "<leader>bmb", "<cmd>BufferLineMovePrev<CR>", { desc = "Move buffer
 map(
   { "n" },
   "<leader>ba",
-  "<cmd>bufdo if &buftype == '' | bd | endif<cr>",
+  "<cmd>bufdo if &buftype == '' || &buftype == 'acwrite' | bd | endif<cr>",
   { silent = true, desc = "Close all buffers" }
 )
 map({ "n" }, "<leader>tc", "<cmd>tabclose<CR>", { desc = "Close tab" })
