@@ -49,6 +49,21 @@ vim.api.nvim_create_autocmd("DirChanged", {
       end)
     end
     utils.UpdateTmuxWindow()
+    if vim.bo.filetype == "snacks_dashboard" then
+      local bufs = vim.tbl_filter(function(b)
+        return vim.api.nvim_buf_is_valid(b) and vim.bo[b].buflisted
+      end, vim.api.nvim_list_bufs())
+
+      if #bufs > 0 then
+        for _, b in ipairs(bufs) do
+          print(vim.bo[b].filetype)
+          if vim.bo[b].filetype ~= "snacks_dashboard" then
+            vim.cmd("buffer " .. b)
+            break
+          end
+        end
+      end
+    end
   end,
 })
 vim.api.nvim_create_autocmd({ "FileType" }, {
