@@ -193,6 +193,23 @@ return {
       },
       sources = {
         projects = {
+          on_show = function(picker)
+            local bufnr = picker.input.win.buf
+            vim.keymap.set({ "i", "n" }, "<C-w>", function()
+              if vim.api.nvim_get_mode().mode == "n" then
+                return
+              end
+              local col = vim.fn.col(".")
+              local line = vim.fn.getline(".")
+              local last_col = #line
+              if col >= last_col - 1 then
+                vim.cmd('normal! vb"_d')
+                return
+              end
+              vim.cmd('normal! vb"_dh')
+              -- vim.api.nvim_feedkeys(keys, "n", false)
+            end, { buffer = bufnr, nowait = true, desc = "Кастомный Ctrl+W в проектах" })
+          end,
           layout = {
             preview = false,
           },
