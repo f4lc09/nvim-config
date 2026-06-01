@@ -19,6 +19,8 @@ map("n", "<leader>dt", dapui.toggle, { desc = "Dap Toggle UI" })
 -- Override common moves
 map({ "n", "v" }, "<C-END>", "G", { noremap = true, silent = true, desc = "Go to the end of the file" })
 map({ "n", "v" }, "<C-HOME>", "gg", { noremap = true, silent = true, desc = "Go to the start of the file" })
+map({ "n" }, "<", "<l", { noremap = true, silent = true, desc = "Indent line back" })
+map({ "n" }, ">", ">l", { noremap = true, silent = true, desc = "Indent line" })
 map({ "n", "v" }, "G", "G$", { noremap = true, silent = true, desc = "Go to the end of the file" })
 map({ "n", "v" }, "gg", "gg^", { noremap = true, silent = true, desc = "Go to the start of the file" })
 map({ "n", "v" }, "<C-y>", "<cmd>%y<CR>", { noremap = true, silent = true, desc = "Yank whole file" })
