@@ -246,6 +246,7 @@ return {
             "**/.git",
             "**/.Session.vim",
             "**/*.pb.go",
+            "**/.venv",
           },
         },
         files = {
@@ -255,6 +256,7 @@ return {
             "**/.git",
             "**/.Session.vim",
             "**/*.pb.go",
+            "**/.venv",
           },
         },
         explorer = {
