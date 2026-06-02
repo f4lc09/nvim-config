@@ -244,11 +244,13 @@ return {
             local ret = {}
 
             vim.list_extend(ret, require("snacks.picker.format").file(item, picker))
-            for i = 1, 51 do
+            -- if #ret >= 2 then
+            --   ret[2] = { item.file }
+            -- end
+
+            while #ret > 2 do
               table.remove(ret)
             end
-
-            print(#ret)
 
             return ret
           end,
