@@ -240,6 +240,22 @@ return {
           end,
         },
         grep = {
+          format = function(item, picker)
+            local ret = {}
+
+            vim.list_extend(ret, require("snacks.picker.format").file(item, picker))
+            table.remove(ret)
+            table.remove(ret)
+            table.remove(ret)
+
+            return ret
+          end,
+          layout = {
+            preset = "vertical",
+            layout = {
+              width = 0.95,
+            },
+          },
           hidden = true,
           ignored = true,
           exclude = {
@@ -250,6 +266,12 @@ return {
           },
         },
         files = {
+          layout = {
+            preset = "vertical",
+            layout = {
+              width = 0.95,
+            },
+          },
           hidden = true,
           ignored = true,
           exclude = {
