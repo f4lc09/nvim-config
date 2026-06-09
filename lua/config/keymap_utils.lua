@@ -266,28 +266,31 @@ end
 
 local S = {}
 S.stack = {}
+S.closed = {}
+vim.api.nvim_create_autocmd("BufDelete", {
+  callback = function(args)
+    local name = vim.api.nvim_buf_get_name(args.buf)
+    if name ~= "" then
+      table.insert(S.closed, name)
+    end
+  end,
+})
 vim.api.nvim_create_autocmd("BufEnter", {
   callback = function()
     local buf = vim.api.nvim_get_current_buf()
-    if S.stack[#S.stack] ~= buf then
+
+    if vim.bo[buf].buflisted and S.stack[#S.stack] ~= buf then
       table.insert(S.stack, buf)
     end
   end,
 })
 function S.back()
-  S.stack = vim.tbl_filter(function(buf)
-    return vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buflisted
-  end, S.stack)
   local current = vim.api.nvim_get_current_buf()
 
   for i = #S.stack - 1, 1, -1 do
     local buf = S.stack[i]
 
-    if buf ~= current and vim.api.nvim_buf_is_valid(buf) then
-      for j = #S.stack, i + 1, -1 do
-        table.remove(S.stack, j)
-      end
-
+    if buf ~= current and vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buflisted then
       vim.cmd("buffer " .. buf)
       return
     end
@@ -310,6 +313,7 @@ function M.BufferDelete()
       vim.cmd("stopinsert")
     end
 
+    S.last_closed = vim.api.nvim_buf_get_name(bufnr)
     if #listed == 1 then
       vim.api.nvim_buf_delete(bufnr, { force = true })
       vim.cmd("enew")
@@ -340,6 +344,13 @@ function M.BufferDelete()
   end
 
   force_delete()
+end
+function M.Reopen()
+  local file = table.remove(S.closed)
+
+  if file and file ~= "" then
+    vim.cmd("edit " .. vim.fn.fnameescape(file))
+  end
 end
 
 return M
