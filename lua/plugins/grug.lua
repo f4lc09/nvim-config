@@ -10,6 +10,9 @@ return {
           require("grug-far").open({
             windowCreationCommand = "buffer " .. buf,
             transient = false,
+            openTargetWindow = {
+              preferredLocation = "prev",
+            },
             prefills = {
               filesFilter = nil,
               flags = "-F --multiline",
