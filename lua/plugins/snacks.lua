@@ -210,6 +210,12 @@ return {
               end
               vim.cmd('normal! vb"_d')
             end, { buffer = bufnr, nowait = true, desc = "Кастомный Ctrl+W в проектах" })
+            vim.keymap.set({ "i", "n", "v" }, "<M-d>", function()
+              if vim.api.nvim_get_mode().mode ~= "i" then
+                return
+              end
+              vim.cmd('normal! vw"_d')
+            end, { buffer = bufnr, nowait = true, desc = "Кастомный Ctrl+W в проектах" })
           end,
           layout = {
             preview = false,
