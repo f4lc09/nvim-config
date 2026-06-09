@@ -28,6 +28,8 @@ function M.ToggleLazygit()
         vim.api.nvim_buf_set_keymap(
           term.bufnr, "n", "<C-g>",
           [[<cmd>lua require("config.lazygit_utils").ToggleLazygit()<CR>]], { noremap = true, silent = true })
+        vim.keymap.set("t", "<C-Left>", "<M-Left>",  { buffer = term.bufnr, remap = true })
+        vim.keymap.set("t", "<C-Right>", "<M-Right>",  { buffer = term.bufnr, remap = true })
       end,
     })
   end
