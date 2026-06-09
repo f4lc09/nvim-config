@@ -264,8 +264,39 @@ function M.BufferCycle(num)
   end
 end
 
+local S = {}
+S.stack = {}
+vim.api.nvim_create_autocmd("BufEnter", {
+  callback = function()
+    local buf = vim.api.nvim_get_current_buf()
+    if S.stack[#S.stack] ~= buf then
+      table.insert(S.stack, buf)
+    end
+  end,
+})
+function S.back()
+  S.stack = vim.tbl_filter(function(buf)
+    return vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buflisted
+  end, S.stack)
+  local current = vim.api.nvim_get_current_buf()
+
+  for i = #S.stack - 1, 1, -1 do
+    local buf = S.stack[i]
+
+    if buf ~= current and vim.api.nvim_buf_is_valid(buf) then
+      for j = #S.stack, i + 1, -1 do
+        table.remove(S.stack, j)
+      end
+
+      vim.cmd("buffer " .. buf)
+      return
+    end
+  end
+end
+
 function M.BufferDelete()
   local bufnr = vim.api.nvim_get_current_buf()
+
   local listed = vim.tbl_filter(function(b)
     return vim.bo[b].buflisted
   end, vim.api.nvim_list_bufs())
@@ -274,21 +305,28 @@ function M.BufferDelete()
     return
   end
 
-  function force_delete()
-    local mode = vim.api.nvim_get_mode().mode
-    if mode == "i" then
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+  local function force_delete()
+    if vim.api.nvim_get_mode().mode == "i" then
+      vim.cmd("stopinsert")
     end
 
     if #listed == 1 then
-      vim.cmd("bdelete " .. bufnr)
+      vim.api.nvim_buf_delete(bufnr, { force = true })
       vim.cmd("enew")
-    else
-      vim.cmd("bp | bd #")
+      return
+    end
+
+    local origin = bufnr
+
+    S.back()
+
+    if vim.api.nvim_buf_is_valid(origin) then
+      vim.api.nvim_buf_delete(origin, { force = true })
     end
   end
+
   if vim.bo[bufnr].modified then
-    local choice = vim.fn.confirm("File is modified! Save changes?", "&Yes\n&No\n&Cancel", 1)
+    local choice = vim.fn.confirm("File is modified! Save?", "&Yes\n&No\n&Cancel", 1)
 
     if choice == 1 then
       vim.cmd("write")
@@ -297,8 +335,10 @@ function M.BufferDelete()
       vim.cmd("setlocal nomodified")
       force_delete()
     end
+
     return
   end
+
   force_delete()
 end
 

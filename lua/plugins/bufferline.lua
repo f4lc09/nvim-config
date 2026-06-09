@@ -3,6 +3,7 @@ return {
     "akinsho/bufferline.nvim",
     opts = {
       options = {
+        insert_at_end = true,
         always_show_bufferline = true,
         sort_by = nil,
         numbers = "none",
