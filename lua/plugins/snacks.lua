@@ -315,7 +315,7 @@ return {
           keys = {
             ["<C-f>"] = { "cd_to_folder", mode = { "n", "i" } },
             ["<C-y>"] = { "copy_file_name", mode = { "n", "i" } },
-            ["<C-\\>"] = { "open_tmux_term_in_folder", mode = { "n", "i" } },
+            ["<M-t>"] = { "open_tmux_term_in_folder", mode = { "n", "i" } },
             ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
             ["<C-g>"] = { "lazygit", mode = { "n", "i" } },
             ["<leader>ba"] = { "close_buffers", mode = { "n" } },

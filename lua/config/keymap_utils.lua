@@ -172,7 +172,7 @@ function M.SmartScroll(direction)
 end
 
 function M.ToggleTerminal()
-  local term = Snacks.terminal.get(nil, { create = false, cwd = vim.fn.getcwd() })
+  local term = Snacks.terminal.get(nil, { create = false })
 
   if term and term:valid() and vim.api.nvim_win_is_valid(term.win) and vim.api.nvim_get_current_win() ~= term.win then
     term:focus()

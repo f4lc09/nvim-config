@@ -22,12 +22,18 @@ function M.ToggleLazygit()
       },
       -- stylua: ignore
       on_open = function(term)
-        vim.api.nvim_buf_set_keymap(
-          term.bufnr, "t", "<C-g>",
-          [[<C-\><C-n><cmd>lua require("config.lazygit_utils").ToggleLazygit()<CR>]], { noremap = true, silent = true })
-        vim.api.nvim_buf_set_keymap(
-          term.bufnr, "n", "<C-g>",
-          [[<cmd>lua require("config.lazygit_utils").ToggleLazygit()<CR>]], { noremap = true, silent = true })
+        vim.defer_fn(function()
+          if vim.bo.buftype == "terminal" then
+            vim.cmd("startinsert!")
+          end
+        end, 50)
+
+        -- vim.api.nvim_buf_set_keymap(
+        --   term.bufnr, "t", "<C-g>",
+        --   [[<C-\><C-n><cmd>lua require("config.lazygit_utils").ToggleLazygit()<CR>]], { noremap = true, silent = true })
+        -- vim.api.nvim_buf_set_keymap(
+        --   term.bufnr, "t", "<C-g>",
+        --   [[<cmd>lua require("config.lazygit_utils").ToggleLazygit()<CR>]], { noremap = true, silent = true })
         vim.keymap.set("t", "<C-Left>", "<M-Left>",  { buffer = term.bufnr, remap = true })
         vim.keymap.set("t", "<C-Right>", "<M-Right>",  { buffer = term.bufnr, remap = true })
         vim.keymap.set("t", "<M-d>", "<M-Right><C-w>",  { buffer = term.bufnr, remap = true })
@@ -35,14 +41,9 @@ function M.ToggleLazygit()
     })
   end
   lazygit:toggle()
-  vim.defer_fn(function()
-    if vim.bo.buftype == "terminal" then
-      vim.cmd("startinsert!")
-    end
-  end, 50)
 end
 
-vim.keymap.set("n", "<C-g>", function()
+vim.keymap.set({ "n", "t" }, "<C-g>", function()
   local explorer = Snacks.picker.get({ source = "explorer" })[1]
   if explorer then
     explorer:close()
