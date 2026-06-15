@@ -171,13 +171,37 @@ function M.SmartScroll(direction)
   end
 end
 
-function M.ToggleTerminal()
-  local term = Snacks.terminal.get(nil, { create = false })
+local function get_snacks_terminal_wins()
+  local terminal_wins = {}
+  for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+    local bufnr = vim.api.nvim_win_get_buf(winid)
+    if vim.b[bufnr].snacks_terminal then
+      table.insert(terminal_wins, winid)
+    end
+  end
+  return terminal_wins
+end
 
-  if term and term:valid() and vim.api.nvim_win_is_valid(term.win) and vim.api.nvim_get_current_win() ~= term.win then
-    term:focus()
+local function has_value(tab, val)
+  for _, value in ipairs(tab) do
+    if value == val then
+      return true
+    end
+  end
+  return false
+end
+
+function M.ToggleTerminal()
+  local winids = get_snacks_terminal_wins()
+  if #winids > 0 and not has_value(winids, vim.api.nvim_get_current_win()) then
+    vim.api.nvim_set_current_win(winids[1])
     return
   end
+  if #winids > 0 and has_value(winids, vim.api.nvim_get_current_win()) then
+    vim.api.nvim_win_close(vim.api.nvim_get_current_win(), true)
+    return
+  end
+
   Snacks.terminal.toggle(nil, {
     cwd = vim.fn.getcwd(),
   })
