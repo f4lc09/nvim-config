@@ -114,7 +114,8 @@ return {
               vim.opt.eventignore = old_eventignore
             end
 
-            Snacks.explorer({ cwd = path })
+            local exp = Snacks.explorer({ cwd = path })
+            exp:action("explorer_close_all")
           end)
         end,
         cd_to_folder = function(picker)
