@@ -167,7 +167,7 @@ local function focus_file(picker)
     end
   end)
 end
-map("n", "<leader>e", function()
+map({ "n", "i", "t" }, "", function()
   local picker = Snacks.explorer()
   focus_file(picker)
 end, { desc = "Snacks (Root Dir)" })
