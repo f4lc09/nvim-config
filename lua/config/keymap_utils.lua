@@ -377,4 +377,28 @@ function M.Reopen()
   vim.api.nvim_win_set_cursor(0, item.pos)
 end
 
+function M.DelMarks()
+  local current_line = vim.api.nvim_win_get_cursor(0)[1]
+  local current_buf = vim.api.nvim_get_current_buf()
+  local marks_to_delete = {}
+  for _, mark_data in ipairs(vim.fn.getmarklist(current_buf)) do
+    local name = mark_data.mark:sub(2)
+    if mark_data.pos[2] == current_line and name:match("%l") then
+      table.insert(marks_to_delete, name)
+    end
+  end
+  for _, mark_data in ipairs(vim.fn.getmarklist()) do
+    local name = mark_data.mark:sub(2)
+    if mark_data.pos[1] == current_buf and mark_data.pos[2] == current_line and name:match("%u") then
+      table.insert(marks_to_delete, name)
+    end
+  end
+  if #marks_to_delete > 0 then
+    local marks_str = table.concat(marks_to_delete, " ")
+    vim.cmd("delmarks " .. marks_str)
+  else
+    print("На текущей строке нет меток")
+  end
+end
+
 return M
