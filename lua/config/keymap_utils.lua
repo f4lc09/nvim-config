@@ -317,8 +317,8 @@ function M.BufferDelete()
   local bufnr = vim.api.nvim_get_current_buf()
   local is_terminal = vim.api.nvim_get_option_value("buftype", { buf = bufnr }) == "terminal"
 
-  if is_terminal and vim.api.nvim_get_mode().mode == "n" then
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<leader>bd", true, false, true), "n", false)
+  if is_terminal and vim.api.nvim_get_mode().mode == "nt" then
+    vim.api.nvim_buf_delete(bufnr, { force = true })
     return
   end
 
