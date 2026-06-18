@@ -114,7 +114,7 @@ return {
               vim.opt.eventignore = old_eventignore
             end
 
-            local exp = Snacks.explorer({ cwd = path })
+            local exp = Snacks.explorer({ cwd = path, follow_file = false })
             exp:action("explorer_close_all")
           end)
         end,

@@ -315,6 +315,12 @@ end
 
 function M.BufferDelete()
   local bufnr = vim.api.nvim_get_current_buf()
+  local is_terminal = vim.api.nvim_get_option_value("buftype", { buf = bufnr }) == "terminal"
+
+  if is_terminal and vim.api.nvim_get_mode().mode == "n" then
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<leader>bd", true, false, true), "n", false)
+    return
+  end
 
   local listed = vim.tbl_filter(function(b)
     return vim.bo[b].buflisted
