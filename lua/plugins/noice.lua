@@ -47,6 +47,13 @@ return {
           },
           opts = { skip = true },
         },
+        {
+          filter = {
+            event = "msg_show",
+            find = "parser is ready!",
+          },
+          opts = { skip = true },
+        },
       },
     },
   },
