@@ -335,7 +335,7 @@ function M.BufferDelete()
       file = vim.api.nvim_buf_get_name(bufnr),
       pos = pos,
     })
-    if #listed == 1 then
+    if #listed == 1 and listed[1] == vim.api.nvim_get_current_buf() then
       vim.api.nvim_buf_delete(bufnr, { force = true })
       vim.cmd("enew")
       return
