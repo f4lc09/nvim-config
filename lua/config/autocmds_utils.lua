@@ -79,10 +79,10 @@ function M.RestoreCWDFromSession()
   end
 end
 
+local success, kulala_module = pcall(require, "kulala")
 function M.SetupKulalaKeymaps(bufnr)
   local map = vim.keymap.set
   map("n", "<Enter>", function()
-    local success, kulala_module = pcall(require, "kulala")
     if success and kulala_module then
       kulala_module.run()
       kulala_module.open()
