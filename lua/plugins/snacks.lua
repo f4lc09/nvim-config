@@ -266,6 +266,7 @@ return {
             preset = "vertical",
             layout = {
               width = 0.95,
+              height = 0.95,
             },
           },
           hidden = true,
@@ -282,6 +283,7 @@ return {
             preset = "vertical",
             layout = {
               width = 0.95,
+              height = 0.95,
             },
           },
           hidden = true,
@@ -305,8 +307,8 @@ return {
             preset = "select",
             layout = {
               -- position = "right",
-              width = 0.6,
-              height = 0.8,
+              width = 0.95,
+              height = 0.95,
             },
           },
         },

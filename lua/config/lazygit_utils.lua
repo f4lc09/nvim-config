@@ -16,6 +16,14 @@ function M.ToggleLazygit()
       direction = "float",
       float_opts = {
         border = "none",
+        height = function()
+          return vim.o.lines
+        end,
+        width = function()
+          return vim.o.columns
+        end,
+        row = 0,
+        col = 0,
       },
       highlights = {
         Border = { link = "FloatBorder" },

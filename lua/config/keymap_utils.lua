@@ -140,34 +140,34 @@ function M.SmartScroll(direction)
     local winheight = vim.api.nvim_win_get_height(0)
     local middle = math.floor(winheight / 2)
 
-    if (winline - middle > 1 and direction == "up") or (winline - middle < -1 and direction == "down") then
-      local move = middle - winline
-      local letter = "k"
-      if direction == "down" then
-        letter = "j"
-      end
-      vim.cmd(string.format("normal! %d%s", move, letter))
-      return
-    end
+    -- if (winline - middle > 1 and direction == "up") or (winline - middle < -1 and direction == "down") then
+    --   local move = middle - winline
+    --   local letter = "k"
+    --   if direction == "down" then
+    --     letter = "j"
+    --   end
+    --   vim.cmd(string.format("normal! %d%s", move, letter))
+    --   return
+    -- end
 
     local lines = math.floor(winheight / 2)
     if direction == "down" then
       require("neoscroll").scroll(lines, {
-        move_cursor = true,
+        move_cursor = false,
         duration = 150, -- время в мс
         easing = "linear", -- тип анимации
       })
     else
       require("neoscroll").scroll(-lines, {
-        move_cursor = true,
+        move_cursor = false,
         duration = 150,
         easing = "linear",
       })
     end
 
-    vim.schedule(function()
-      vim.cmd("normal! zz")
-    end)
+    -- vim.schedule(function()
+    --   vim.cmd("normal! zz")
+    -- end)
   end
 end
 
