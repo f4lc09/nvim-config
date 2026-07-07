@@ -113,9 +113,11 @@ return {
               vim.api.nvim_set_current_dir(path)
               vim.opt.eventignore = old_eventignore
             end
-
             local exp = Snacks.explorer({ cwd = path, follow_file = false })
-            exp:action("explorer_close_all")
+
+            vim.defer_fn(function()
+              exp:action("explorer_close_all")
+            end, 10)
           end)
         end,
         cd_to_folder = function(picker)

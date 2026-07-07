@@ -38,6 +38,7 @@ map({ "n", "v" }, "<M-v>", "<C-v>", { noremap = true, silent = true, desc = "Yan
 map({ "n", "v" }, "m", "`", { noremap = true, silent = true, desc = "Go mark" })
 map({ "n", "v" }, "mm", "m", { noremap = true, silent = true, desc = "Make mark" })
 map("n", "dm", utils.DelMarks, { desc = "Удалить все метки на текущей строке" })
+map("n", "yb", "vby", { noremap = true, silent = true, desc = "Yank backwards" })
 
 map("n", "v", "<Esc>v", { noremap = true, silent = true })
 map("n", "<C-d>", utils.SmartScroll("down"))
