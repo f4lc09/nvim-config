@@ -235,7 +235,8 @@ map("n", "<leader>gr", utils.OpenRepository, { desc = "Git Remote Root" })
 --
 -- Remap Lazy l -> lv
 unmap({ "n" }, "<leader>l")
-map({ "n" }, "<leader>lv", "<cmd>Lazy<CR>")
+map({ "n" }, "<leader>ll", "<cmd>Lazy<CR>")
+map({ "n" }, "<leader>le", "<cmd>LazyExtras<CR>")
 
 --
 -- And others
