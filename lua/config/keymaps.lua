@@ -233,10 +233,11 @@ end, { noremap = true, silent = true, desc = "Git Stage File" })
 map("n", "<leader>gr", utils.OpenRepository, { desc = "Git Remote Root" })
 
 --
--- Remap Lazy l -> lv
+-- Remap LazyVim
 unmap({ "n" }, "<leader>l")
 map({ "n" }, "<leader>ll", "<cmd>Lazy<CR>")
 map({ "n" }, "<leader>le", "<cmd>LazyExtras<CR>")
+map({ "n" }, "<leader>vq", "<cmd>qa<CR>")
 
 --
 -- And others
