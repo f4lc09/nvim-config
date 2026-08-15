@@ -116,7 +116,8 @@ return {
             local exp = Snacks.explorer({ cwd = path, follow_file = false })
 
             vim.defer_fn(function()
-              exp:action("explorer_close_all")
+              local Actions = require("snacks.explorer.actions")
+              Actions.update(exp, { target = current_root, refresh = true })
             end, 10)
           end)
         end,

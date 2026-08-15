@@ -1,6 +1,7 @@
 local dap = require("dap")
 local dapui = require("dapui")
 local utils = require("config.keymap_utils")
+local au_utils = require("config.autocmds_utils")
 local lazygit = require("config.lazygit_utils")
 
 local map = vim.keymap.set
@@ -179,7 +180,17 @@ map({ "n", "i", "t" }, "", function()
   Snacks.picker.projects()
 end, { desc = "Projects" })
 
-map("n", "<leader>E", function()
+map("n", "<leader>e", function()
+  local session_file = vim.v.this_session
+  if session_file == "" then
+    return
+  end
+  local save_ignore = vim.opt.eventignore:get()
+  vim.opt.eventignore:append("all")
+  local session_dir = vim.fn.fnamemodify(session_file, ":p:h") .. "/"
+  pcall(vim.api.nvim_set_current_dir, session_dir)
+  vim.opt.eventignore = save_ignore
+
   Snacks.picker.explorer()
 end, { desc = "Snacks Picker Explorer" })
 map("n", "<leader><space>", function()
