@@ -30,7 +30,9 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
   command = "set conceallevel=0",
 })
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
-  callback = utils.UpdateTmuxWindow,
+  callback = function()
+    openProject()
+  end,
 })
 vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
   group = vim.api.nvim_create_augroup("AutoSessionGitRoot", { clear = true }),
@@ -39,33 +41,38 @@ vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
 vim.api.nvim_create_autocmd("DirChanged", {
   pattern = "*",
   callback = function()
-    local session_file = vim.fn.getcwd() .. "/.Session.vim"
-    if vim.fn.filereadable(session_file) == 1 then
-      vim.cmd("source " .. session_file)
-      vim.schedule(function()
-        vim.cmd("syntax enable")
-        vim.cmd("doautocmd BufRead")
-        vim.cmd("set showtabline=2")
-      end)
-    end
-    utils.UpdateTmuxWindow()
-    if vim.bo.filetype == "snacks_dashboard" then
-      local bufs = vim.tbl_filter(function(b)
-        return vim.api.nvim_buf_is_valid(b) and vim.bo[b].buflisted
-      end, vim.api.nvim_list_bufs())
+    openProject()
+  end,
+})
 
-      if #bufs > 0 then
-        for _, b in ipairs(bufs) do
-          print(vim.bo[b].filetype)
-          if vim.bo[b].filetype ~= "snacks_dashboard" then
-            vim.cmd("buffer " .. b)
-            break
-          end
+function openProject()
+  local session_file = vim.fn.getcwd() .. "/.Session.vim"
+  if vim.fn.filereadable(session_file) == 1 then
+    vim.cmd("source " .. session_file)
+    vim.schedule(function()
+      vim.cmd("syntax enable")
+      vim.cmd("doautocmd BufRead")
+      vim.cmd("set showtabline=2")
+    end)
+  end
+  utils.UpdateTmuxWindow()
+  if vim.bo.filetype == "snacks_dashboard" then
+    local bufs = vim.tbl_filter(function(b)
+      return vim.api.nvim_buf_is_valid(b) and vim.bo[b].buflisted
+    end, vim.api.nvim_list_bufs())
+
+    if #bufs > 0 then
+      for _, b in ipairs(bufs) do
+        print(vim.bo[b].filetype)
+        if vim.bo[b].filetype ~= "snacks_dashboard" then
+          vim.cmd("buffer " .. b)
+          break
         end
       end
     end
-  end,
-})
+  end
+end
+
 vim.api.nvim_create_autocmd({ "FileType" }, {
   pattern = { "http", "yaml" },
   callback = function()
