@@ -216,52 +216,38 @@ vim.api.nvim_create_autocmd("WinLeave", {
     end
   end,
 })
--- local buf_cache = {}
---
--- local function split(line)
---   local col = line:find('"', 1, true)
---   if not col then
---     return { line }
---   end
---   return { line:sub(1, col - 1), line:sub(col) }
--- end
---
--- local function render(buf)
---   local orig = buf_cache[buf]
---   if not orig then
---     return
---   end
---
---   local out = {}
---
---   for _, line in ipairs(orig) do
---     local parts = split(line)
---     for _, p in ipairs(parts) do
---       table.insert(out, p)
---     end
---   end
---
---   vim.api.nvim_buf_set_option(buf, "modifiable", true)
---   vim.api.nvim_buf_set_lines(buf, 0, -1, false, out)
--- end
---
--- local function enable(buf)
---   buf_cache[buf] = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
---
---   render(buf)
---
---   vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
---     buffer = buf,
---     callback = function()
---       buf_cache[buf] = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
---       render(buf)
---     end,
---   })
--- end
---
--- vim.api.nvim_create_autocmd("BufEnter", {
---   pattern = "proto",
---   callback = function(args)
---     enable(args.buf)
---   end,
--- })
+vim.api.nvim_create_autocmd("BufReadCmd", {
+  pattern = "jar://*",
+  callback = function(args)
+    local uri = args.match
+    local jar_path, class_path = uri:match("jar://(.*)!(.*)")
+    if jar_path and class_path then
+      class_path = class_path:gsub("^/", "")
+
+      -- 1. Создаем уникальный временный файл .class
+      local tmp_class_path = os.tmpname() .. ".class"
+
+      -- 2. Распаковываем байт-код во временный файл
+      local unzip_cmd = string.format("unzip -p %q %q > %q", jar_path, class_path, tmp_class_path)
+      os.execute(unzip_cmd)
+
+      -- 3. Запускаем javap на временном файле
+      local javap_cmd = string.format("javap -c -p %q", tmp_class_path)
+      local handle = io.popen(javap_cmd)
+      local decompiled_text = handle:read("*a") or ""
+      handle:close()
+
+      -- 4. Удаляем временный файл
+      os.remove(tmp_class_path)
+
+      -- 5. Заполняем буфер текстом
+      local lines = vim.split(decompiled_text:gsub("\r", ""), "\n")
+      vim.api.nvim_buf_set_lines(args.buf, 0, -1, false, lines)
+
+      -- 6. Настройки буфера
+      vim.api.nvim_set_option_value("readonly", true, { buf = args.buf })
+      vim.api.nvim_set_option_value("modified", false, { buf = args.buf })
+      vim.api.nvim_set_option_value("filetype", "java", { buf = args.buf })
+    end
+  end,
+})
