@@ -249,7 +249,7 @@ map("n", "<leader>gr", utils.OpenRepository, { desc = "Git Remote Root" })
 -- Remap LazyVim
 unmap({ "n" }, "<leader>l")
 map({ "n" }, "<leader>ll", "<cmd>Lazy<CR>")
-map({ "n" }, "<leader>le", "<cmd>LazyExtras<CR>")
+map({ "n" }, "<leader>lx", "<cmd>LazyExtras<CR>")
 map({ "n" }, "<leader>vq", "<cmd>qa<CR>")
 
 --

@@ -74,7 +74,7 @@ function openProject()
 end
 
 vim.api.nvim_create_autocmd({ "FileType" }, {
-  pattern = { "http", "yaml" },
+  pattern = { "http", "yaml", "kotlin" },
   callback = function()
     vim.b.autoformat = false
   end,
@@ -224,37 +224,68 @@ vim.api.nvim_create_autocmd("WinLeave", {
   end,
 })
 vim.api.nvim_create_autocmd("BufReadCmd", {
-  pattern = "jar://*",
+  pattern = { "jar://*", "jrt://*" },
   callback = function(args)
-    local uri = args.match
-    local jar_path, class_path = uri:match("jar://(.*)!(.*)")
-    if jar_path and class_path then
-      class_path = class_path:gsub("^/", "")
+    local uri = args.file
+    local buf = args.buf
 
-      -- 1. Создаем уникальный временный файл .class
-      local tmp_class_path = os.tmpname() .. ".class"
+    local client = vim.lsp.get_clients({
+      name = "kotlin_lsp",
+    })[1]
 
-      -- 2. Распаковываем байт-код во временный файл
-      local unzip_cmd = string.format("unzip -p %q %q > %q", jar_path, class_path, tmp_class_path)
-      os.execute(unzip_cmd)
-
-      -- 3. Запускаем javap на временном файле
-      local javap_cmd = string.format("javap -c -p %q", tmp_class_path)
-      local handle = io.popen(javap_cmd)
-      local decompiled_text = handle:read("*a") or ""
-      handle:close()
-
-      -- 4. Удаляем временный файл
-      os.remove(tmp_class_path)
-
-      -- 5. Заполняем буфер текстом
-      local lines = vim.split(decompiled_text:gsub("\r", ""), "\n")
-      vim.api.nvim_buf_set_lines(args.buf, 0, -1, false, lines)
-
-      -- 6. Настройки буфера
-      vim.api.nvim_set_option_value("readonly", true, { buf = args.buf })
-      vim.api.nvim_set_option_value("modified", false, { buf = args.buf })
-      vim.api.nvim_set_option_value("filetype", "java", { buf = args.buf })
+    if not client then
+      vim.notify("kotlin_lsp client not found", vim.log.levels.ERROR)
+      return
     end
+
+    vim.bo[buf].modifiable = true
+    vim.bo[buf].readonly = false
+    vim.bo[buf].swapfile = false
+    vim.bo[buf].buftype = "nofile"
+
+    local done = false
+
+    client:request("workspace/executeCommand", {
+      command = "decompile",
+      arguments = { uri },
+    }, function(err, result)
+      if err then
+        vim.schedule(function()
+          vim.notify(vim.inspect(err), vim.log.levels.ERROR)
+        end)
+
+        done = true
+        return
+      end
+
+      if not result or not result.code then
+        done = true
+        return
+      end
+
+      local lines = vim.split(result.code:gsub("\r\n", "\n"), "\n", { plain = true })
+
+      vim.schedule(function()
+        if not vim.api.nvim_buf_is_valid(buf) then
+          done = true
+          return
+        end
+
+        vim.bo[buf].modifiable = true
+
+        vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+        vim.bo[buf].syntax = "java"
+        vim.bo[buf].modifiable = false
+        vim.bo[buf].readonly = true
+        vim.bo[buf].modified = false
+
+        done = true
+      end)
+    end)
+
+    vim.wait(10000, function()
+      return done
+    end)
   end,
 })

@@ -8,6 +8,7 @@ return {
       yaml = {},
       go = { "goimports", "gofmt" },
       javascript = { "deno_fmt_js" },
+      kotlin = { "ktlint" },
     },
     lsp_format = "never",
     formatters = {
