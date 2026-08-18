@@ -365,5 +365,17 @@ vim.api.nvim_create_autocmd("BufEnter", {
         close_timer = nil
       end)
     )
+    vim.on_key(function()
+      if flash_picker and not flash_picker.closed then
+        flash_picker:close()
+        flash_picker = nil
+
+        if close_timer then
+          close_timer:stop()
+          close_timer:close()
+          close_timer = nil
+        end
+      end
+    end)
   end,
 })
