@@ -234,14 +234,8 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
     })[1]
 
     if not client then
-      vim.notify("kotlin_lsp client not found", vim.log.levels.ERROR)
       return
     end
-
-    vim.bo[buf].modifiable = true
-    vim.bo[buf].readonly = false
-    vim.bo[buf].swapfile = false
-    vim.bo[buf].buftype = "nofile"
 
     local done = false
 
@@ -249,16 +243,7 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
       command = "decompile",
       arguments = { uri },
     }, function(err, result)
-      if err then
-        vim.schedule(function()
-          vim.notify(vim.inspect(err), vim.log.levels.ERROR)
-        end)
-
-        done = true
-        return
-      end
-
-      if not result or not result.code then
+      if err or not result or not result.code then
         done = true
         return
       end
@@ -271,11 +256,14 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
           return
         end
 
-        vim.bo[buf].modifiable = true
-
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
-        vim.bo[buf].syntax = "java"
+        local ft = result.language and result.language:lower() or "kotlin"
+
+        vim.api.nvim_set_option_value("filetype", ft, {
+          buf = buf,
+        })
+
         vim.bo[buf].modifiable = false
         vim.bo[buf].readonly = true
         vim.bo[buf].modified = false
