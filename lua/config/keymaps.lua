@@ -147,32 +147,8 @@ map({ "n" }, "yy", "m`0y$``", { noremap = true })
 unmap("n", "<leader>e")
 unmap("n", "<leader>E")
 
--- local last_file = nil
--- vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
---   callback = function(args)
---     local name = vim.api.nvim_buf_get_name(args.buf)
---     if name ~= "" and vim.fn.filereadable(name) == 1 then
---       last_file = name
---     end
---   end,
--- })
--- local function focus_file(picker)
---   vim.schedule(function()
---     if not picker then
---       return
---     end
---     if not last_file then
---       return
---     end
---
---     local Actions = require("snacks.explorer.actions")
---     local current_file = picker:current()
---
---     if current_file ~= last_file then
---       Actions.update(picker, { target = last_file, refresh = true })
---     end
---   end)
--- end
+-- TODO: Open Explorer with previous cursor position
+-- Add "Get to root cwd (reset)", and focus current file
 local MAIN_EXPLORER_TITLE = "main_explorer"
 
 map({ "n", "i", "t" }, "", function()
@@ -200,10 +176,6 @@ map({ "n", "i", "t" }, "", function()
     },
   })
 end, { desc = "Toggle Explorer" })
--- map({ "n", "i", "t" }, "", function()
---   local picker = Snacks.explorer({ follow_file = true })
---   -- focus_file(picker)
--- end, { desc = "Snacks (Root Dir)" })
 
 map({ "n", "i", "t" }, "", function()
   Snacks.picker.projects()
