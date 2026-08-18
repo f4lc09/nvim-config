@@ -351,7 +351,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
     close_timer = vim.uv.new_timer()
 
     close_timer:start(
-      1500,
+      2000,
       0,
       vim.schedule_wrap(function()
         if flash_picker and not flash_picker.closed then
