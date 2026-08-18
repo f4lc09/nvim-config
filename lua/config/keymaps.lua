@@ -146,36 +146,65 @@ map({ "n" }, "yy", "m`0y$``", { noremap = true })
 -- Snacks
 unmap("n", "<leader>e")
 unmap("n", "<leader>E")
-local last_file = nil
-vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
-  callback = function(args)
-    local name = vim.api.nvim_buf_get_name(args.buf)
-    if name ~= "" and vim.fn.filereadable(name) == 1 then
-      last_file = name
-    end
-  end,
-})
-local function focus_file(picker)
-  vim.schedule(function()
-    if not picker then
-      return
-    end
-    if not last_file then
-      return
-    end
 
-    local Actions = require("snacks.explorer.actions")
-    local current_file = picker:current()
+-- local last_file = nil
+-- vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+--   callback = function(args)
+--     local name = vim.api.nvim_buf_get_name(args.buf)
+--     if name ~= "" and vim.fn.filereadable(name) == 1 then
+--       last_file = name
+--     end
+--   end,
+-- })
+-- local function focus_file(picker)
+--   vim.schedule(function()
+--     if not picker then
+--       return
+--     end
+--     if not last_file then
+--       return
+--     end
+--
+--     local Actions = require("snacks.explorer.actions")
+--     local current_file = picker:current()
+--
+--     if current_file ~= last_file then
+--       Actions.update(picker, { target = last_file, refresh = true })
+--     end
+--   end)
+-- end
+local MAIN_EXPLORER_TITLE = "main_explorer"
 
-    if current_file ~= last_file then
-      Actions.update(picker, { target = last_file, refresh = true })
-    end
-  end)
-end
 map({ "n", "i", "t" }, "", function()
-  local picker = Snacks.explorer()
-  focus_file(picker)
-end, { desc = "Snacks (Root Dir)" })
+  local found
+
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if vim.api.nvim_win_is_valid(win) then
+      local ok, title = pcall(vim.api.nvim_win_get_config, win)
+
+      if ok and title.title == MAIN_EXPLORER_TITLE then
+        found = win
+        break
+      end
+    end
+  end
+
+  if found then
+    vim.api.nvim_win_close(found, true)
+    return
+  end
+
+  Snacks.explorer({
+    win = {
+      title = MAIN_EXPLORER_TITLE,
+    },
+  })
+end, { desc = "Toggle Explorer" })
+-- map({ "n", "i", "t" }, "", function()
+--   local picker = Snacks.explorer({ follow_file = true })
+--   -- focus_file(picker)
+-- end, { desc = "Snacks (Root Dir)" })
+
 map({ "n", "i", "t" }, "", function()
   Snacks.picker.projects()
 end, { desc = "Projects" })
@@ -301,4 +330,3 @@ end, { desc = "Focus Kulala Scratchpad" })
 map({ "n" }, "<leader>ks", function()
   require("kulala").set_selected_env()
 end, { desc = "Select Enviroment" })
-map({ "n" }, "p", utils.Reopen)

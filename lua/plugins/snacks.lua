@@ -299,8 +299,13 @@ return {
           },
         },
         explorer = {
-          hidden = true,
+          hidden = false,
           ignored = true,
+          include = {
+            "**/.env",
+            ".gitignore",
+            ".gitlab-ci.yaml",
+          },
           exclude = {
             "**/.git",
             "**/.Session.vim",

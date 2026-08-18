@@ -288,31 +288,6 @@ function M.BufferCycle(num)
   end
 end
 
-local S = {}
-S.stack = {}
-S.closed = {}
-vim.api.nvim_create_autocmd("BufEnter", {
-  callback = function()
-    local buf = vim.api.nvim_get_current_buf()
-
-    if vim.bo[buf].buflisted and S.stack[#S.stack] ~= buf then
-      table.insert(S.stack, buf)
-    end
-  end,
-})
-function S.back()
-  local current = vim.api.nvim_get_current_buf()
-
-  for i = #S.stack - 1, 1, -1 do
-    local buf = S.stack[i]
-
-    if buf ~= current and vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buflisted then
-      vim.cmd("buffer " .. buf)
-      return
-    end
-  end
-end
-
 function M.BufferDelete()
   local bufnr = vim.api.nvim_get_current_buf()
   local is_terminal = vim.api.nvim_get_option_value("buftype", { buf = bufnr }) == "terminal"
@@ -335,12 +310,6 @@ function M.BufferDelete()
       vim.cmd("stopinsert")
     end
 
-    local win = vim.fn.bufwinid(bufnr)
-    local pos = win ~= -1 and vim.api.nvim_win_get_cursor(win) or { 1, 0 }
-    table.insert(S.closed, {
-      file = vim.api.nvim_buf_get_name(bufnr),
-      pos = pos,
-    })
     if #listed == 1 and listed[1] == vim.api.nvim_get_current_buf() then
       vim.api.nvim_buf_delete(bufnr, { force = true })
       vim.cmd("enew")
@@ -348,8 +317,6 @@ function M.BufferDelete()
     end
 
     local origin = bufnr
-
-    S.back()
 
     if vim.api.nvim_buf_is_valid(origin) then
       vim.api.nvim_buf_delete(origin, { force = true })
@@ -371,16 +338,6 @@ function M.BufferDelete()
   end
 
   force_delete()
-end
-function M.Reopen()
-  local item = table.remove(S.closed)
-
-  if not item then
-    return
-  end
-
-  vim.cmd("edit " .. vim.fn.fnameescape(item.file))
-  vim.api.nvim_win_set_cursor(0, item.pos)
 end
 
 function M.DelMarks()
