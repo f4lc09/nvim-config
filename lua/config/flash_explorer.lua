@@ -26,6 +26,7 @@ function M.ShowFlashExplorer(file)
 
   if flash_picker and not flash_picker.closed then
     flash_picker:close()
+    flash_picker = nil
   end
 
   if close_timer then
@@ -81,6 +82,7 @@ function M.ShowFlashExplorer(file)
     vim.schedule_wrap(function()
       if flash_picker and not flash_picker.closed then
         flash_picker:close()
+        flash_picker = nil
       end
 
       if close_timer == nil then
@@ -98,9 +100,8 @@ function M.ShowFlashExplorer(file)
     end
 
     if flash_picker and not flash_picker.closed then
-      vim.schedule(function()
-        flash_picker:close()
-      end)
+      flash_picker:close()
+      flash_picker = nil
 
       if close_timer then
         close_timer:stop()
