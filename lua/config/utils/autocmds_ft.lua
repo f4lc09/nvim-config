@@ -1,4 +1,4 @@
-local utils = require("config.autocmds.autocmds_utils")
+local utils = require("config.utils.autocmds")
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "http",

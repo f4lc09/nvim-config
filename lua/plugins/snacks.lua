@@ -1,4 +1,4 @@
-local cmd_utils = require("config.autocmds.autocmds_utils")
+local cmd_utils = require("config.utils.autocmds")
 
 return {
   "folke/snacks.nvim",

@@ -1,6 +1,5 @@
-local utils = require("config.autocmds.autocmds_utils")
-
-require("config.autocmds.file_type")
+local utils = require("config.utils.autocmds")
+require("config.utils.autocmds_ft")
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- --
 -- Sessions -- -- -- -- -- -- -- -- -- --
@@ -166,7 +165,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
       return
     end
     local file = vim.api.nvim_buf_get_name(args.buf)
-    require("config.flash_explorer").ShowFlashExplorer(file)
+    require("config.utils.flash_explorer").ShowFlashExplorer(file)
   end,
 })
 vim.api.nvim_create_autocmd({ "BufEnter" }, {

@@ -2,7 +2,7 @@ vim.o.shada = [[!,'5000,<50,s10,h]]
 
 require("config.lazy")
 require("config.autocmds")
-require("config.jar_definition")
+require("config.utils.jar_definition")
 
 local node_bin_path = "/home/falcon/.nvm/versions/node/v24.15.0/bin/node"
 vim.env.PATH = node_bin_path .. ":" .. vim.env.PATH

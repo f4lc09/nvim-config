@@ -1,7 +1,7 @@
 local dap = require("dap")
 local dapui = require("dapui")
-local utils = require("config.keymap_utils")
-local lazygit = require("config.lazygit_utils")
+local utils = require("config.utils.keymaps")
+local lazygit = require("config.utils.lazygit")
 
 local map = vim.keymap.set
 local unmap = vim.keymap.del
