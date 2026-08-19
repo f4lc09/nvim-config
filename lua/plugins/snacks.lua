@@ -19,6 +19,7 @@ return {
     },
     explorer = {
       diagnostics = false,
+      replace_netrw = true,
     },
     scroll = {
       enabled = false,

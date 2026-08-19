@@ -15,6 +15,7 @@ return {
         ["*"] = {
           keys = {
             { "K", false },
+            { "gd", false },
           },
         },
         protols = {

@@ -149,32 +149,8 @@ unmap("n", "<leader>E")
 
 -- TODO: Open Explorer with previous cursor position
 -- Add "Get to root cwd (reset)", and focus current file
-local MAIN_EXPLORER_TITLE = "main_explorer"
-
 map({ "n", "i", "t" }, "", function()
-  local found
-
-  for _, win in ipairs(vim.api.nvim_list_wins()) do
-    if vim.api.nvim_win_is_valid(win) then
-      local ok, title = pcall(vim.api.nvim_win_get_config, win)
-
-      if ok and title.title == MAIN_EXPLORER_TITLE then
-        found = win
-        break
-      end
-    end
-  end
-
-  if found then
-    vim.api.nvim_win_close(found, true)
-    return
-  end
-
-  Snacks.explorer({
-    win = {
-      title = MAIN_EXPLORER_TITLE,
-    },
-  })
+  Snacks.explorer({ diagnostics_open = false })
 end, { desc = "Toggle Explorer" })
 
 map({ "n", "i", "t" }, "", function()

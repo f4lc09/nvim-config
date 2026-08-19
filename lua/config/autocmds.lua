@@ -277,105 +277,15 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
     end)
   end,
 })
-local group = vim.api.nvim_create_augroup("ExplorerFlash", { clear = true })
 
-local flash_picker
-local close_timer
-
+local flashgroup = vim.api.nvim_create_augroup("ExplorerFlash", { clear = true })
 vim.api.nvim_create_autocmd("BufEnter", {
-  group = group,
+  group = flashgroup,
   callback = function(args)
     if vim.bo[args.buf].buftype ~= "" then
       return
     end
-
     local file = vim.api.nvim_buf_get_name(args.buf)
-
-    if file == "" then
-      return
-    end
-
-    if flash_picker and not flash_picker.closed then
-      flash_picker:close()
-    end
-
-    if close_timer then
-      close_timer:stop()
-      close_timer:close()
-      close_timer = nil
-    end
-
-    local current_win = vim.api.nvim_get_current_win()
-
-    local cwd = vim.fn.getcwd()
-    local file = vim.api.nvim_buf_get_name(args.buf)
-
-    if not vim.startswith(file, cwd .. "/") and file ~= cwd then
-      cwd = vim.fn.fnamemodify(file, ":h")
-    end
-    local explorer_source = require("snacks.picker.source.explorer")
-    flash_picker = Snacks.picker({
-      source = "flash_explorer",
-      finder = explorer_source.explorer,
-      cwd = cwd,
-      follow_file = true,
-      enter = false,
-      preview = false,
-      layout = {
-        preview = false,
-        layout = {
-          position = "float",
-          relative = "editor",
-          width = 35,
-          height = 0.9,
-          col = -1,
-          row = 0,
-          border = "none",
-          backdrop = false,
-          box = "vertical",
-          {
-            win = "list",
-            border = "none",
-          },
-        },
-      },
-    })
-
-    vim.schedule(function()
-      flash_picker:action("explorer_close_all")
-      if vim.api.nvim_win_is_valid(current_win) then
-        vim.api.nvim_set_current_win(current_win)
-      end
-    end)
-
-    close_timer = vim.uv.new_timer()
-
-    close_timer:start(
-      2000,
-      0,
-      vim.schedule_wrap(function()
-        if flash_picker and not flash_picker.closed then
-          flash_picker:close()
-        end
-
-        flash_picker = nil
-
-        close_timer:stop()
-        close_timer:close()
-        close_timer = nil
-      end)
-    )
-    vim.on_key(function()
-      if flash_picker and not flash_picker.closed then
-        flash_picker:close()
-        flash_picker = nil
-
-        if close_timer then
-          close_timer:stop()
-          close_timer:close()
-          close_timer = nil
-        end
-      end
-    end)
+    require("config.flash_explorer").ShowFlashExplorer(file)
   end,
 })
