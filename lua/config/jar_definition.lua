@@ -135,13 +135,6 @@ function M.definition()
 
   if not is_jar(source_buf) then
     vim.lsp.buf.definition()
-    vim.schedule(function()
-      vim.defer_fn(function()
-        -- Source buf won't work since the buffer has changed
-        require("config.flash_explorer").ShowFlashExplorer(vim.api.nvim_buf_get_name(api.nvim_get_current_buf()))
-      end, 5)
-    end)
-
     return
   end
 
