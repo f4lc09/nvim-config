@@ -1,17 +1,6 @@
-local utils = require("config.autocmds_utils")
+local utils = require("config.autocmds.autocmds_utils")
 
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "http",
-  callback = function(args)
-    utils.SetupKulalaKeymaps(args.buf)
-  end,
-})
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "go",
-  callback = function(args)
-    utils.SetupGoTestKeymaps(args.buf)
-  end,
-})
+require("config.autocmds.file_type")
 vim.api.nvim_create_autocmd({ "BufEnter", "BufRead", "BufWinEnter", "LspAttach" }, {
   group = vim.api.nvim_create_augroup("UserBufferRoot", { clear = true }),
   pattern = "*",
@@ -25,14 +14,8 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufRead", "BufWinEnter", "LspAttach" 
     end
   end,
 })
-vim.api.nvim_create_autocmd({ "FileType" }, {
-  pattern = { "http", "json", "rest", "graphql" },
-  command = "set conceallevel=0",
-})
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
-  callback = function()
-    openProject()
-  end,
+  callback = utils.OpenProject,
 })
 vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
   group = vim.api.nvim_create_augroup("AutoSessionGitRoot", { clear = true }),
@@ -40,45 +23,9 @@ vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
 })
 vim.api.nvim_create_autocmd("DirChanged", {
   pattern = "*",
-  callback = function()
-    openProject()
-  end,
+  callback = utils.OpenProject,
 })
 
-function openProject()
-  local session_file = vim.fn.getcwd() .. "/.Session.vim"
-  if vim.fn.filereadable(session_file) == 1 then
-    vim.cmd("source " .. session_file)
-    vim.schedule(function()
-      vim.cmd("syntax enable")
-      vim.cmd("doautocmd BufRead")
-      vim.cmd("set showtabline=2")
-    end)
-  end
-  utils.UpdateTmuxWindow()
-  if vim.bo.filetype == "snacks_dashboard" then
-    local bufs = vim.tbl_filter(function(b)
-      return vim.api.nvim_buf_is_valid(b) and vim.bo[b].buflisted
-    end, vim.api.nvim_list_bufs())
-
-    if #bufs > 0 then
-      for _, b in ipairs(bufs) do
-        print(vim.bo[b].filetype)
-        if vim.bo[b].filetype ~= "snacks_dashboard" then
-          vim.cmd("buffer " .. b)
-          break
-        end
-      end
-    end
-  end
-end
-
-vim.api.nvim_create_autocmd({ "FileType" }, {
-  pattern = { "http", "yaml", "kotlin" },
-  callback = function()
-    vim.b.autoformat = false
-  end,
-})
 vim.api.nvim_create_autocmd("VimLeave", {
   callback = function()
     local pane = os.getenv("TMUX_PANE")
@@ -101,18 +48,6 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 
       vim.b[args.buf].autoformat = false
     end
-  end,
-})
-vim.api.nvim_create_autocmd("TermEnter", {
-  pattern = "*",
-  callback = function()
-    vim.opt_local.timeoutlen = 175
-  end,
-})
-vim.api.nvim_create_autocmd("TermLeave", {
-  pattern = "*",
-  callback = function()
-    vim.opt_local.timeoutlen = 1000
   end,
 })
 
@@ -174,13 +109,6 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufDelete" }, {
     vim.schedule(utils.RestoreCWDFromSession)
   end,
 })
-
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "markdown",
-  callback = function()
-    vim.opt_local.spell = false
-  end,
-})
 vim.api.nvim_create_autocmd("VimLeave", {
   callback = function()
     vim.opt.guicursor = "a:ver20"
@@ -226,55 +154,7 @@ vim.api.nvim_create_autocmd("WinLeave", {
 vim.api.nvim_create_autocmd("BufReadCmd", {
   pattern = { "jar://*", "jrt://*" },
   callback = function(args)
-    local uri = args.file
-    local buf = args.buf
-
-    local client = vim.lsp.get_clients({
-      name = "kotlin_lsp",
-    })[1]
-
-    if not client then
-      return
-    end
-
-    local done = false
-
-    client:request("workspace/executeCommand", {
-      command = "decompile",
-      arguments = { uri },
-    }, function(err, result)
-      if err or not result or not result.code then
-        done = true
-        return
-      end
-
-      local lines = vim.split(result.code:gsub("\r\n", "\n"), "\n", { plain = true })
-
-      vim.schedule(function()
-        if not vim.api.nvim_buf_is_valid(buf) then
-          done = true
-          return
-        end
-
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-
-        local ft = result.language and result.language:lower() or "kotlin"
-
-        vim.api.nvim_set_option_value("filetype", ft, {
-          buf = buf,
-        })
-
-        vim.bo[buf].modifiable = false
-        vim.bo[buf].readonly = true
-        vim.bo[buf].modified = false
-
-        done = true
-      end)
-    end)
-
-    vim.wait(10000, function()
-      return done
-    end)
+    utils.ReadJar(args)
   end,
 })
 
@@ -289,6 +169,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
     require("config.flash_explorer").ShowFlashExplorer(file)
   end,
 })
+
 vim.api.nvim_set_hl(0, "CursorLine", {
   bg = "#3a3f4b",
 })

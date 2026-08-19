@@ -1,7 +1,6 @@
 local dap = require("dap")
 local dapui = require("dapui")
 local utils = require("config.keymap_utils")
-local au_utils = require("config.autocmds_utils")
 local lazygit = require("config.lazygit_utils")
 
 local map = vim.keymap.set

@@ -1,19 +1,19 @@
+vim.o.shada = [[!,'5000,<50,s10,h]]
+
 require("config.lazy")
 require("config.autocmds")
+require("config.jar_definition")
 
 local node_bin_path = "/home/falcon/.nvm/versions/node/v24.15.0/bin/node"
 vim.env.PATH = node_bin_path .. ":" .. vim.env.PATH
 
-vim.g.AutoPairs = 0
-vim.o.showtabline = 2
+-- vim.o.showtabline = 2 for removal
+-- vim.o.tabstop = 4 for removal
 vim.o.smartindent = false
 vim.o.autoindent = false
 vim.o.cindent = true
-vim.o.showtabline = 2
-vim.o.shada = [[!,'5000,<50,s10,h]]
 vim.o.fixendofline = false
 vim.o.timeoutlen = 1000
-vim.o.tabstop = 4
 vim.o.wrap = true
 vim.o.swapfile = false
 
@@ -31,7 +31,6 @@ vim.api.nvim_create_autocmd("User", {
     })
   end,
 })
-require("config.jar_definition").setup()
 -- TODO: disable arrows at auto complete
 --
 -- TODO: поправить статусную линию

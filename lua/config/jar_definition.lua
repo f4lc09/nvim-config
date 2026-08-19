@@ -314,10 +314,8 @@ function M.definition()
   end, temp_buf)
 end
 
-function M.setup()
-  vim.keymap.set("n", "gd", M.definition, {
-    desc = "Goto Definition",
-  })
-end
+vim.keymap.set("n", "gd", M.definition, {
+  desc = "Goto Definition",
+})
 
 return M

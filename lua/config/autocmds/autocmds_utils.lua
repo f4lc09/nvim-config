@@ -55,18 +55,14 @@ function M.RestoreCWDFromSession()
     return
   end
 
-  -- 2. Данные текущего буфера
   local bufnr = vim.api.nvim_get_current_buf()
   local buf_name = vim.api.nvim_buf_get_name(bufnr)
   local buftype = vim.bo[bufnr].buftype
 
-  -- 3. ИСКЛЮЧЕНИЯ (Щит): Если это НЕ обычный текстовый буфер, ничего не делаем.
-  -- Это защищает от срабатывания в Explorer, Telescope, терминалах и т.д.
   if buftype ~= "" then
     return
   end
 
-  -- 4. ГЛАВНОЕ УСЛОВИЕ: Если буфер не сохранен (пустое имя)
   if buf_name == "" then
     local session_dir = vim.fn.fnamemodify(session_file, ":p:h") .. "/"
     local current_dir = vim.fn.getcwd() .. "/"
@@ -79,11 +75,11 @@ function M.RestoreCWDFromSession()
   end
 end
 
-local success, kulala_module = pcall(require, "kulala")
+local kulalaSuccess, kulala_module = pcall(require, "kulala")
 function M.SetupKulalaKeymaps(bufnr)
   local map = vim.keymap.set
   map("n", "<Enter>", function()
-    if success and kulala_module then
+    if kulalaSuccess and kulala_module then
       kulala_module.run()
       kulala_module.open()
       vim.defer_fn(function()
@@ -110,6 +106,86 @@ function M.SetupGoTestKeymaps(bufnr)
       buffer = bufnr,
     })
   end
+end
+
+function M.OpenProject()
+  local session_file = vim.fn.getcwd() .. "/.Session.vim"
+  if vim.fn.filereadable(session_file) == 1 then
+    vim.cmd("source " .. session_file)
+    vim.schedule(function()
+      vim.cmd("syntax enable")
+      vim.cmd("doautocmd BufRead")
+      vim.cmd("set showtabline=2")
+    end)
+  end
+  M.UpdateTmuxWindow()
+  if vim.bo.filetype == "snacks_dashboard" then
+    local bufs = vim.tbl_filter(function(b)
+      return vim.api.nvim_buf_is_valid(b) and vim.bo[b].buflisted
+    end, vim.api.nvim_list_bufs())
+
+    if #bufs > 0 then
+      for _, b in ipairs(bufs) do
+        print(vim.bo[b].filetype)
+        if vim.bo[b].filetype ~= "snacks_dashboard" then
+          vim.cmd("buffer " .. b)
+          break
+        end
+      end
+    end
+  end
+end
+
+function M.ReadJar(args)
+  local uri = args.file
+  local buf = args.buf
+
+  local client = vim.lsp.get_clients({
+    name = "kotlin_lsp",
+  })[1]
+
+  if not client then
+    return
+  end
+
+  local done = false
+
+  client:request("workspace/executeCommand", {
+    command = "decompile",
+    arguments = { uri },
+  }, function(err, result)
+    if err or not result or not result.code then
+      done = true
+      return
+    end
+
+    local lines = vim.split(result.code:gsub("\r\n", "\n"), "\n", { plain = true })
+
+    vim.schedule(function()
+      if not vim.api.nvim_buf_is_valid(buf) then
+        done = true
+        return
+      end
+
+      vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+      local ft = result.language and result.language:lower() or "kotlin"
+
+      vim.api.nvim_set_option_value("filetype", ft, {
+        buf = buf,
+      })
+
+      vim.bo[buf].modifiable = false
+      vim.bo[buf].readonly = true
+      vim.bo[buf].modified = false
+
+      done = true
+    end)
+  end)
+
+  vim.wait(10000, function()
+    return done
+  end)
 end
 
 return M
