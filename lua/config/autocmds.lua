@@ -289,3 +289,6 @@ vim.api.nvim_create_autocmd("BufEnter", {
     require("config.flash_explorer").ShowFlashExplorer(file)
   end,
 })
+vim.api.nvim_set_hl(0, "CursorLine", {
+  bg = "#3a3f4b",
+})

@@ -33,3 +33,5 @@ vim.api.nvim_create_autocmd("User", {
 })
 require("config.jar_definition").setup()
 -- TODO: disable arrows at auto complete
+--
+-- TODO: поправить статусную линию

@@ -3,11 +3,10 @@ local M = {}
 local flash_picker
 local close_timer
 
+local inserts = { "a", "A", "i", "I", "o", "O" }
+
 local ignore_combo = {
-  { "m", "'", "z", "z", "z", "v" },
-}
-local inserts = {
-  { "a", "A", "i", "I", "o", "O" },
+  { "m", "'", "z", "z", "z", "v", unpack(inserts) },
 }
 
 local function has_value(tab, val)
@@ -61,19 +60,22 @@ function M.ShowFlashExplorer(file)
         position = "float",
         relative = "editor",
         width = 35,
-        height = 0.9,
+        height = 0.8,
         col = -1,
-        row = 0,
+        row = 2,
         border = "none",
         backdrop = false,
         box = "vertical",
         {
           win = "list",
-          border = "none",
+          border = "rounded",
         },
       },
     },
   })
+  vim.schedule(function()
+    flash_picker:action("explorer_close_all")
+  end)
 
   close_timer = vim.uv.new_timer()
   close_timer:start(
@@ -93,6 +95,7 @@ function M.ShowFlashExplorer(file)
       close_timer = nil
     end)
   )
+
   vim.on_key(function(key)
     -- TODO: проверять последовательность
     if has_value(ignore_combo[1], key) then
@@ -108,14 +111,19 @@ function M.ShowFlashExplorer(file)
         close_timer:close()
         close_timer = nil
       end
-
-      -- TODO: Fix inserts
-      -- if has_value(inserts, key) then
-      --   vim.schedule(function()
-      --     vim.cmd("startinsert!")
-      --   end)
-      -- end
     end
+  end)
+end
+
+for _, v in ipairs(inserts) do
+  vim.keymap.set("n", v, function()
+    if flash_picker and not flash_picker.closed then
+      flash_picker:close()
+      flash_picker = nil
+    end
+    vim.schedule(function()
+      vim.api.nvim_feedkeys(v, "n", false)
+    end)
   end)
 end
 
