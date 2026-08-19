@@ -1,6 +1,10 @@
 local utils = require("config.autocmds.autocmds_utils")
 
 require("config.autocmds.file_type")
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- Sessions -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- --
 vim.api.nvim_create_autocmd({ "BufEnter", "BufRead", "BufWinEnter", "LspAttach" }, {
   group = vim.api.nvim_create_augroup("UserBufferRoot", { clear = true }),
   pattern = "*",
@@ -15,7 +19,7 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufRead", "BufWinEnter", "LspAttach" 
   end,
 })
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
-  callback = utils.OpenProject,
+  callback = utils.LoadSession,
 })
 vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
   group = vim.api.nvim_create_augroup("AutoSessionGitRoot", { clear = true }),
@@ -23,9 +27,8 @@ vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
 })
 vim.api.nvim_create_autocmd("DirChanged", {
   pattern = "*",
-  callback = utils.OpenProject,
+  callback = utils.LoadSession,
 })
-
 vim.api.nvim_create_autocmd("VimLeave", {
   callback = function()
     local pane = os.getenv("TMUX_PANE")
@@ -34,6 +37,17 @@ vim.api.nvim_create_autocmd("VimLeave", {
     end
   end,
 })
+local group = vim.api.nvim_create_augroup("SessionCwdRestore", { clear = true })
+vim.api.nvim_create_autocmd({ "BufEnter", "BufDelete" }, {
+  group = group,
+  callback = function()
+    vim.schedule(utils.RestoreCWDFromSession)
+  end,
+})
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- Sops auto decrypt/encrypt small fix --
+-- -- -- -- -- -- -- -- -- -- -- -- -- --
 vim.api.nvim_create_autocmd("BufReadPost", {
   pattern = "*/secrets/**/*enc*.yaml",
   callback = function(args)
@@ -41,18 +55,18 @@ vim.api.nvim_create_autocmd("BufReadPost", {
       vim.schedule(function()
         if vim.api.nvim_buf_is_valid(args.buf) then
           vim.api.nvim_win_set_cursor(0, { 1, 0 })
-
           vim.b[args.buf].sops_first_open_done = true
         end
       end)
-
-      vim.b[args.buf].autoformat = false
+      -- vim.b[args.buf].autoformat = false for removal
     end
   end,
 })
 
+-- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- Visuals  -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- --
 local visual_timer = nil
-
 vim.api.nvim_create_autocmd("ModeChanged", {
   pattern = "*:[vV\x16]*",
   callback = function()
@@ -71,7 +85,6 @@ vim.api.nvim_create_autocmd("ModeChanged", {
     end, 20)
   end,
 })
-
 vim.api.nvim_create_autocmd("ModeChanged", {
   pattern = "[vV\x16]*:*",
   callback = function()
@@ -88,25 +101,6 @@ vim.api.nvim_create_autocmd("ModeChanged", {
         vim.cmd("redraw")
       end
     end)
-  end,
-})
-
-vim.api.nvim_create_autocmd({ "BufEnter" }, {
-  callback = function()
-    for _, a in ipairs(vim.api.nvim_get_autocmds({ event = "CursorMoved" })) do
-      if (a.group_name == "trouble.section.lsp.document_symbols.1" or a.group_name == "snacks_scroll") and a.id then
-        vim.api.nvim_del_autocmd(a.id)
-      end
-    end
-  end,
-})
-
-local group = vim.api.nvim_create_augroup("SessionCwdRestore", { clear = true })
-
-vim.api.nvim_create_autocmd({ "BufEnter", "BufDelete" }, {
-  group = group,
-  callback = function()
-    vim.schedule(utils.RestoreCWDFromSession)
   end,
 })
 vim.api.nvim_create_autocmd("VimLeave", {
@@ -136,6 +130,13 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
     end, 10)
   end,
 })
+vim.api.nvim_set_hl(0, "CursorLine", {
+  bg = "#3a3f4b",
+})
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- --
+-- OTHERS   -- -- -- -- -- -- -- -- -- --
+-- -- -- -- -- -- -- -- -- -- -- -- -- --
 vim.api.nvim_create_autocmd("WinLeave", {
   pattern = "*",
   callback = function()
@@ -157,7 +158,6 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
     utils.ReadJar(args)
   end,
 })
-
 local flashgroup = vim.api.nvim_create_augroup("ExplorerFlash", { clear = true })
 vim.api.nvim_create_autocmd("BufEnter", {
   group = flashgroup,
@@ -169,7 +169,12 @@ vim.api.nvim_create_autocmd("BufEnter", {
     require("config.flash_explorer").ShowFlashExplorer(file)
   end,
 })
-
-vim.api.nvim_set_hl(0, "CursorLine", {
-  bg = "#3a3f4b",
+vim.api.nvim_create_autocmd({ "BufEnter" }, {
+  callback = function()
+    for _, a in ipairs(vim.api.nvim_get_autocmds({ event = "CursorMoved" })) do
+      if (a.group_name == "trouble.section.lsp.document_symbols.1" or a.group_name == "snacks_scroll") and a.id then
+        vim.api.nvim_del_autocmd(a.id)
+      end
+    end
+  end,
 })

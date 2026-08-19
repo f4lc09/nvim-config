@@ -108,7 +108,7 @@ function M.SetupGoTestKeymaps(bufnr)
   end
 end
 
-function M.OpenProject()
+function M.LoadSession()
   local session_file = vim.fn.getcwd() .. "/.Session.vim"
   if vim.fn.filereadable(session_file) == 1 then
     vim.cmd("source " .. session_file)
