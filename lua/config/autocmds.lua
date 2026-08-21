@@ -165,6 +165,14 @@ vim.api.nvim_create_autocmd("BufEnter", {
     if vim.bo[args.buf].buftype ~= "" then
       return
     end
+
+    local buf_name = vim.api.nvim_buf_get_name(args.buf)
+    local uv = vim.uv
+    local stat = uv.fs_stat(buf_name)
+    if not stat or stat.type ~= "file" then
+      return false
+    end
+
     local file = vim.api.nvim_buf_get_name(args.buf)
     require("config.utils.flash_explorer").ShowFlashExplorer(file)
   end,

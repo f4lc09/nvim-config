@@ -33,3 +33,4 @@ vim.api.nvim_create_autocmd("User", {
   end,
 })
 -- TODO: поправить статусную линию
+-- TODO: diffview close on exit and fix gopls
