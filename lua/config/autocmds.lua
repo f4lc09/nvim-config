@@ -158,6 +158,7 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
   end,
 })
 local flashgroup = vim.api.nvim_create_augroup("ExplorerFlash", { clear = true })
+-- TODO: IGNORE everything without regular file path
 vim.api.nvim_create_autocmd("BufEnter", {
   group = flashgroup,
   callback = function(args)
