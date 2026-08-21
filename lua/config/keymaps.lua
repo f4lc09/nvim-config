@@ -149,7 +149,7 @@ unmap("n", "<leader>E")
 -- TODO: Open Explorer with previous cursor position
 -- Add "Get to root cwd (reset)", and focus current file
 map({ "n", "i", "t" }, "", function()
-  Snacks.explorer({ diagnostics_open = false })
+  Snacks.explorer({ diagnostics_open = false, cwd = utils.GetCWD() })
 end, { desc = "Toggle Explorer" })
 
 map({ "n", "i", "t" }, "", function()
@@ -170,18 +170,14 @@ map("n", "<leader>e", function()
   Snacks.picker.explorer()
 end, { desc = "Snacks Picker Explorer" })
 map("n", "<leader><space>", function()
-  Snacks.picker.files({ cwd = vim.fn.getcwd() })
+  Snacks.picker.files({ cwd = utils.GetCWD() })
 end, { desc = "find files (cwd)" })
 map("n", "<leader>sg", function()
-  LazyVim.pick("live_grep", { root = false })()
+  Snacks.picker.grep({ cwd = utils.GetCWD() })
 end, { desc = "Grep (cwd)" })
 map("n", "<leader>sG", function()
   LazyVim.pick("live_grep")()
 end, { desc = "Grep (Root Dir)" })
-map("n", "gR", function()
-  vim.cmd('normal! "yyiw')
-  Snacks.picker.grep({ search = vim.fn.getreg('"') })
-end, { desc = "Grep Word Under Cursor (Snacks)" })
 
 --
 -- Buffers and tabs

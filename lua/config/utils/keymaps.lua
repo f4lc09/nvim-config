@@ -364,4 +364,15 @@ function M.DelMarks()
   end
 end
 
+function M.GetCWD()
+  local buf = vim.api.nvim_get_current_buf()
+  local file = vim.api.nvim_buf_get_name(buf)
+  local cwd = vim.fn.getcwd()
+  if not vim.startswith(file, cwd .. "/") and file ~= cwd then
+    cwd = vim.fn.fnamemodify(file, ":h")
+  end
+
+  return cwd
+end
+
 return M

@@ -21,6 +21,7 @@ vim.lsp.set_log_level("error")
 vim.g.root_spec = { { ".git", "lua" }, "cwd", "lsp" }
 vim.g.go_debug_log_output = ""
 vim.o.conceallevel = 0
+vim.g.ale_enabled = 0
 vim.opt.guicursor:append("v:hor20-Cursor,t:ver25,c:ver20")
 vim.api.nvim_create_autocmd("User", {
   pattern = "SnacksDashboardOpened",
@@ -31,6 +32,4 @@ vim.api.nvim_create_autocmd("User", {
     })
   end,
 })
--- TODO: disable arrows at auto complete
---
 -- TODO: поправить статусную линию
