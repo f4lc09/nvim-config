@@ -315,7 +315,15 @@ return {
           layout = {
             preset = "select",
             layout = {
-              -- position = "right",
+              width = 0.95,
+              height = 0.95,
+            },
+          },
+        },
+        diagnostics = {
+          layout = {
+            preset = "vertical",
+            layout = {
               width = 0.95,
               height = 0.95,
             },
