@@ -148,6 +148,7 @@ unmap("n", "<leader>E")
 
 -- TODO: Open Explorer with previous cursor position
 -- Add "Get to root cwd (reset)", and focus current file
+-- Открывать explorer в буфере??? oil
 map({ "n", "i", "t" }, "", function()
   Snacks.explorer({ diagnostics_open = false, cwd = utils.GetCWD() })
 end, { desc = "Toggle Explorer" })

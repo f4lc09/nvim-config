@@ -34,3 +34,4 @@ vim.api.nvim_create_autocmd("User", {
 })
 -- TODO: поправить статусную линию
 -- TODO: diffview close on exit and fix gopls
+-- TODO: не работает space sR
