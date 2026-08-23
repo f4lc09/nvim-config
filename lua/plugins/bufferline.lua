@@ -2,6 +2,7 @@ require("bufferline")
 return {
   {
     "akinsho/bufferline.nvim",
+    enabled = false,
     ---@type bufferline.UserConfig
     opts = {
       options = {

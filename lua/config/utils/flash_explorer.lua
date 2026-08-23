@@ -74,6 +74,9 @@ function M.ShowFlashExplorer(file)
     },
   })
   vim.schedule(function()
+    if not flash_picker then
+      return
+    end
     flash_picker:action("explorer_close_all")
   end)
 
