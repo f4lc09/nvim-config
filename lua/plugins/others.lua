@@ -162,7 +162,7 @@ return {
         return ""
       end
       local lazy_root = function()
-        return "" .. vim.fs.basename(LazyVim.root())
+        return "" .. vim.fs.basename(vim.fn.getcwd())
       end
       local relative_dir_path = function()
         local path = vim.fn.expand("%:.:h")
@@ -182,10 +182,11 @@ return {
           separator = { right = "" },
         },
         { "diagnostics" },
-        { relative_dir_path, color = { fg = "#a0a0a0" } },
 
         { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
         { "filename", path = 0 },
+
+        { relative_dir_path, color = { fg = "#a0a0a0" } },
       }
 
       opts.winbar = {
