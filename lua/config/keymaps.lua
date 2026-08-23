@@ -183,9 +183,6 @@ end, { desc = "Grep (Root Dir)" })
 
 --
 -- Buffers and tabs
-map("n", "<leader>,", function()
-  Snacks.picker.buffers({ current = false })
-end, { desc = "Buffers (including current)" })
 -- map({ "n", "v", "i" }, ">", function()
 --   utils.BufferCycle(1)
 -- end, { silent = true, desc = "Next buffer" })

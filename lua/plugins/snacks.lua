@@ -197,6 +197,9 @@ return {
         end,
       },
       sources = {
+        buffers = {
+          current = false,
+        },
         projects = {
           on_show = function(picker)
             local bufnr = picker.input.win.buf
