@@ -199,4 +199,5 @@ return {
       }
     end,
   },
+  { "tiagovla/scope.nvim", config = true },
 }

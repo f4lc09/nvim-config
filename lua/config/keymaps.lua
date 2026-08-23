@@ -183,12 +183,12 @@ end, { desc = "Grep (Root Dir)" })
 
 --
 -- Buffers and tabs
--- map({ "n", "v", "i" }, ">", function()
---   utils.BufferCycle(1)
--- end, { silent = true, desc = "Next buffer" })
--- map({ "n", "v", "i" }, "<", function()
---   utils.BufferCycle(-1)
--- end, { silent = true, desc = "Previous buffer" })
+map({ "n", "v", "i" }, ">", function()
+  utils.BufferCycle(1)
+end, { silent = true, desc = "Next buffer" })
+map({ "n", "v", "i" }, "<", function()
+  utils.BufferCycle(-1)
+end, { silent = true, desc = "Previous buffer" })
 -- map({ "n" }, "<leader>bmf", "<cmd>BufferLineMoveNext<CR>", { desc = "Move buffer forward" })
 -- map({ "n" }, "<leader>bmb", "<cmd>BufferLineMovePrev<CR>", { desc = "Move buffer back" })
 map({ "n", "v", "i" }, "w", function()

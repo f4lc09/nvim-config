@@ -198,7 +198,13 @@ return {
       },
       sources = {
         buffers = {
-          current = false,
+          layout = {
+            preset = "vertical",
+            layout = {
+              width = 0.60,
+              height = 0.55,
+            },
+          },
         },
         projects = {
           on_show = function(picker)

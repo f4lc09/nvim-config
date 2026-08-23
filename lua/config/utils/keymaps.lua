@@ -276,7 +276,15 @@ function M.BufferCycle(num)
     end
   end
 
-  bufferline.cycle(num)
+  -- bufferline.cycle(num)
+  if num == 1 then
+    vim.cmd("bnext")
+    return
+  end
+  if num == -1 then
+    vim.cmd("bprev")
+    return
+  end
 
   if is_empty_and_nameless then
     pcall(vim.api.nvim_buf_delete, prev_buf, { force = true })

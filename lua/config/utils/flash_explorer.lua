@@ -82,7 +82,7 @@ function M.ShowFlashExplorer(file)
 
   close_timer = vim.uv.new_timer()
   close_timer:start(
-    2000,
+    3000,
     0,
     vim.schedule_wrap(function()
       if flash_picker and not flash_picker.closed then
@@ -116,6 +116,41 @@ function M.ShowFlashExplorer(file)
       end
     end
   end)
+end
+
+function M.ShowFlashBuffers(file)
+  local buf = vim.api.nvim_create_buf(false, true)
+
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
+    "hello",
+    "world",
+    "some information",
+  })
+
+  local width = 35
+  local height = 10
+
+  local ns = vim.api.nvim_create_namespace("my_float")
+  vim.api.nvim_set_hl(ns, "NormalFloat", {
+    link = "Normal",
+  })
+  vim.api.nvim_set_hl(ns, "FloatBorder", {
+    fg = "#56B6C2",
+    bg = "NONE",
+  })
+  local win = vim.api.nvim_open_win(buf, false, {
+    relative = "editor",
+    width = width,
+    height = height,
+    col = vim.o.columns - width - 1,
+    row = 2,
+    style = "minimal",
+    border = "rounded",
+    focusable = false,
+  })
+
+  vim.api.nvim_win_set_hl_ns(win, ns)
+  vim.api.nvim_set_option_value("winblend", 0, { win = win })
 end
 
 for _, v in ipairs(inserts) do

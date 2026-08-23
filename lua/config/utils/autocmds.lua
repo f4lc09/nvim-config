@@ -35,6 +35,7 @@ function M.SaveSessionAtGitRoot()
   local git_root = vim.fn.system("git rev-parse --show-toplevel 2>/dev/null"):gsub("\n", "")
 
   if git_root ~= "" and vim.v.shell_error == 0 then
+    vim.cmd("ScopeSaveState")
     local session_file = git_root .. "/.Session.vim"
     vim.cmd("silent! mksession! " .. session_file)
 
@@ -116,6 +117,7 @@ function M.LoadSession()
       vim.cmd("syntax enable")
       vim.cmd("doautocmd BufRead")
       vim.cmd("set showtabline=0")
+      vim.cmd("ScopeLoadState")
     end)
   end
   M.UpdateTmuxWindow()

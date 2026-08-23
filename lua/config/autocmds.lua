@@ -174,6 +174,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 
     local file = vim.api.nvim_buf_get_name(args.buf)
     require("config.utils.flash_explorer").ShowFlashExplorer(file)
+    -- require("config.utils.flash_explorer").ShowFlashBuffers(file)
   end,
 })
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
