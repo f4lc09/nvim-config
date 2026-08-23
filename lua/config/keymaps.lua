@@ -183,18 +183,21 @@ end, { desc = "Grep (Root Dir)" })
 
 --
 -- Buffers and tabs
-map({ "n", "v", "i" }, ">", function()
-  utils.BufferCycle(1)
-end, { silent = true, desc = "Next buffer" })
-map({ "n", "v", "i" }, "<", function()
-  utils.BufferCycle(-1)
-end, { silent = true, desc = "Previous buffer" })
+map("n", "<leader>,", function()
+  Snacks.picker.buffers({ current = false })
+end, { desc = "Buffers (including current)" })
+-- map({ "n", "v", "i" }, ">", function()
+--   utils.BufferCycle(1)
+-- end, { silent = true, desc = "Next buffer" })
+-- map({ "n", "v", "i" }, "<", function()
+--   utils.BufferCycle(-1)
+-- end, { silent = true, desc = "Previous buffer" })
+-- map({ "n" }, "<leader>bmf", "<cmd>BufferLineMoveNext<CR>", { desc = "Move buffer forward" })
+-- map({ "n" }, "<leader>bmb", "<cmd>BufferLineMovePrev<CR>", { desc = "Move buffer back" })
 map({ "n", "v", "i" }, "w", function()
   utils.BufferDelete()
 end, { silent = true, desc = "Delete buffer" })
 map({ "n" }, "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
-map({ "n" }, "<leader>bmf", "<cmd>BufferLineMoveNext<CR>", { desc = "Move buffer forward" })
-map({ "n" }, "<leader>bmb", "<cmd>BufferLineMovePrev<CR>", { desc = "Move buffer back" })
 map(
   { "n" },
   "<leader>ba",
