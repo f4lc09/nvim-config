@@ -300,6 +300,7 @@ return {
           },
         },
         explorer = {
+          -- focus = "input",
           hidden = false,
           ignored = true,
           include = {
@@ -347,7 +348,7 @@ return {
               "explorer_esc",
               mode = { "i", "n" },
               desc = "Focus file tree with",
-            },
+            }, -- TODO: esc не работает + сделать аналог files, чтобы папки перепрыгивал и confirm открывал файл (ctrl?E - goto file)
             ["<C-\\>"] = { "open_tmux_term_in_folder", mode = { "n", "i" } },
             ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
             ["<C-g>"] = { "lazygit", mode = { "n", "i" } },

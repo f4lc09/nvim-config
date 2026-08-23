@@ -158,7 +158,6 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
   end,
 })
 local flashgroup = vim.api.nvim_create_augroup("ExplorerFlash", { clear = true })
--- TODO: IGNORE everything without regular file path
 vim.api.nvim_create_autocmd("BufEnter", {
   group = flashgroup,
   callback = function(args)
@@ -186,3 +185,12 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
     end
   end,
 })
+-- vim.api.nvim_create_autocmd("LspAttach", {
+--   callback = function(args)
+--     local name = vim.api.nvim_buf_get_name(args.buf)
+--
+--     if name:match("^diffview://") then
+--       vim.lsp.buf_detach_client(args.buf, args.data.client_id)
+--     end
+--   end,
+-- })
