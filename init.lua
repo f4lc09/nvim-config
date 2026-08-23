@@ -7,8 +7,8 @@ require("config.utils.jar_definition")
 local node_bin_path = "/home/falcon/.nvm/versions/node/v24.15.0/bin/node"
 vim.env.PATH = node_bin_path .. ":" .. vim.env.PATH
 
--- vim.o.showtabline = 2 for removal
 -- vim.o.tabstop = 4 for removal
+vim.o.showtabline = 0
 vim.o.smartindent = false
 vim.o.autoindent = false
 vim.o.cindent = true

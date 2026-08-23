@@ -149,4 +149,53 @@ return {
       require("dap-go").setup()
     end,
   },
+  {
+    "nvim-lualine/lualine.nvim",
+    opts = function(_, opts)
+      opts.sections.lualine_b = {}
+
+      local file_branch = function()
+        local b_branch = vim.b.gitsigns_head
+        if b_branch and b_branch ~= "" then
+          return " " .. b_branch
+        end
+        return ""
+      end
+      local lazy_root = function()
+        return "" .. vim.fs.basename(LazyVim.root())
+      end
+      local relative_dir_path = function()
+        local path = vim.fn.expand("%:.:h")
+        if path == "." or path == "" then
+          return ""
+        end
+        if #path > 30 then
+          path = path:gsub("([^/])[^/]*/", "%1/")
+        end
+        return path
+      end
+
+      opts.sections.lualine_c = {
+        {
+          lazy_root,
+          color = { bg = "#004154", fg = "#d1d1d1" },
+          separator = { right = "" },
+        },
+        { "diagnostics" },
+        { relative_dir_path, color = { fg = "#a0a0a0" } },
+
+        { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
+        { "filename", path = 0 },
+      }
+
+      opts.winbar = {
+        lualine_c = { "navic" },
+      }
+
+      opts.sections.lualine_z = {
+        { file_branch },
+        { "time" },
+      }
+    end,
+  },
 }

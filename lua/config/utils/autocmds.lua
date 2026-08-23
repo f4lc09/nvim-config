@@ -115,7 +115,7 @@ function M.LoadSession()
     vim.schedule(function()
       vim.cmd("syntax enable")
       vim.cmd("doautocmd BufRead")
-      vim.cmd("set showtabline=2")
+      vim.cmd("set showtabline=0")
     end)
   end
   M.UpdateTmuxWindow()
