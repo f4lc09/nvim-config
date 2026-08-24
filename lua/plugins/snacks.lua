@@ -275,6 +275,7 @@ return {
             preset = "sidebar",
             preview = "main",
             layout = {
+              position = "top",
               width = 0.40,
               height = 0.40,
             },
