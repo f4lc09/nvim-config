@@ -212,7 +212,21 @@ map({ "v", "x" }, "<leader>go", "<Esc><cmd>'<,'>GBrowse<cr>", { noremap = true, 
 map({ "n" }, "<leader>go", "<cmd>GBrowse<cr>", { noremap = true, silent = true, desc = "Git Open Remote" })
 unmap({ "n" }, "<leader>gf")
 map({ "n" }, "<leader>gfl", function()
-  require("snacks").picker.git_log_file()
+  require("snacks").picker.git_log_file({
+    layout = {
+      layout = {
+        box = "horizontal",
+        fulscreen = true,
+        {
+          box = "vertical",
+          border = "rounded",
+          { win = "input", height = 1, border = "bottom" },
+          { win = "list", border = "none" },
+          { win = "preview", height = 0.80, border = "top" },
+        },
+      },
+    },
+  })
 end, { noremap = true, silent = true, desc = "Git Open File History" })
 map({ "n" }, "<leader>gfs", function()
   vim.fn.system({ "git", "add", vim.api.nvim_buf_get_name(0) })
