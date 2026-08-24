@@ -272,12 +272,16 @@ return {
             }
           end,
           layout = {
-            preset = "sidebar",
-            preview = "main",
             layout = {
-              position = "top",
-              width = 0.40,
-              height = 0.40,
+              box = "horizontal",
+              fulscreen = true,
+              {
+                box = "vertical",
+                border = "rounded",
+                { win = "input", height = 1, border = "bottom" },
+                { win = "list", border = "none" },
+                { win = "preview", height = 0.7, border = "top" },
+              },
             },
           },
           hidden = true,
