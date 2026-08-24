@@ -36,6 +36,14 @@ return {
         },
       },
       actions = {
+        restore_session_cwd = function(picker)
+          cmd_utils.RestoreCWDFromSessionForce()
+          picker:close()
+
+          vim.schedule(function()
+            Snacks.explorer()
+          end)
+        end,
         explorer_paste = function(picker, item) --[[Override]]
           local Tree = require("snacks.explorer.tree")
           local files = vim.split(vim.fn.getreg(vim.v.register or "+") or "", "\n", { plain = true })
@@ -322,7 +330,7 @@ return {
         },
         explorer = {
           -- focus = "input",
-          hidden = false,
+          hidden = true,
           ignored = true,
           include = {
             "**/.env",
@@ -361,6 +369,7 @@ return {
             ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
             ["<C-g>"] = { "lazygit", mode = { "n", "i" } },
             ["<leader>ba"] = { "close_buffers", mode = { "n" } },
+            ["<C-r>"] = { "restore_session_cwd", mode = { "n" } },
           },
         },
         input = {

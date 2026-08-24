@@ -25,12 +25,27 @@ return {
   {
     "saghen/blink.cmp",
     opts = {
+      completion = {
+        trigger = {
+          show_on_backspace = true,
+          show_on_backspace_in_keyword = false,
+          show_on_insert = true,
+        },
+        list = {
+          selection = {
+            preselect = false,
+            auto_insert = true,
+          },
+        },
+      },
+      signature = {
+        enabled = true,
+      },
       keymap = {
         ["<Tab>"] = { "select_next", "fallback" },
         ["<S-Tab>"] = { "select_prev", "fallback" },
         ["<Down>"] = {},
         ["<Up>"] = {},
-        ["<CR>"] = {},
       },
     },
   },

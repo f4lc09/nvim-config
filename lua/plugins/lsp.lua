@@ -9,6 +9,15 @@ return {
         vim.lsp.set_log_level("error")
       end,
       servers = {
+        lua_ls = {
+          settings = {
+            Lua = {
+              completion = {
+                callSnippet = "Disable",
+              },
+            },
+          },
+        },
         ["*"] = {
           keys = {
             { "K", false },

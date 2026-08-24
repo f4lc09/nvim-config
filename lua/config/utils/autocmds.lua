@@ -33,19 +33,24 @@ end
 
 function M.SaveSessionAtGitRoot()
   local git_root = vim.fn.system("git rev-parse --show-toplevel 2>/dev/null"):gsub("\n", "")
+  local session_file = vim.v.this_session
 
   if git_root ~= "" and vim.v.shell_error == 0 then
-    vim.cmd("ScopeSaveState")
-    local session_file = git_root .. "/.Session.vim"
-    vim.cmd("silent! mksession! " .. session_file)
+    session_file = git_root .. "/.Session.vim"
+  end
 
-    local current_name = vim.g.tmux_window_name
-    if current_name and current_name ~= "" then
-      local file = io.open(session_file, "a") -- режим "a" (append) для дозаписи
-      if file then
-        file:write('\nlet g:tmux_window_name = "' .. vim.g.tmux_window_name .. '"')
-        file:close()
-      end
+  if session_file == "" then
+    return
+  end
+
+  vim.cmd("ScopeSaveState")
+  vim.cmd("silent! mksession! " .. session_file)
+  local current_name = vim.g.tmux_window_name
+  if current_name and current_name ~= "" then
+    local file = io.open(session_file, "a") -- режим "a" (append) для дозаписи
+    if file then
+      file:write('\nlet g:tmux_window_name = "' .. vim.g.tmux_window_name .. '"')
+      file:close()
     end
   end
 end
@@ -74,6 +79,18 @@ function M.RestoreCWDFromSession()
       vim.opt.eventignore = save_ignore
     end
   end
+end
+
+function M.RestoreCWDFromSessionForce()
+  local session_file = vim.v.this_session
+  if session_file == "" then
+    return
+  end
+  local session_dir = vim.fn.fnamemodify(session_file, ":p:h") .. "/"
+  local save_ignore = vim.opt.eventignore:get()
+  vim.opt.eventignore:append("all")
+  pcall(vim.api.nvim_set_current_dir, session_dir)
+  vim.opt.eventignore = save_ignore
 end
 
 local kulalaSuccess, kulala_module = pcall(require, "kulala")

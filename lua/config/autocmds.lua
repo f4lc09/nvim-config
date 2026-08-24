@@ -1,4 +1,5 @@
 local utils = require("config.utils.autocmds")
+local keymap_utils = require("config.utils.keymaps")
 require("config.utils.autocmds_ft")
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -174,7 +175,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     --   end
     -- end
 
-    Snacks.explorer()
+    Snacks.explorer({ cwd = keymap_utils.GetCWD() })
   end,
 })
 
