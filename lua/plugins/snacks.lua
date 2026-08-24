@@ -261,25 +261,22 @@ return {
           end,
         },
         grep = {
-          format = function(item, picker)
-            local ret = {}
+          format = function(item)
+            local icon, hl = Snacks.util.icon(item.file, "file")
+            local line = item.pos and item.pos[1] or 0
 
-            vim.list_extend(ret, require("snacks.picker.format").file(item, picker))
-            -- if #ret >= 2 then
-            --   ret[2] = { item.file }
-            -- end
-
-            while #ret > 2 do
-              table.remove(ret)
-            end
-
-            return ret
+            return {
+              { icon .. " ", hl },
+              { vim.fn.fnamemodify(item.file, ":."), "Normal" },
+              { ":" .. line, "LineNr" },
+            }
           end,
           layout = {
-            preset = "vertical",
+            preset = "sidebar",
+            preview = "main",
             layout = {
-              width = 0.95,
-              height = 0.95,
+              width = 0.40,
+              height = 0.40,
             },
           },
           hidden = true,
@@ -353,6 +350,8 @@ return {
         },
         input = {
           keys = {
+            ["<Tab>"] = { "list_down", mode = { "i", "n" } },
+            ["<S-Tab>"] = { "list_up", mode = { "i", "n" } },
             ["<Esc>"] = {
               "explorer_esc",
               mode = { "i", "n" },
