@@ -163,20 +163,21 @@ vim.api.nvim_create_autocmd("BufReadPost", {
       return
     end
 
-    local prev_win = vim.fn.win_getid(vim.fn.winnr("#"))
-
-    if prev_win ~= 0 then
-      local prev_buf = vim.api.nvim_win_get_buf(prev_win)
-      print(vim.bo[prev_buf].filetype)
-
-      if vim.bo[prev_buf].filetype == "snacks_picker_list" or vim.bo[prev_buf].filetype == "snacks_picker_input" then
-        return
-      end
-    end
+    -- Skipping explorer sources
+    -- local prev_win = vim.fn.win_getid(vim.fn.winnr("#"))
+    -- if prev_win ~= 0 then
+    --   local prev_buf = vim.api.nvim_win_get_buf(prev_win)
+    --   print(vim.bo[prev_buf].filetype)
+    --
+    --   if vim.bo[prev_buf].filetype == "snacks_picker_list" or vim.bo[prev_buf].filetype == "snacks_picker_input" then
+    --     return
+    --   end
+    -- end
 
     Snacks.explorer()
   end,
 })
+
 -- vim.api.nvim_create_autocmd("LspAttach", {
 --   callback = function(args)
 --     local name = vim.api.nvim_buf_get_name(args.buf)
