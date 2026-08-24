@@ -232,7 +232,17 @@ return {
             end, { buffer = bufnr, nowait = true, desc = "Кастомный Ctrl+W в проектах" })
           end,
           layout = {
-            preview = false,
+            layout = {
+              box = "horizontal",
+              fulscreen = true,
+              {
+                box = "vertical",
+                border = "rounded",
+                { win = "input", height = 1, border = "bottom" },
+                { win = "list", border = "none" },
+                { win = "preview", height = 0.5, border = "top" },
+              },
+            },
           },
           confirm = function(picker, item)
             cmd_utils.SaveSessionAtGitRoot()
@@ -280,7 +290,7 @@ return {
                 border = "rounded",
                 { win = "input", height = 1, border = "bottom" },
                 { win = "list", border = "none" },
-                { win = "preview", height = 0.7, border = "top" },
+                { win = "preview", height = 0.5, border = "top" },
               },
             },
           },
