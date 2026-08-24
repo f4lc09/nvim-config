@@ -37,12 +37,12 @@ function M.ShowFlashExplorer(file)
   local cwd = vim.fn.getcwd()
   if not vim.startswith(file, cwd .. "/") and file ~= cwd then
     cwd = vim.fn.fnamemodify(file, ":h")
-    -- TODO: раскрывать cwd если мало включений
+    -- туду: раскрывать cwd если мало включений
   end
   local explorer_source = require("snacks.picker.source.explorer")
   flash_picker = Snacks.picker({
     source = "flash_explorer",
-    -- TODO:
+    -- туду:
     -- sort = function ()
     -- end
     formatters = {
