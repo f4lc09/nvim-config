@@ -157,33 +157,24 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
     utils.ReadJar(args)
   end,
 })
-local flashgroup = vim.api.nvim_create_augroup("ExplorerFlash", { clear = true })
-vim.api.nvim_create_autocmd("BufEnter", {
-  group = flashgroup,
+vim.api.nvim_create_autocmd("BufReadPost", {
   callback = function(args)
     if vim.bo[args.buf].buftype ~= "" then
       return
     end
 
-    local buf_name = vim.api.nvim_buf_get_name(args.buf)
-    local uv = vim.uv
-    local stat = uv.fs_stat(buf_name)
-    if not stat or stat.type ~= "file" then
-      return false
-    end
+    local prev_win = vim.fn.win_getid(vim.fn.winnr("#"))
 
-    local file = vim.api.nvim_buf_get_name(args.buf)
-    require("config.utils.flash_explorer").ShowFlashExplorer(file)
-    -- require("config.utils.flash_explorer").ShowFlashBuffers(file)
-  end,
-})
-vim.api.nvim_create_autocmd({ "BufEnter" }, {
-  callback = function()
-    for _, a in ipairs(vim.api.nvim_get_autocmds({ event = "CursorMoved" })) do
-      if (a.group_name == "trouble.section.lsp.document_symbols.1" or a.group_name == "snacks_scroll") and a.id then
-        vim.api.nvim_del_autocmd(a.id)
+    if prev_win ~= 0 then
+      local prev_buf = vim.api.nvim_win_get_buf(prev_win)
+      print(vim.bo[prev_buf].filetype)
+
+      if vim.bo[prev_buf].filetype == "snacks_picker_list" or vim.bo[prev_buf].filetype == "snacks_picker_input" then
+        return
       end
     end
+
+    Snacks.explorer()
   end,
 })
 -- vim.api.nvim_create_autocmd("LspAttach", {
