@@ -158,34 +158,6 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
     utils.ReadJar(args)
   end,
 })
-vim.api.nvim_create_autocmd("BufReadPost", {
-  callback = function(args)
-    local buf = args.buf
-    if vim.bo[buf].buftype ~= "" then
-      return
-    end
-    if not vim.bo[buf].swapfile and vim.bo[buf].bufhidden ~= "" then
-      return
-    end
-    local path = vim.api.nvim_buf_get_name(buf)
-    if path:match("[/\\]%.local[/\\]share[/\\]nvim[/\\]scratch[/\\]") then
-      return
-    end
-    -- Skipping explorer sources
-    -- local prev_win = vim.fn.win_getid(vim.fn.winnr("#"))
-    -- if prev_win ~= 0 then
-    --   local prev_buf = vim.api.nvim_win_get_buf(prev_win)
-    --   print(vim.bo[prev_buf].filetype)
-    --
-    --   if vim.bo[prev_buf].filetype == "snacks_picker_list" or vim.bo[prev_buf].filetype == "snacks_picker_input" then
-    --     return
-    --   end
-    -- end
-
-    Snacks.explorer({ cwd = keymap_utils.GetCWD() })
-  end,
-})
-
 -- vim.api.nvim_create_autocmd("LspAttach", {
 --   callback = function(args)
 --     local name = vim.api.nvim_buf_get_name(args.buf)
