@@ -160,10 +160,17 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
 })
 vim.api.nvim_create_autocmd("BufReadPost", {
   callback = function(args)
-    if vim.bo[args.buf].buftype ~= "" then
+    local buf = args.buf
+    if vim.bo[buf].buftype ~= "" then
       return
     end
-
+    if not vim.bo[buf].swapfile and vim.bo[buf].bufhidden ~= "" then
+      return
+    end
+    local path = vim.api.nvim_buf_get_name(buf)
+    if path:match("[/\\]%.local[/\\]share[/\\]nvim[/\\]scratch[/\\]") then
+      return
+    end
     -- Skipping explorer sources
     -- local prev_win = vim.fn.win_getid(vim.fn.winnr("#"))
     -- if prev_win ~= 0 then
@@ -188,3 +195,36 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 --     end
 --   end,
 -- })
+vim.api.nvim_create_autocmd("TextYankPost", {
+  callback = function()
+    if vim.bo.buftype ~= "terminal" then
+      return
+    end
+
+    local reg = vim.v.event.regname
+    reg = reg == "" and '"' or reg
+
+    local text = vim.fn.getreg(reg)
+    local width = vim.api.nvim_win_get_width(0)
+    local lines = vim.split(text, "\n", { plain = true })
+
+    local result = {}
+    local join_next = false
+
+    for _, line in ipairs(lines) do
+      if join_next then
+        result[#result] = result[#result] .. line
+      else
+        result[#result + 1] = line
+      end
+
+      join_next = vim.fn.strdisplaywidth(line) == width
+    end
+
+    local fixed = table.concat(result, "\n")
+    local regtype = vim.fn.getregtype(reg)
+
+    vim.fn.setreg(reg, fixed, regtype)
+    vim.fn.setreg("+", fixed, regtype)
+  end,
+})

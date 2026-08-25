@@ -85,6 +85,7 @@ end, { silent = true })
 map({ "n", "v" }, "<leader>p", function()
   local reg = vim.v.register
   vim.cmd("normal! o")
+  vim.cmd('normal! 0v$"_d')
   vim.cmd('normal! "' .. reg .. "P")
   LazyVim.format()
 end, { silent = true, desc = "Paste in new line" })
@@ -92,6 +93,7 @@ end, { silent = true, desc = "Paste in new line" })
 map({ "n", "v" }, "<leader>P", function()
   local reg = vim.v.register
   vim.cmd("normal! O")
+  vim.cmd('normal! 0v$"_d')
   vim.cmd('normal! "' .. reg .. "P")
   vim.cmd("w")
 end, { silent = true, desc = "Paste in new line" })
@@ -145,7 +147,7 @@ map({ "n" }, "<BS>", '"_cl<Esc>', { noremap = true, desc = "Удалить си�
 map({ "n" }, "<delete>", '"_x', { noremap = true, desc = "Удалить символ влево" })
 
 map({ "x", "n", "v" }, "c", '"_c', { noremap = true, desc = "Change without yanking", nowait = true })
-map({ "x", "n", "v" }, "C", '"_VdO', { noremap = true, desc = "Change without yanking", nowait = true })
+map({ "x", "n", "v" }, "C", 'V"_dO', { noremap = true, desc = "Change without yanking", nowait = true })
 map({ "n" }, "Y", "Vy", { noremap = true })
 map({ "n" }, "yy", "m`0y$``", { noremap = true })
 
