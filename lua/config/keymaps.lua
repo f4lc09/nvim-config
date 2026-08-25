@@ -194,10 +194,10 @@ end, { desc = "Grep (Root Dir)" })
 --
 -- Buffers and tabs
 map({ "n", "v", "i" }, ">", function()
-  utils.BufferCycle(1)
+  vim.cmd("tabnext")
 end, { silent = true, desc = "Next buffer" })
 map({ "n", "v", "i" }, "<", function()
-  utils.BufferCycle(-1)
+  vim.cmd("tabprev")
 end, { silent = true, desc = "Previous buffer" })
 -- map({ "n" }, "<leader>bmf", "<cmd>BufferLineMoveNext<CR>", { desc = "Move buffer forward" })
 -- map({ "n" }, "<leader>bmb", "<cmd>BufferLineMovePrev<CR>", { desc = "Move buffer back" })
@@ -211,10 +211,14 @@ map(
   "<cmd>bufdo if &buftype == '' || &buftype == 'acwrite' | bd | endif<cr>",
   { silent = true, desc = "Close all buffers" }
 )
-map({ "n" }, "<leader>tc", "<cmd>tabclose<CR>", { desc = "Close tab" })
-map({ "n" }, "<leader>tn", "<cmd>tabnext<CR>", { desc = "Next tab" })
-map({ "n" }, "<leader>tp", "<cmd>tabprev<CR>", { desc = "Previoues tab" })
+map({ "n" }, "<leader>td", "<cmd>tabclose<CR>", { desc = "Close tab" })
+-- map({ "n" }, "<leader>tn", "<cmd>tabnext<CR>", { desc = "Next tab" })
+-- map({ "n" }, "<leader>tp", "<cmd>tabprev<CR>", { desc = "Previoues tab" })
+map({ "n" }, "<leader>tn", "<cmd>tabnew<CR>", { desc = "New tab" })
 map({ "n" }, "<leader><C-r>", "<cmd>e<cr>", { desc = "Reload buffer" })
+map({ "n" }, "<leader>ts", function()
+  require("config.utils.tabs_picker").tabs_picker()
+end, { desc = "Snacks: Tabs Picker" })
 
 --
 -- GIT Comannds
