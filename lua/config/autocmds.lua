@@ -200,3 +200,36 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     vim.fn.setreg("+", fixed, regtype)
   end,
 })
+local tab_reload_group = vim.api.nvim_create_augroup("TabReloadGroup", { clear = true })
+local visited_tabs = {}
+vim.api.nvim_create_autocmd("TabEnter", {
+  group = tab_reload_group,
+  pattern = "*",
+  callback = function()
+    local current_tab = vim.api.nvim_get_current_tabpage()
+    if not visited_tabs[current_tab] then
+      visited_tabs[current_tab] = true
+      vim.schedule(function()
+        pcall(vim.cmd, "e")
+      end)
+    end
+  end,
+})
+
+vim.api.nvim_create_autocmd("TabClosed", {
+  group = tab_reload_group,
+  pattern = "*",
+  callback = function()
+    local open_tabs = vim.api.nvim_list_tabpages()
+    local open_tabs_set = {}
+    for _, tab in ipairs(open_tabs) do
+      open_tabs_set[tab] = true
+    end
+
+    for tab_id in pairs(visited_tabs) do
+      if not open_tabs_set[tab_id] then
+        visited_tabs[tab_id] = nil
+      end
+    end
+  end,
+})
