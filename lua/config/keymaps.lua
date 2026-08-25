@@ -52,7 +52,15 @@ map({ "n", "t", "i" }, "<C-t>", utils.ToggleTerminal, { desc = "Toggle Terminal"
 map({ "n", "t", "i" }, "<M-t>", utils.ToggleTmuxTerminal, { desc = "Toggle Terminal" })
 map({ "n", "t", "i" }, "<C-_>", utils.ToggleTerminal, { desc = "Toggle Terminal" })
 map({ "t" }, "<C-n>", [[<C-\><C-n>]], { desc = "Go normanl mode from terminal" })
-map({ "t" }, "<C-u>", [[<C-\><C-n><C-u>]], { desc = "Go normanl mode from terminal" })
+-- map({ "t" }, "<C-u>", [[<C-\><C-n><C-u>]], { desc = "Go normanl mode from terminal" })
+map({ "t" }, "<C-u>", function()
+  local esc = vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true)
+  vim.api.nvim_feedkeys(esc, "n", false)
+  vim.schedule(function()
+    local target_height = math.floor(vim.o.lines * 0.6)
+    vim.api.nvim_win_set_height(0, target_height)
+  end)
+end, { desc = "Go normal mode and resize terminal to 80%" })
 
 --
 -- Paste Commands
