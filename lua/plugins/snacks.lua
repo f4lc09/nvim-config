@@ -1,4 +1,5 @@
 local cmd_utils = require("config.utils.autocmds")
+local key_utils = require("config.utils.keymaps")
 
 return {
   "folke/snacks.nvim",
@@ -206,6 +207,42 @@ return {
       },
       sources = {
         buffers = {
+          format = function(item, picker)
+            local icon, hl = Snacks.util.icon(item.file, "file")
+            local path = item.file or item.text
+            local file = vim.fn.fnamemodify(path, ":t")
+            local cwd = key_utils.GetCWD(path)
+            local dir_name = cwd:match("^.*/([^/]+)$")
+
+            local escaped_cwd = cwd:gsub("([^%w])", "%%%1")
+            local relative_path = path:gsub("^" .. escaped_cwd, "")
+            relative_path = relative_path:gsub("^/", "")
+            -- TODO: использовать relative_path только тогда когда есть файлы с тем же названием
+            local display_path = dir_name .. "/" .. relative_path
+
+            local file_hl = "Normal"
+            local is_modified = false
+
+            local bufnr = vim.fn.bufnr(item.file)
+            if bufnr ~= -1 then
+              local main_buf = vim.api.nvim_win_is_valid(picker.main) and vim.api.nvim_win_get_buf(picker.main) or nil
+              is_modified = vim.api.nvim_get_option_value("modified", { buf = bufnr })
+              if bufnr == main_buf then
+                file_hl = "SnacksPickerDir"
+              elseif vim.api.nvim_buf_is_loaded(bufnr) then
+                file_hl = "SnacksDashboardKey"
+              end
+            end
+            local ret = {}
+            if is_modified then
+              ret[#ret + 1] = { "● ", "DiagnosticError" }
+            end
+            ret[#ret + 1] = { icon .. " ", hl }
+            ret[#ret + 1] = { file .. " ", file_hl }
+            ret[#ret + 1] = { display_path, "SnacksPickerDir" }
+
+            return ret
+          end,
           layout = {
             preset = "vertical",
             layout = {
@@ -267,11 +304,9 @@ return {
           end,
           format = function(item)
             local path = item.file or item.text
-            -- Convert absolute path to home-relative (e.g., /home/user -> ~)
             local home_path = vim.fn.fnamemodify(path, ":~")
 
             local ret = {}
-            -- Keep the default icon and name if available
             ret[#ret + 1] = { item.name or vim.fn.fnamemodify(path, ":t"), "Normal" }
             ret[#ret + 1] = { " " } -- Separator
             ret[#ret + 1] = { home_path, "Directory" }
@@ -279,13 +314,25 @@ return {
           end,
         },
         grep = {
-          format = function(item)
+          format = function(item, picker)
             local icon, hl = Snacks.util.icon(item.file, "file")
             local line = item.pos and item.pos[1] or 0
 
+            local file_hl = "Normal"
+
+            local bufnr = vim.fn.bufnr(item.file)
+
+            if bufnr ~= -1 then
+              local main_buf = vim.api.nvim_win_is_valid(picker.main) and vim.api.nvim_win_get_buf(picker.main) or nil
+              if bufnr == main_buf then
+                file_hl = "SnacksPickerTitle"
+              elseif vim.api.nvim_get_option_value("buflisted", { buf = bufnr }) then
+                file_hl = "SnacksDashboardKey"
+              end
+            end
             return {
               { icon .. " ", hl },
-              { vim.fn.fnamemodify(item.file, ":."), "Normal" },
+              { vim.fn.fnamemodify(item.file, ":."), file_hl },
               { ":" .. line, "LineNr" },
             }
           end,

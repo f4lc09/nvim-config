@@ -1,5 +1,4 @@
 local dap = require("dap")
-local bufferline = require("bufferline")
 
 local M = {}
 
@@ -80,9 +79,6 @@ function M.SetTmuxWindowName()
   end
 end
 
-local status, hl_normal = pcall(vim.api.nvim_get_hl, 0, { name = "Normal" })
-local fixed_bg = (status and hl_normal.bg) or "NONE"
-
 function M.LanguageControl(key)
   local mode = vim.api.nvim_get_mode().mode
   if mode == "i" or mode == "R" then
@@ -90,14 +86,12 @@ function M.LanguageControl(key)
   end
 
   if key:match("[%z\1-\127]") == nil and key:match("[а-яА-ЯёЁ]") then
-    -- vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
-
-    -- Красим (используем константу вместо динамического определения)
     vim.api.nvim_set_hl(0, "Normal", { bg = "#5f0000" })
 
     vim.defer_fn(function()
-      -- Всегда возвращаем к заранее запомненному fixed_bg
-      vim.api.nvim_set_hl(0, "Normal", { bg = fixed_bg })
+      vim.api.nvim_set_hl(0, "Normal", { link = "Normal" })
+      vim.cmd("colorscheme " .. vim.g.colors_name)
+      vim.cmd("redraw")
     end, 50)
   end
 end
@@ -373,13 +367,26 @@ function M.DelMarks()
 end
 
 function M.GetCWD(file)
-  if not file then
+  if not file or file == "" then
     local buf = vim.api.nvim_get_current_buf()
     file = vim.api.nvim_buf_get_name(buf)
   end
+
+  if file == "" then
+    return vim.fn.getcwd()
+  end
+
   local cwd = vim.fn.getcwd()
   if not vim.startswith(file, cwd .. "/") and file ~= cwd then
-    cwd = vim.fn.fnamemodify(file, ":h")
+    local file_dir = vim.fn.fnamemodify(file, ":h")
+
+    local root_file = vim.fs.find({ ".git", "go.mod" }, { path = file_dir, upward = true })[1]
+
+    if root_file then
+      cwd = vim.fn.fnamemodify(root_file, ":h")
+    else
+      cwd = file_dir
+    end
   end
 
   return cwd

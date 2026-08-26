@@ -163,10 +163,16 @@ unmap("n", "<leader>E")
 map({ "n", "i", "t" }, "", function()
   Snacks.explorer({ diagnostics_open = false, cwd = utils.GetCWD() })
 end, { desc = "Toggle Explorer" })
+map({ "n", "i", "t" }, "<leader>,", function()
+  local picker = Snacks.picker.buffers({
+    cwd = utils.GetCWD(),
+  })
+  picker:action("list_down")
+end, { desc = "Toggle Explorer" })
 
-map({ "n", "i", "t" }, "", function()
-  Snacks.picker.projects()
-end, { desc = "Projects" })
+-- map({ "n", "i", "t" }, "", function()
+--   Snacks.picker.projects()
+-- end, { desc = "Projects" })
 
 map("n", "<leader>e", function()
   local session_file = vim.v.this_session
@@ -194,6 +200,9 @@ end, { desc = "Grep (Root Dir)" })
 --
 -- Buffers and tabs
 map({ "n", "v", "i" }, ">", function()
+  local mode = vim.api.nvim_get_mode().mode
+  if mode == "i" or mode == "t" then
+  end
   vim.cmd("tabnext")
 end, { silent = true, desc = "Next buffer" })
 map({ "n", "v", "i" }, "<", function()
@@ -266,6 +275,10 @@ map({ "n" }, "a", utils.SmartInsertOnEmptyLine, { noremap = true, expr = true, d
 map({ "n", "v", "x" }, "<leader>rs", utils.ReplaceWithSubstituteCommand, { desc = "Replace with /s command" })
 map({ "v" }, "<leader>ra", utils.ReplaceSelectionAcrossFile, { desc = "Substitute current selection" })
 map({ "n" }, "<leader>op", utils.OpenFromClipboard, { desc = "Open file from clipboard" })
+map({ "n" }, "ш", "i")
+map({ "n" }, "ф", "a")
+map({ "n" }, "Ш", "I")
+map({ "n" }, "Ф", "A")
 vim.on_key(utils.LanguageControl)
 
 map({ "n", "v", "x" }, "<leader>m", function()

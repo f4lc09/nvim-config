@@ -100,7 +100,7 @@ function M.ShowFlashExplorer(file)
   )
 
   vim.on_key(function(key)
-    -- TODO: проверять последовательность
+    -- туду: проверять последовательность
     if has_value(ignore_combo[1], key) then
       return
     end
