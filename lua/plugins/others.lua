@@ -46,6 +46,7 @@ return {
         ["<S-Tab>"] = { "select_prev", "fallback" },
         ["<Down>"] = {},
         ["<Up>"] = {},
+        ["<C-y>"] = {},
       },
     },
   },
