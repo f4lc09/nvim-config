@@ -239,7 +239,7 @@ return {
               local main_buf = vim.api.nvim_win_is_valid(picker.main) and vim.api.nvim_win_get_buf(picker.main) or nil
               is_modified = vim.api.nvim_get_option_value("modified", { buf = bufnr })
               if bufnr == main_buf then
-                file_hl = "SnacksPickerDir"
+                file_hl = "SnacksPickerTitle"
               elseif vim.api.nvim_buf_is_loaded(bufnr) then
                 file_hl = "SnacksDashboardKey"
               end
