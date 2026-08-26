@@ -211,14 +211,25 @@ return {
             local icon, hl = Snacks.util.icon(item.file, "file")
             local path = item.file or item.text
             local file = vim.fn.fnamemodify(path, ":t")
+            local display_path = ""
+
+            local diff_cwds = false
             local cwd = key_utils.GetCWD(path)
             local dir_name = cwd:match("^.*/([^/]+)$")
 
-            local escaped_cwd = cwd:gsub("([^%w])", "%%%1")
-            local relative_path = path:gsub("^" .. escaped_cwd, "")
-            relative_path = relative_path:gsub("^/", "")
-            -- TODO: использовать relative_path только тогда когда есть файлы с тем же названием
-            local display_path = dir_name .. "/" .. relative_path
+            for _, other in ipairs(picker:items()) do
+              local other_path = other.file or other.text
+              local other_cwd = key_utils.GetCWD(other_path)
+              local other_dir_name = other_cwd:match("^.*/([^/]+)$")
+              if other_dir_name ~= dir_name then
+                diff_cwds = true
+                break
+              end
+            end
+
+            if diff_cwds then
+              display_path = dir_name
+            end
 
             local file_hl = "Normal"
             local is_modified = false
@@ -246,7 +257,7 @@ return {
           layout = {
             preset = "vertical",
             layout = {
-              width = 0.60,
+              width = 0.70,
               height = 0.55,
             },
           },
