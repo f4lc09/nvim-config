@@ -385,6 +385,29 @@ local grep = function()
   local active_ns = vim.api.nvim_create_namespace("snacks_grep_active")
   local ts_ns = vim.api.nvim_create_namespace("snacks_grep_ts")
 
+  ----------------------------------------------------------------
+  -- Statuscolumn
+  ----------------------------------------------------------------
+
+  _G.SnacksGrepStatusColumn = function()
+    local buf = vim.api.nvim_get_current_buf()
+    local numbers = vim.b[buf].grep_line_numbers
+
+    if not numbers then
+      return "        "
+    end
+
+    local number = numbers[vim.v.lnum]
+
+    if not number then
+      return "        "
+    end
+
+    local width = vim.b[buf].grep_line_nr_width or 5
+
+    return string.format("%" .. width .. "d ", number)
+  end
+
   local function item_key(item)
     return string.format(
       "%s:%s:%s:%s",
@@ -404,10 +427,14 @@ local grep = function()
     vim.wo[win].relativenumber = false
     vim.wo[win].signcolumn = "no"
     vim.wo[win].foldcolumn = "0"
-    vim.wo[win].statuscolumn = ""
+    vim.wo[win].statuscolumn = "%{v:lua.SnacksGrepStatusColumn()}"
     vim.wo[win].cursorline = false
     vim.wo[win].wrap = false
   end
+
+  ----------------------------------------------------------------
+  -- Clear preview marks.
+  ----------------------------------------------------------------
 
   local function clear_preview_marks(picker)
     local preview = picker.preview
@@ -428,8 +455,17 @@ local grep = function()
 
     vim.api.nvim_buf_clear_namespace(buf, ts_ns, 0, -1)
 
+    vim.b[buf].grep_line_numbers = nil
+    vim.b[buf].grep_line_nr_width = nil
+
     setup_preview_window(preview.win.win)
   end
+
+  ----------------------------------------------------------------
+  -- Active line.
+  --
+  -- Красим только то, что находится ВНЕ match.
+  ----------------------------------------------------------------
 
   local function update_active_line(picker, item)
     local preview = picker.preview
@@ -462,11 +498,19 @@ local grep = function()
       details = true,
     })
 
+    ----------------------------------------------------------------
+    -- Нет match.
+    ----------------------------------------------------------------
+
     if #extmarks == 0 then
       vim.api.nvim_buf_add_highlight(buf, active_ns, "SnacksGrepActiveLine", line, 0, -1)
 
       return
     end
+
+    ----------------------------------------------------------------
+    -- Active background только вне match.
+    ----------------------------------------------------------------
 
     local cursor = 0
 
@@ -517,20 +561,16 @@ local grep = function()
     },
 
     ----------------------------------------------------------------
-    -- Active item.
+    -- Selection changed.
+    --
+    -- Если набор результатов тот же — ничего не перерисовываем.
     ----------------------------------------------------------------
 
     on_change = function(picker, item)
       if not item then
-        ------------------------------------------------------------
-        -- Просто сбрасываем состояние.
-        --
-        -- НЕ трогаем содержимое preview-буфера.
-        -- Snacks сам вызовет preview() при появлении результатов.
-        ------------------------------------------------------------
-
         picker._grep_signature = nil
         picker._grep_item_lines = nil
+        picker._grep_line_numbers = nil
 
         clear_preview_marks(picker)
 
@@ -541,7 +581,7 @@ local grep = function()
     end,
 
     ----------------------------------------------------------------
-    -- Format.
+    -- List format.
     ----------------------------------------------------------------
 
     format = function(item, picker)
@@ -589,14 +629,13 @@ local grep = function()
       local items = picker:items()
 
       ----------------------------------------------------------------
-      -- Нет результатов.
-      --
-      -- Ничего не пишем напрямую в preview buffer.
+      -- No results.
       ----------------------------------------------------------------
 
       if #items == 0 then
         picker._grep_signature = nil
         picker._grep_item_lines = nil
+        picker._grep_line_numbers = nil
 
         vim.api.nvim_buf_clear_namespace(buf, match_ns, 0, -1)
 
@@ -604,13 +643,16 @@ local grep = function()
 
         vim.api.nvim_buf_clear_namespace(buf, ts_ns, 0, -1)
 
+        vim.b[buf].grep_line_numbers = nil
+        vim.b[buf].grep_line_nr_width = nil
+
         setup_preview_window(win)
 
         return
       end
 
       ----------------------------------------------------------------
-      -- Signature.
+      -- Signature результатов.
       ----------------------------------------------------------------
 
       local signature_parts = {}
@@ -622,7 +664,9 @@ local grep = function()
       local signature = table.concat(signature_parts, "\n")
 
       ----------------------------------------------------------------
-      -- Если список тот же — только active line.
+      -- Результаты те же.
+      --
+      -- Только перемещаем active line.
       ----------------------------------------------------------------
 
       if picker._grep_signature == signature then
@@ -635,8 +679,39 @@ local grep = function()
 
       picker._grep_signature = signature
       picker._grep_item_lines = {}
+      picker._grep_line_numbers = {}
 
-      local width = vim.api.nvim_win_get_width(win)
+      ----------------------------------------------------------------
+      -- Собираем максимальный номер строки.
+      ----------------------------------------------------------------
+
+      local max_line_nr = 0
+
+      for _, item in ipairs(items) do
+        if item.pos and item.pos[1] then
+          max_line_nr = math.max(max_line_nr, item.pos[1])
+        end
+      end
+
+      local line_nr_width = math.max(5, #tostring(max_line_nr))
+
+      picker._grep_line_nr_width = line_nr_width
+
+      ----------------------------------------------------------------
+      -- Ширина preview с учётом statuscolumn.
+      --
+      -- "%5d │" = 5 цифр + пробел + │
+      ----------------------------------------------------------------
+
+      local gutter_width = line_nr_width + 2
+
+      local total_width = vim.api.nvim_win_get_width(win)
+
+      local width = math.max(1, total_width - gutter_width)
+
+      ----------------------------------------------------------------
+      -- Data.
+      ----------------------------------------------------------------
 
       local lines = {}
       local matches = {}
@@ -673,12 +748,14 @@ local grep = function()
             }
 
             picker._grep_item_lines[item_key(item)] = preview_line
+
+            picker._grep_line_numbers[preview_line + 1] = line_nr
           end
         end
       end
 
       ----------------------------------------------------------------
-      -- display -> byte.
+      -- display column -> byte offset.
       ----------------------------------------------------------------
 
       local function display_to_byte(line, target)
@@ -703,6 +780,7 @@ local grep = function()
           end
 
           display = display + char_width
+
           byte = byte + #char
         end
 
@@ -744,7 +822,7 @@ local grep = function()
       end
 
       ----------------------------------------------------------------
-      -- Crop lines.
+      -- Crop каждой строки.
       ----------------------------------------------------------------
 
       local cropped_lines = {}
@@ -848,8 +926,21 @@ local grep = function()
       ctx.preview:reset()
       ctx.preview:set_lines(cropped_lines)
 
-      -- Обязательно после set_lines.
+      ----------------------------------------------------------------
+      -- Snacks мог заменить preview buffer.
+      ----------------------------------------------------------------
+
+      buf = ctx.preview.win.buf
+
+      vim.b[buf].grep_line_numbers = picker._grep_line_numbers
+
+      vim.b[buf].grep_line_nr_width = picker._grep_line_nr_width
+
       setup_preview_window(win)
+
+      ----------------------------------------------------------------
+      -- Namespaces.
+      ----------------------------------------------------------------
 
       vim.api.nvim_buf_clear_namespace(buf, ts_ns, 0, -1)
 
@@ -858,7 +949,7 @@ local grep = function()
       vim.api.nvim_buf_clear_namespace(buf, active_ns, 0, -1)
 
       ----------------------------------------------------------------
-      -- Tree-sitter highlights.
+      -- Tree-sitter.
       ----------------------------------------------------------------
 
       for line_nr, highlights in pairs(syntax) do
@@ -911,7 +1002,15 @@ local grep = function()
       update_active_line(picker, ctx.item)
 
       ----------------------------------------------------------------
-      -- Cleanup Tree-sitter.
+      -- Statuscolumn.
+      ----------------------------------------------------------------
+
+      setup_preview_window(win)
+
+      vim.cmd("redraw")
+
+      ----------------------------------------------------------------
+      -- Cleanup Tree-sitter buffers.
       ----------------------------------------------------------------
 
       for _, ts in pairs(parsers) do
@@ -919,8 +1018,6 @@ local grep = function()
           pcall(vim.api.nvim_buf_delete, ts.buf, { force = true })
         end
       end
-
-      setup_preview_window(win)
     end,
   })
 end
