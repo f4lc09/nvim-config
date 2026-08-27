@@ -387,7 +387,7 @@ local grep = function()
 
         {
           win = "preview",
-          height = 0.4,
+          height = 0.5,
           border = "top",
         },
       },
