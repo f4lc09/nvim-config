@@ -586,10 +586,8 @@ local grep = function()
 
     format = function(item, picker)
       local icon, hl = Snacks.util.icon(item.file, "file")
-      local line = item.pos and item.pos[1] or 0
 
       local file_hl = "Normal"
-
       local bufnr = vim.fn.bufnr(item.file)
 
       if bufnr ~= -1 then
@@ -604,10 +602,13 @@ local grep = function()
         end
       end
 
+      local filename = vim.fn.fnamemodify(item.file, ":t")
+      local path = vim.fn.fnamemodify(item.file, ":.")
+
       return {
         { icon .. " ", hl },
-        { vim.fn.fnamemodify(item.file, ":."), file_hl },
-        { ":" .. line, "LineNr" },
+        { filename, file_hl },
+        { "\n" .. path, "Comment" },
       }
     end,
 
