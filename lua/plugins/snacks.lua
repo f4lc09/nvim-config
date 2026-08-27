@@ -284,21 +284,32 @@ return {
             local display_path = ""
 
             local diff_cwds = false
+            local same_file_name = false
             local cwd = key_utils.GetCWD(path)
             local dir_name = cwd:match("^.*/([^/]+)$")
 
             for _, other in ipairs(picker:items()) do
               local other_path = other.file or other.text
-              local other_cwd = key_utils.GetCWD(other_path)
-              local other_dir_name = other_cwd:match("^.*/([^/]+)$")
-              if other_dir_name ~= dir_name then
-                diff_cwds = true
-                break
+              if path ~= other_path then
+                local other_cwd = key_utils.GetCWD(other_path)
+                local other_dir_name = other_cwd:match("^.*/([^/]+)$")
+                if other_dir_name ~= dir_name then
+                  diff_cwds = true
+                end
+
+                if vim.fn.fnamemodify(other_path, ":t") == vim.fn.fnamemodify(path, ":t") then
+                  print(vim.fn.fnamemodify(path, ":t"))
+                  same_file_name = true
+                  break
+                end
               end
             end
 
             if diff_cwds then
               display_path = dir_name
+            end
+            if same_file_name then
+              display_path = vim.fn.fnamemodify(path, ":.:h")
             end
 
             local file_hl = "Normal"
@@ -461,6 +472,9 @@ return {
           },
         },
         list = {
+          wo = {
+            wrap = true,
+          },
           keys = {
             ["<C-p>"] = {
               "cycle_win",

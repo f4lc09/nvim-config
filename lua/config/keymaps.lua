@@ -160,7 +160,13 @@ unmap("n", "<leader>E")
 map({ "n", "i", "t" }, "", function()
   Snacks.explorer({ diagnostics_open = false, cwd = utils.GetCWD() })
 end, { desc = "Toggle Explorer" })
-map({ "n", "t" }, "<leader>,", function()
+map({ "n" }, "<leader>,", function()
+  local picker = Snacks.picker.buffers({
+    cwd = utils.GetCWD(),
+  })
+  picker:action("list_down")
+end, { desc = "Toggle Explorer" })
+map({ "n" }, "<leader>_", function()
   local picker = Snacks.picker.buffers({
     cwd = utils.GetCWD(),
   })
@@ -369,6 +375,6 @@ map({ "n" }, "<leader>ks", function()
   require("kulala").set_selected_env()
 end, { desc = "Select Enviroment" })
 
-map("n", "<leader>sg", grep_utils.grep, {
-  desc = "Grep",
-})
+-- map("n", "<leader>sg", grep_utils.grep, {
+--   desc = "Grep",
+-- })
