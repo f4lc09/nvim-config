@@ -392,7 +392,7 @@ local grep = function()
         },
       },
     },
-    format = function(item)
+    format = function(item, picker)
       local icon, hl = Snacks.util.icon(item.file, "file")
       local line = item.pos and item.pos[1] or 0
 
@@ -419,6 +419,7 @@ local grep = function()
       local current = ctx.item
       local lines = {}
       local current_line
+      local highlights = {}
 
       local cache = {}
 
@@ -431,14 +432,21 @@ local grep = function()
             cache[item.file] = ok and content or {}
           end
 
-          local content = cache[item.file]
-          local line = content[line_nr]
+          local line = cache[item.file][line_nr]
 
           if line then
+            local preview_line = #lines
             lines[#lines + 1] = line
 
             if item == current then
-              current_line = #lines
+              current_line = preview_line + 1
+            end
+
+            if item.positions then
+              highlights[#highlights + 1] = {
+                line = preview_line,
+                positions = item.positions,
+              }
             end
           end
         end
@@ -447,11 +455,34 @@ local grep = function()
       ctx.preview:reset()
       ctx.preview:set_lines(lines)
 
+      local buf = ctx.preview.win.buf
+      local ns = vim.api.nvim_create_namespace("snacks_grep_preview")
+
+      vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+
+      for _, match in ipairs(highlights) do
+        for _, col in ipairs(match.positions) do
+          vim.api.nvim_buf_add_highlight(buf, ns, "Search", match.line, col, col + 1)
+        end
+      end
+
       if current_line then
         vim.api.nvim_win_set_cursor(ctx.preview.win.win, { current_line, 0 })
       end
 
       vim.wo[ctx.preview.win.win].cursorline = true
+
+      local filetype = vim.filetype.match({
+        filename = current and current.file or "",
+      })
+
+      if filetype then
+        vim.bo[buf].filetype = filetype
+
+        if vim.treesitter.language.add(filetype) then
+          vim.treesitter.start(buf, filetype)
+        end
+      end
     end,
   })
 end
