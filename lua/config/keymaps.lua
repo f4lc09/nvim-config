@@ -156,14 +156,11 @@ map({ "n" }, "yy", "m`0y$``", { noremap = true })
 unmap("n", "<leader>e")
 unmap("n", "<leader>E")
 
--- TODO: Open Explorer with previous cursor position
--- Add "Get to root cwd (reset)", and focus current file
--- Открывать explorer в буфере??? oil
--- Files заменить видом эксплорер но логику оставить ту же
+-- TODO: когда открыл не тот файл, закрыл его и кирдык, опять в эксплорере листать до него
 map({ "n", "i", "t" }, "", function()
   Snacks.explorer({ diagnostics_open = false, cwd = utils.GetCWD() })
 end, { desc = "Toggle Explorer" })
-map({ "n", "i", "t" }, "<leader>,", function()
+map({ "n", "t" }, "<leader>,", function()
   local picker = Snacks.picker.buffers({
     cwd = utils.GetCWD(),
   })
@@ -199,18 +196,23 @@ end, { desc = "Grep (Root Dir)" })
 
 --
 -- Buffers and tabs
-map({ "n", "v", "i" }, ">", function()
+map({ "n", "v", "i" }, ">", function()
   local mode = vim.api.nvim_get_mode().mode
   if mode == "i" or mode == "t" then
+    vim.cmd("silent! stopinsert")
   end
   vim.cmd("tabnext")
 end, { silent = true, desc = "Next buffer" })
-map({ "n", "v", "i" }, "<", function()
+map({ "n", "v", "i" }, "<", function()
+  local mode = vim.api.nvim_get_mode().mode
+  if mode == "i" or mode == "t" then
+    vim.cmd("silent! stopinsert")
+  end
   vim.cmd("tabprev")
 end, { silent = true, desc = "Previous buffer" })
 -- map({ "n" }, "<leader>bmf", "<cmd>BufferLineMoveNext<CR>", { desc = "Move buffer forward" })
 -- map({ "n" }, "<leader>bmb", "<cmd>BufferLineMovePrev<CR>", { desc = "Move buffer back" })
-map({ "n", "v", "i" }, "w", function()
+map({ "n", "v", "i" }, "w", function()
   utils.BufferDelete()
 end, { silent = true, desc = "Delete buffer" })
 map({ "n" }, "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })

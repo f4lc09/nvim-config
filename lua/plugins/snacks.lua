@@ -37,6 +37,25 @@ return {
         },
       },
       actions = {
+        cycle_win_backward = function(picker)
+          local wins = { picker.input.win.win, picker.preview.win.win, picker.list.win.win }
+          if type(vim.g.snacks_picker_cycle_win) == "number" then
+            table.insert(wins, 3, vim.g.snacks_picker_cycle_win)
+          end
+          wins = vim.tbl_filter(function(w)
+            return vim.api.nvim_win_is_valid(w)
+          end, wins)
+          local win = vim.api.nvim_get_current_win()
+          local idx = 1
+          for i, w in ipairs(wins) do
+            if w == win then
+              idx = i
+              break
+            end
+          end
+          win = wins[(idx - 2) % #wins + 1]
+          vim.api.nvim_set_current_win(win)
+        end,
         restore_session_cwd = function(picker)
           cmd_utils.RestoreCWDFromSessionForce()
           picker:close()
@@ -419,8 +438,32 @@ return {
         },
       },
       win = {
+        preview = {
+          keys = {
+            ["<C-p>"] = {
+              "cycle_win",
+              mode = { "i", "n" },
+              desc = "Cycle windows backwards",
+            },
+            ["<C-n>"] = {
+              "cycle_win_backward",
+              mode = { "i", "n" },
+              desc = "Cycle window forward",
+            },
+          },
+        },
         list = {
           keys = {
+            ["<C-p>"] = {
+              "cycle_win",
+              mode = { "i", "n" },
+              desc = "Cycle windows backwards",
+            },
+            ["<C-n>"] = {
+              "cycle_win_backward",
+              mode = { "i", "n" },
+              desc = "Cycle window forward",
+            },
             ["<C-f>"] = { "cd_to_folder", mode = { "n", "i" } },
             ["<C-y>"] = { "copy_file_name", mode = { "n", "i" } },
             ["<M-t>"] = { "open_tmux_term_in_folder", mode = { "n", "i" } },
@@ -432,6 +475,16 @@ return {
         },
         input = {
           keys = {
+            ["<C-p>"] = {
+              "cycle_win",
+              mode = { "i", "n" },
+              desc = "Cycle windows backwards",
+            },
+            ["<C-n>"] = {
+              "cycle_win_backward",
+              mode = { "i", "n" },
+              desc = "Cycle window forward",
+            },
             ["<Tab>"] = { "list_down", mode = { "i", "n" } },
             ["<S-Tab>"] = { "list_up", mode = { "i", "n" } },
             ["<Esc>"] = {
