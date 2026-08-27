@@ -368,6 +368,19 @@ map({ "n" }, "<leader>ks", function()
   require("kulala").set_selected_env()
 end, { desc = "Select Enviroment" })
 local grep = function()
+  vim.api.nvim_set_hl(0, "SnacksGrepMatch", {
+    fg = vim.api.nvim_get_hl(0, {
+      name = "SnacksDashboardHeader",
+      link = false,
+    }).fg,
+    bg = "#626670",
+    bold = true,
+  })
+
+  vim.api.nvim_set_hl(0, "SnacksGrepActiveLine", {
+    bg = "#3a3f4b",
+  })
+
   Snacks.picker.grep({
     layout = {
       fullscreen = true,
@@ -377,21 +390,26 @@ local grep = function()
         {
           win = "input",
           height = 1,
-          border = "bottom",
+          border = "rounded",
         },
 
         {
-          win = "list",
-          border = "none",
-        },
+          box = "horizontal",
 
-        {
-          win = "preview",
-          height = 0.5,
-          border = "top",
+          {
+            win = "list",
+            border = "right",
+            height = 0,
+          },
+
+          {
+            win = "preview",
+            height = 0,
+          },
         },
       },
     },
+
     format = function(item, picker)
       local icon, hl = Snacks.util.icon(item.file, "file")
       local line = item.pos and item.pos[1] or 0
@@ -402,24 +420,29 @@ local grep = function()
 
       if bufnr ~= -1 then
         local main_buf = vim.api.nvim_win_is_valid(picker.main) and vim.api.nvim_win_get_buf(picker.main) or nil
+
         if bufnr == main_buf then
           file_hl = "SnacksPickerTitle"
         elseif vim.api.nvim_get_option_value("buflisted", { buf = bufnr }) then
           file_hl = "SnacksDashboardKey"
         end
       end
+
       return {
         { icon .. " ", hl },
         { vim.fn.fnamemodify(item.file, ":."), file_hl },
         { ":" .. line, "LineNr" },
       }
     end,
+
     preview = function(ctx)
       local picker = ctx.picker
       local current = ctx.item
 
       local lines = {}
+      local matches = {}
       local current_line
+
       local cache = {}
       local parsers = {}
       local syntax = {}
@@ -437,7 +460,13 @@ local grep = function()
 
           if line then
             local preview_line = #lines
+
             lines[#lines + 1] = line
+
+            matches[preview_line] = {
+              start = item.pos[2] or 0,
+              finish = item.end_pos and item.end_pos[2] or ((item.pos[2] or 0) + 1),
+            }
 
             if item == current then
               current_line = preview_line + 1
@@ -460,6 +489,7 @@ local grep = function()
                 vim.bo[tsbuf].filetype = ft
 
                 local parser = vim.treesitter.get_parser(tsbuf, lang)
+
                 parser:parse()
 
                 local query = vim.treesitter.query.get(lang, "highlights")
@@ -487,6 +517,7 @@ local grep = function()
 
                 if row1 <= line_nr - 1 and row2 >= line_nr - 1 then
                   local start_col = row1 == line_nr - 1 and col1 or 0
+
                   local end_col = row2 == line_nr - 1 and col2 or #line
 
                   syntax[preview_line] = syntax[preview_line] or {}
@@ -503,19 +534,202 @@ local grep = function()
         end
       end
 
-      ctx.preview:reset()
-      ctx.preview:set_lines(lines)
-
+      local win = ctx.preview.win.win
       local buf = ctx.preview.win.buf
-      local ns = vim.api.nvim_create_namespace("snacks_grep_preview")
 
-      vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+      vim.wo[win].number = false
+      vim.wo[win].relativenumber = false
+      vim.wo[win].signcolumn = "no"
+      vim.wo[win].foldcolumn = "0"
+      vim.wo[win].statuscolumn = ""
+      vim.wo[win].cursorline = false
+      vim.wo[win].wrap = false
+
+      local width = vim.api.nvim_win_get_width(win)
+
+      ----------------------------------------------------------------
+      -- display column -> byte offset
+      ----------------------------------------------------------------
+
+      local function display_to_byte(line, target)
+        if target <= 0 then
+          return 0
+        end
+
+        local byte = 0
+        local display = 0
+
+        while byte < #line do
+          local char = vim.fn.matchstr(line:sub(byte + 1), "^.")
+
+          if char == "" then
+            break
+          end
+
+          local char_width = vim.fn.strdisplaywidth(char)
+
+          if display + char_width > target then
+            break
+          end
+
+          display = display + char_width
+          byte = byte + #char
+        end
+
+        return byte
+      end
+
+      ----------------------------------------------------------------
+      -- Crop
+      ----------------------------------------------------------------
+
+      local function crop_line(line, match_start, match_end)
+        local line_width = vim.fn.strdisplaywidth(line)
+
+        if line_width <= width then
+          return line, 0
+        end
+
+        local match_start_display = vim.fn.strdisplaywidth(line:sub(1, match_start))
+
+        local match_end_display = vim.fn.strdisplaywidth(line:sub(1, match_end))
+
+        local crop_display = 0
+
+        if match_end_display <= width then
+          crop_display = 0
+        elseif match_start_display < width then
+          crop_display = 0
+        else
+          crop_display = match_end_display - width + 5
+        end
+
+        crop_display = math.max(0, math.min(crop_display, line_width - width))
+
+        local start_byte = display_to_byte(line, crop_display)
+
+        local end_byte = display_to_byte(line, crop_display + width)
+
+        return line:sub(start_byte + 1, end_byte), start_byte
+      end
+
+      ----------------------------------------------------------------
+      -- Crop каждой строки независимо
+      ----------------------------------------------------------------
+
+      local cropped_lines = {}
+      local crop_offsets = {}
+
+      for i, line in ipairs(lines) do
+        local match = matches[i - 1]
+
+        local cropped, offset = crop_line(line, match.start, match.finish)
+
+        cropped_lines[i] = cropped
+        crop_offsets[i] = offset
+      end
+
+      ----------------------------------------------------------------
+      -- Tree-sitter highlights
+      ----------------------------------------------------------------
+
+      local cropped_syntax = {}
 
       for line_nr, highlights in pairs(syntax) do
+        local offset = crop_offsets[line_nr + 1] or 0
+
+        local cropped = cropped_lines[line_nr + 1] or ""
+
         for _, h in ipairs(highlights) do
-          vim.api.nvim_buf_add_highlight(buf, ns, h[3], line_nr, h[1], h[2])
+          local start_col = h[1] - offset
+          local end_col = h[2] - offset
+
+          if end_col > 0 and start_col < #cropped then
+            start_col = math.max(0, start_col)
+            end_col = math.min(#cropped, end_col)
+
+            if end_col > start_col then
+              cropped_syntax[line_nr] = cropped_syntax[line_nr] or {}
+
+              table.insert(cropped_syntax[line_nr], {
+                start_col,
+                end_col,
+                h[3],
+              })
+            end
+          end
         end
       end
+
+      ----------------------------------------------------------------
+      -- Render
+      ----------------------------------------------------------------
+
+      ctx.preview:reset()
+      ctx.preview:set_lines(cropped_lines)
+
+      local ts_ns = vim.api.nvim_create_namespace("snacks_grep_preview")
+
+      local match_ns = vim.api.nvim_create_namespace("snacks_grep_match")
+
+      local active_ns = vim.api.nvim_create_namespace("snacks_grep_active")
+
+      vim.api.nvim_buf_clear_namespace(buf, ts_ns, 0, -1)
+
+      vim.api.nvim_buf_clear_namespace(buf, match_ns, 0, -1)
+
+      vim.api.nvim_buf_clear_namespace(buf, active_ns, 0, -1)
+
+      ----------------------------------------------------------------
+      -- Active line
+      ----------------------------------------------------------------
+
+      if current_line then
+        vim.api.nvim_buf_set_extmark(buf, active_ns, current_line - 1, 0, {
+          line_hl_group = "SnacksGrepActiveLine",
+          priority = 50,
+        })
+      end
+
+      ----------------------------------------------------------------
+      -- Tree-sitter
+      ----------------------------------------------------------------
+
+      for line_nr, highlights in pairs(cropped_syntax) do
+        for _, h in ipairs(highlights) do
+          vim.api.nvim_buf_add_highlight(buf, ts_ns, h[3], line_nr, h[1], h[2])
+        end
+      end
+
+      ----------------------------------------------------------------
+      -- Match
+      ----------------------------------------------------------------
+
+      for line_nr, match in pairs(matches) do
+        local offset = crop_offsets[line_nr + 1] or 0
+
+        local line = cropped_lines[line_nr + 1] or ""
+
+        local start_col = match.start - offset
+
+        local end_col = match.finish - offset
+
+        start_col = math.max(0, start_col)
+
+        end_col = math.min(#line, end_col)
+
+        if start_col < end_col then
+          vim.api.nvim_buf_set_extmark(buf, match_ns, line_nr, start_col, {
+            end_col = end_col,
+            hl_group = "SnacksGrepMatch",
+            priority = 200,
+          })
+        end
+      end
+
+      ----------------------------------------------------------------
+      -- Cleanup Tree-sitter buffers
+      ----------------------------------------------------------------
 
       for _, ts in pairs(parsers) do
         if ts then
@@ -524,12 +738,12 @@ local grep = function()
       end
 
       if current_line then
-        vim.api.nvim_win_set_cursor(ctx.preview.win.win, { current_line, 0 })
+        vim.api.nvim_win_set_cursor(win, { current_line, 0 })
       end
-
-      vim.wo[ctx.preview.win.win].cursorline = true
     end,
   })
 end
 
-vim.keymap.set("n", "<leader>sg", grep, { desc = "Grep" })
+vim.keymap.set("n", "<leader>sg", grep, {
+  desc = "Grep",
+})
