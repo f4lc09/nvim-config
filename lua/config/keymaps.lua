@@ -2,7 +2,6 @@ local dap = require("dap")
 local dapui = require("dapui")
 local utils = require("config.utils.keymaps")
 local lazygit = require("config.utils.lazygit")
-
 local map = vim.keymap.set
 local unmap = vim.keymap.del
 
@@ -188,10 +187,60 @@ map("n", "<leader><space>", function()
   Snacks.picker.files({ cwd = utils.GetCWD() })
 end, { desc = "find files (cwd)" })
 map("n", "<leader>sg", function()
-  Snacks.picker.grep({ cwd = utils.GetCWD() })
+  Snacks.picker.grep({
+    cwd = utils.GetCWD(),
+    win = {
+      input = {
+        keys = {
+          ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
+          ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+        },
+      },
+      list = {
+        keys = {
+          ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+          ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
+        },
+      },
+      preview = {
+        keys = {
+          ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
+          ["<C-j>"] = { "do_nothing", mode = { "i", "n" } },
+        },
+      },
+    },
+  })
 end, { desc = "Grep (cwd)" })
-map("n", "<leader>sG", function()
-  LazyVim.pick("live_grep")()
+map("n", "<leader>sw", function()
+  Snacks.picker.grep_word({
+    cwd = utils.GetCWD(),
+    win = {
+      input = {
+        keys = {
+          ["<C-h>"] = { "do_nothing", mode = { "i", "n" } },
+          ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
+          ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+          ["<C-l>"] = { "cycle_win", mode = { "i", "n" } },
+        },
+      },
+      list = {
+        keys = {
+          ["<C-h>"] = { "do_nothing", mode = { "i", "n" } },
+          ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+          ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
+          ["<C-l>"] = { "cycle_win", mode = { "i", "n" } },
+        },
+      },
+      preview = {
+        keys = {
+          ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
+          ["<C-j>"] = { "do_nothing", mode = { "i", "n" } },
+          ["<C-l>"] = { "do_nothing", mode = { "i", "n" } },
+          ["<C-h>"] = { "cycle_win", mode = { "i", "n" } },
+        },
+      },
+    },
+  })
 end, { desc = "Grep (Root Dir)" })
 
 --
@@ -318,3 +367,93 @@ end, { desc = "Focus Kulala Scratchpad" })
 map({ "n" }, "<leader>ks", function()
   require("kulala").set_selected_env()
 end, { desc = "Select Enviroment" })
+local grep = function()
+  Snacks.picker.grep({
+    layout = {
+      fullscreen = true,
+      layout = {
+        box = "vertical",
+
+        {
+          win = "input",
+          height = 1,
+          border = "bottom",
+        },
+
+        {
+          win = "list",
+          border = "none",
+        },
+
+        {
+          win = "preview",
+          height = 0.4,
+          border = "top",
+        },
+      },
+    },
+    format = function(item)
+      local icon, hl = Snacks.util.icon(item.file, "file")
+      local line = item.pos and item.pos[1] or 0
+
+      local file_hl = "Normal"
+
+      local bufnr = vim.fn.bufnr(item.file)
+
+      if bufnr ~= -1 then
+        local main_buf = vim.api.nvim_win_is_valid(picker.main) and vim.api.nvim_win_get_buf(picker.main) or nil
+        if bufnr == main_buf then
+          file_hl = "SnacksPickerTitle"
+        elseif vim.api.nvim_get_option_value("buflisted", { buf = bufnr }) then
+          file_hl = "SnacksDashboardKey"
+        end
+      end
+      return {
+        { icon .. " ", hl },
+        { vim.fn.fnamemodify(item.file, ":."), file_hl },
+        { ":" .. line, "LineNr" },
+      }
+    end,
+    preview = function(ctx)
+      local picker = ctx.picker
+      local current = ctx.item
+      local lines = {}
+      local current_line
+
+      local cache = {}
+
+      for _, item in ipairs(picker:items()) do
+        if item.file and item.pos then
+          local line_nr = item.pos[1]
+
+          if not cache[item.file] then
+            local ok, content = pcall(vim.fn.readfile, item.file)
+            cache[item.file] = ok and content or {}
+          end
+
+          local content = cache[item.file]
+          local line = content[line_nr]
+
+          if line then
+            lines[#lines + 1] = line
+
+            if item == current then
+              current_line = #lines
+            end
+          end
+        end
+      end
+
+      ctx.preview:reset()
+      ctx.preview:set_lines(lines)
+
+      if current_line then
+        vim.api.nvim_win_set_cursor(ctx.preview.win.win, { current_line, 0 })
+      end
+
+      vim.wo[ctx.preview.win.win].cursorline = true
+    end,
+  })
+end
+
+vim.keymap.set("n", "<leader>sg", grep, { desc = "Grep" })
