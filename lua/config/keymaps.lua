@@ -545,15 +545,15 @@ local grep = function()
 
         {
           box = "horizontal",
-
-          {
-            win = "list",
-            border = "right",
-            height = 0,
-          },
+          border = "single",
 
           {
             win = "preview",
+            height = 0,
+            border = "right",
+          },
+          {
+            win = "list",
             height = 0,
           },
         },
