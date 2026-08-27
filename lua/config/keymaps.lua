@@ -2,7 +2,6 @@ local dap = require("dap")
 local dapui = require("dapui")
 local utils = require("config.utils.keymaps")
 local lazygit = require("config.utils.lazygit")
-local grep_utils = require("config.utils.grep")
 local map = vim.keymap.set
 local unmap = vim.keymap.del
 
@@ -224,26 +223,52 @@ map("n", "<leader>sw", function()
     win = {
       input = {
         keys = {
-          ["<C-h>"] = { "do_nothing", mode = { "i", "n" } },
           ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
+          ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+        },
+      },
+      list = {
+        keys = {
+          ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+          ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
+        },
+      },
+      preview = {
+        keys = {
+          ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
+          ["<C-j>"] = { "do_nothing", mode = { "i", "n" } },
+        },
+      },
+    },
+  })
+end, { desc = "Grep (Root Dir)" })
+
+map("n", "<leader>n", function()
+  Snacks.picker.notifications({
+    cwd = utils.GetCWD(),
+    win = {
+      input = {
+        keys = {
+          ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
+          ["<C-h>"] = { "do_nothing", mode = { "i", "n" } },
           ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
           ["<C-l>"] = { "cycle_win", mode = { "i", "n" } },
         },
       },
       list = {
         keys = {
-          ["<C-h>"] = { "do_nothing", mode = { "i", "n" } },
-          ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+          ["<C-l>"] = { "cycle_win_backward", mode = { "i", "n" } },
           ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
-          ["<C-l>"] = { "cycle_win", mode = { "i", "n" } },
+          ["<C-j>"] = { "do_nothing", mode = { "i", "n" } },
+          ["<C-h>"] = { "do_nothing", mode = { "i", "n" } },
         },
       },
       preview = {
         keys = {
+          ["<C-h>"] = { "cycle_win_backward", mode = { "i", "n" } },
+          ["<C-l>"] = { "do_nothing", mode = { "i", "n" } },
           ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
           ["<C-j>"] = { "do_nothing", mode = { "i", "n" } },
-          ["<C-l>"] = { "do_nothing", mode = { "i", "n" } },
-          ["<C-h>"] = { "cycle_win", mode = { "i", "n" } },
         },
       },
     },
@@ -374,7 +399,3 @@ end, { desc = "Focus Kulala Scratchpad" })
 map({ "n" }, "<leader>ks", function()
   require("kulala").set_selected_env()
 end, { desc = "Select Enviroment" })
-
--- map("n", "<leader>sg", grep_utils.grep, {
---   desc = "Grep",
--- })

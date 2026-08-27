@@ -2,28 +2,6 @@ local cmd_utils = require("config.utils.autocmds")
 local key_utils = require("config.utils.keymaps")
 
 local grep_source_cfg = {
-  -- format = function(item, picker)
-  --   local icon, hl = Snacks.util.icon(item.file, "file")
-  --   local line = item.pos and item.pos[1] or 0
-  --
-  --   local file_hl = "Normal"
-  --
-  --   local bufnr = vim.fn.bufnr(item.file)
-  --
-  --   if bufnr ~= -1 then
-  --     local main_buf = vim.api.nvim_win_is_valid(picker.main) and vim.api.nvim_win_get_buf(picker.main) or nil
-  --     if bufnr == main_buf then
-  --       file_hl = "SnacksPickerTitle"
-  --     elseif vim.api.nvim_get_option_value("buflisted", { buf = bufnr }) then
-  --       file_hl = "SnacksDashboardKey"
-  --     end
-  --   end
-  --   return {
-  --     { icon .. " ", hl },
-  --     { vim.fn.fnamemodify(item.file, ":."), file_hl },
-  --     { ":" .. line, "LineNr" },
-  --   }
-  -- end,
   layout = {
     layout = {
       box = "horizontal",
