@@ -417,11 +417,12 @@ local grep = function()
     preview = function(ctx)
       local picker = ctx.picker
       local current = ctx.item
+
       local lines = {}
       local current_line
-      local highlights = {}
-
       local cache = {}
+      local parsers = {}
+      local syntax = {}
 
       for _, item in ipairs(picker:items()) do
         if item.file and item.pos then
@@ -442,11 +443,61 @@ local grep = function()
               current_line = preview_line + 1
             end
 
-            if item.positions then
-              highlights[#highlights + 1] = {
-                line = preview_line,
-                positions = item.positions,
-              }
+            if parsers[item.file] == nil then
+              parsers[item.file] = false
+
+              local ft = vim.filetype.match({
+                filename = item.file,
+              })
+
+              local lang = ft and vim.treesitter.language.get_lang(ft)
+
+              if lang and vim.treesitter.language.add(lang) then
+                local tsbuf = vim.api.nvim_create_buf(false, true)
+
+                vim.api.nvim_buf_set_lines(tsbuf, 0, -1, false, cache[item.file])
+
+                vim.bo[tsbuf].filetype = ft
+
+                local parser = vim.treesitter.get_parser(tsbuf, lang)
+                parser:parse()
+
+                local query = vim.treesitter.query.get(lang, "highlights")
+
+                if query then
+                  parsers[item.file] = {
+                    buf = tsbuf,
+                    parser = parser,
+                    query = query,
+                  }
+                else
+                  vim.api.nvim_buf_delete(tsbuf, { force = true })
+                end
+              end
+            end
+
+            local ts = parsers[item.file]
+
+            if ts then
+              local tree = ts.parser:parse()[1]
+
+              for id, node in ts.query:iter_captures(tree:root(), ts.buf, line_nr - 1, line_nr) do
+                local capture = ts.query.captures[id]
+                local row1, col1, row2, col2 = node:range()
+
+                if row1 <= line_nr - 1 and row2 >= line_nr - 1 then
+                  local start_col = row1 == line_nr - 1 and col1 or 0
+                  local end_col = row2 == line_nr - 1 and col2 or #line
+
+                  syntax[preview_line] = syntax[preview_line] or {}
+
+                  table.insert(syntax[preview_line], {
+                    start_col,
+                    end_col,
+                    "@" .. capture,
+                  })
+                end
+              end
             end
           end
         end
@@ -460,9 +511,15 @@ local grep = function()
 
       vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
 
-      for _, match in ipairs(highlights) do
-        for _, col in ipairs(match.positions) do
-          vim.api.nvim_buf_add_highlight(buf, ns, "Search", match.line, col, col + 1)
+      for line_nr, highlights in pairs(syntax) do
+        for _, h in ipairs(highlights) do
+          vim.api.nvim_buf_add_highlight(buf, ns, h[3], line_nr, h[1], h[2])
+        end
+      end
+
+      for _, ts in pairs(parsers) do
+        if ts then
+          vim.api.nvim_buf_delete(ts.buf, { force = true })
         end
       end
 
@@ -471,18 +528,6 @@ local grep = function()
       end
 
       vim.wo[ctx.preview.win.win].cursorline = true
-
-      local filetype = vim.filetype.match({
-        filename = current and current.file or "",
-      })
-
-      if filetype then
-        vim.bo[buf].filetype = filetype
-
-        if vim.treesitter.language.add(filetype) then
-          vim.treesitter.start(buf, filetype)
-        end
-      end
     end,
   })
 end
