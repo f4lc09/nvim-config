@@ -195,6 +195,7 @@ end, { desc = "find files (cwd)" })
 map("n", "<leader>sg", function()
   Snacks.picker.grep({
     cwd = utils.GetCWD(),
+    -- Default Vertical View
     win = {
       input = {
         keys = {
@@ -220,6 +221,7 @@ end, { desc = "Grep (cwd)" })
 map("n", "<leader>sw", function()
   Snacks.picker.grep_word({
     cwd = utils.GetCWD(),
+    -- Default Vertical View
     win = {
       input = {
         keys = {
@@ -246,6 +248,7 @@ end, { desc = "Grep (Root Dir)" })
 map("n", "<leader>n", function()
   Snacks.picker.notifications({
     cwd = utils.GetCWD(),
+    -- Default View
     win = {
       input = {
         keys = {

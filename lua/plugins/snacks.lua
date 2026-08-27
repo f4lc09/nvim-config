@@ -1,6 +1,9 @@
 local cmd_utils = require("config.utils.autocmds")
 local key_utils = require("config.utils.keymaps")
 
+local grep_history = {}
+local history_limit = 5
+
 local grep_source_cfg = {
   layout = {
     layout = {
@@ -19,6 +22,25 @@ local grep_source_cfg = {
       },
     },
   },
+  confirm = function(picker, _)
+    local current_input = picker:filter().search or ""
+    if grep_history[#grep_history] == current_input then
+      picker:action("edit")
+      return
+    end
+
+    table.insert(grep_history, current_input)
+    if #grep_history > history_limit then
+      local start_index = #grep_history - (history_limit - 1)
+      grep_history = table.move(grep_history, start_index, #grep_history, 1)
+      for i = (history_limit + 1), #grep_history do
+        grep_history[i] = nil
+      end
+    end
+
+    print(table.concat(grep_history, " "))
+    picker:action("edit")
+  end,
   hidden = true,
   ignored = true,
   exclude = {
