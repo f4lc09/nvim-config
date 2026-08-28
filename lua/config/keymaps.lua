@@ -151,33 +151,22 @@ map({ "n" }, "Y", "Vy", { noremap = true })
 map({ "n" }, "yy", "m`0y$``", { noremap = true })
 
 --
--- Snacks
+-- SNACKS
+--
 unmap("n", "<leader>e")
 unmap("n", "<leader>E")
-
--- TODO: когда открыл не тот файл, закрыл его и кирдык, опять в эксплорере листать до него
-map({ "n", "i", "t" }, "", function()
-  Snacks.explorer({ diagnostics_open = false, cwd = utils.GetCWD() })
-  -- TODO: везде добавить задержку
-  vim.wait(10)
-end, { desc = "Toggle Explorer" })
 map({ "n" }, "<leader>,", function()
   local picker = Snacks.picker.buffers({
     cwd = utils.GetCWD(),
   })
   picker:action("list_down")
-end, { desc = "Toggle Explorer" })
+end, { desc = "Toggle Explorer Root" })
 map({ "n" }, "<leader>_", function()
   local picker = Snacks.picker.buffers({
     cwd = utils.GetCWD(),
   })
   picker:action("list_down")
-end, { desc = "Toggle Explorer" })
-
--- map({ "n", "i", "t" }, "", function()
---   Snacks.picker.projects()
--- end, { desc = "Projects" })
-
+end, { desc = "Toggle Buffers" })
 map("n", "<leader>e", function()
   local session_file = vim.v.this_session
   if session_file == "" then
@@ -190,9 +179,11 @@ map("n", "<leader>e", function()
   vim.opt.eventignore = save_ignore
 
   Snacks.picker.explorer()
+  vim.wait(10)
 end, { desc = "Snacks Picker Explorer" })
 map("n", "<leader><space>", function()
   Snacks.picker.files({ cwd = utils.GetCWD() })
+  vim.wait(10)
 end, { desc = "find files (cwd)" })
 map("n", "<leader>sg", function()
   Snacks.picker.grep({
@@ -296,8 +287,6 @@ map({ "n", "v", "i" }, "<", function()
   end
   vim.cmd("tabprev")
 end, { silent = true, desc = "Previous buffer" })
--- map({ "n" }, "<leader>bmf", "<cmd>BufferLineMoveNext<CR>", { desc = "Move buffer forward" })
--- map({ "n" }, "<leader>bmb", "<cmd>BufferLineMovePrev<CR>", { desc = "Move buffer back" })
 map({ "n", "v", "i" }, "w", function()
   utils.BufferDelete()
 end, { silent = true, desc = "Delete buffer" })
@@ -309,8 +298,6 @@ map(
   { silent = true, desc = "Close all buffers" }
 )
 map({ "n" }, "<leader>td", "<cmd>tabclose<CR>", { desc = "Close tab" })
--- map({ "n" }, "<leader>tn", "<cmd>tabnext<CR>", { desc = "Next tab" })
--- map({ "n" }, "<leader>tp", "<cmd>tabprev<CR>", { desc = "Previoues tab" })
 map({ "n" }, "<leader>tn", "<cmd>tabnew<CR>", { desc = "New tab" })
 map({ "n" }, "<leader>rf", "<cmd>e<cr>", { desc = "Reload buffer" })
 map({ "n" }, "<leader>ts", function()
@@ -356,8 +343,6 @@ map({ "n" }, "<leader>vq", "<cmd>qa<CR>")
 map({ "i" }, "<A-d>", "<C-o>dw", { noremap = true, desc = "Remove word forward in insert mode" })
 map({ "n" }, "<leader>lsr", "<cmd>LspRestart<cr>", { noremap = true, silent = true })
 map({ "n" }, "<leader>lss", "<cmd>LspStop<cr>", { noremap = true, silent = true })
--- map({ "n", "v", "x" }, "$", "g_", { noremap = true, desc = "Go to the last character at the line" })
--- map({ "n", "v", "x" }, "g_", "$", { noremap = true, desc = "Go to the end of line" })
 map({ "n" }, "<leader>rn", utils.SetTmuxWindowName, { desc = "Rename Tmux Window" })
 map({ "n" }, "a", utils.SmartInsertOnEmptyLine, { noremap = true, expr = true, desc = "Auto indent" })
 map({ "n" }, "A", utils.SmartInsertOnEmptyLine2, { noremap = true, expr = true, desc = "Auto indent" })
@@ -430,3 +415,71 @@ map({ "n" }, "<leader>fp", function()
   })
   vim.wait(100)
 end)
+
+local last_explorer_file
+vim.keymap.set("n", "", function()
+  local pickers = Snacks.picker.get({ source = "explorer" })
+
+  if #pickers > 0 then
+    local picker = pickers[1]
+    local item = picker:current()
+
+    if item then
+      last_explorer_file = item.file
+    end
+
+    picker:close()
+    return
+  end
+
+  Snacks.explorer({
+    focus = "list",
+    diagnostics_open = false,
+    cwd = utils.GetCWD(),
+    win = { list = {
+      keys = { [""] = { "focus_current" } },
+      wo = { wrap = false },
+    } },
+    actions = {
+      confirm = function(picker, item)
+        item = item or picker:current()
+        if item then
+          last_explorer_file = item.file
+        end
+        picker:action("confirm")
+      end,
+      focus_current = function(picker)
+        local buf = vim.api.nvim_win_get_buf(picker.main)
+        local file = vim.api.nvim_buf_get_name(buf)
+        if file == "" then
+          return
+        end
+        for i, item in ipairs(picker:items()) do
+          if item.file == file then
+            picker.list:_move(i, true, true)
+            return
+          end
+        end
+      end,
+    },
+    on_show = function(picker)
+      if not last_explorer_file then
+        return
+      end
+
+      vim.schedule(function()
+        if picker.closed then
+          return
+        end
+
+        for i, item in ipairs(picker:items()) do
+          if item.file == last_explorer_file then
+            picker.list:_move(i, true, true)
+            break
+          end
+        end
+      end)
+    end,
+  })
+  vim.wait(10)
+end, { desc = "Toggle Explorer" })

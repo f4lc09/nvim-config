@@ -193,7 +193,7 @@ return {
             Snacks.explorer()
           end)
         end,
-        explorer_paste = function(picker, item) --[[Override]]
+        explorer_paste = function(picker, _) --[[Override]]
           local Tree = require("snacks.explorer.tree")
           local files = vim.split(vim.fn.getreg(vim.v.register or "+") or "", "\n", { plain = true })
           files = vim.tbl_filter(function(file)
@@ -228,12 +228,6 @@ return {
 
           local Actions = require("snacks.explorer.actions")
           Actions.update(picker, { refresh = true })
-
-          -- НАЙТИ И ОТКРЫТЬ ПАПКУ, ЕСЛИ ОНА ЗАКРЫТА
-          local current_item = picker:current()
-          if current_item and current_item.dir and not current_item.open then
-            picker:toggle(current_item)
-          end
 
           if first_pasted_dst then
             Actions.update(picker, { target = first_pasted_dst, refresh = true })
@@ -349,7 +343,7 @@ return {
 
           os.execute("tmux split-window -v -c " .. path)
         end,
-        close_buffers = function(picker)
+        close_buffers = function(_)
           vim.api.nvim_input(vim.g.mapleader .. "bo")
         end,
       },
@@ -516,10 +510,21 @@ return {
           },
           auto_close = true,
           layout = {
-            preset = "select",
+            preset = "default",
             layout = {
-              width = 0.95,
-              height = 0.95,
+              box = "vertical",
+              position = "float",
+              row = 1,
+              col = function()
+                return vim.o.columns - math.floor(vim.o.columns * 0.45)
+              end,
+              height = function()
+                return vim.o.lines - 4
+              end,
+              width = 0.45,
+              border = "rounded",
+              { win = "input", height = 1, border = "bottom" },
+              { win = "list", border = "none" },
             },
           },
         },
