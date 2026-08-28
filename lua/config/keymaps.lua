@@ -51,7 +51,6 @@ map({ "n", "t", "i" }, "<C-t>", utils.ToggleTerminal, { desc = "Toggle Terminal"
 map({ "n", "t", "i" }, "<M-t>", utils.ToggleTmuxTerminal, { desc = "Toggle Terminal" })
 map({ "n", "t", "i" }, "<C-_>", utils.ToggleTerminal, { desc = "Toggle Terminal" })
 map({ "t" }, "<C-n>", [[<C-\><C-n>]], { desc = "Go normanl mode from terminal" })
--- map({ "t" }, "<C-u>", [[<C-\><C-n><C-u>]], { desc = "Go normanl mode from terminal" })
 map({ "t" }, "<C-u>", function()
   local esc = vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true)
   vim.api.nvim_feedkeys(esc, "n", false)
@@ -311,6 +310,27 @@ map({ "n" }, "<leader>go", "<cmd>GBrowse<cr>", { noremap = true, silent = true, 
 unmap({ "n" }, "<leader>gf")
 map({ "n" }, "<leader>gfl", function()
   require("snacks").picker.git_log_file({
+    -- Default Vertical View
+    win = {
+      input = {
+        keys = {
+          ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
+          ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+        },
+      },
+      list = {
+        keys = {
+          ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+          ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
+        },
+      },
+      preview = {
+        keys = {
+          ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
+          ["<C-j>"] = { "do_nothing", mode = { "i", "n" } },
+        },
+      },
+    },
     layout = {
       layout = {
         box = "horizontal",
