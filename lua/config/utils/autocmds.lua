@@ -43,6 +43,19 @@ function M.SaveSessionAtGitRoot()
     return
   end
 
+  for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
+    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tab)) do
+      local buf = vim.api.nvim_win_get_buf(win)
+      local ft = vim.bo[buf].filetype
+
+      if ft == "DiffviewFiles" or ft == "DiffviewFileHistory" then
+        vim.api.nvim_set_current_tabpage(tab)
+        vim.cmd("tabclose!")
+        break
+      end
+    end
+  end
+
   vim.cmd("ScopeSaveState")
   vim.cmd("silent! mksession! " .. session_file)
   local current_name = vim.g.tmux_window_name

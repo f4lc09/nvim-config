@@ -200,9 +200,28 @@ return {
         { "diagnostics" },
 
         { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
-        { "filename", path = 0 },
+        {
+          "filename",
+          path = 0,
+          file_status = true, -- Обязательно: отображает статус файла
+          symbols = {
+            modified = "", -- Здесь укажите вашу иконку (например: '[+]' или '📝')
+            readonly = "🔒", -- Иконка для файлов только для чтения
+            unnamed = "[Без имени]", -- Текст для нового незаписанного буфера
+            newfile = "✨", -- Иконка для только что созданного файла
+          },
+          separator = "",
+          color = { fg = "#dddddd" },
+        },
+        {
+          function()
+            return vim.bo.modified and "●" or "" -- Пробел перед иконкой для отступа
+          end,
+          color = { fg = "#ff0000", gui = "bold" }, -- Цвет ТОЛЬКО для этой иконки
+          padding = { left = 0, right = 1 }, -- Убираем лишние отступы слева
+        },
 
-        { relative_dir_path, color = { fg = "#a0a0a0" } },
+        { relative_dir_path, color = { fg = "#909090" } },
       }
 
       opts.winbar = {
