@@ -158,6 +158,8 @@ unmap("n", "<leader>E")
 -- TODO: когда открыл не тот файл, закрыл его и кирдык, опять в эксплорере листать до него
 map({ "n", "i", "t" }, "", function()
   Snacks.explorer({ diagnostics_open = false, cwd = utils.GetCWD() })
+  -- TODO: везде добавить задержку
+  vim.wait(10)
 end, { desc = "Toggle Explorer" })
 map({ "n" }, "<leader>,", function()
   local picker = Snacks.picker.buffers({
@@ -404,6 +406,27 @@ map({ "n" }, "<leader>ks", function()
   require("kulala").set_selected_env()
 end, { desc = "Select Enviroment" })
 map({ "n" }, "<leader>fp", function()
-  Snacks.picker.projects()
+  Snacks.picker.projects({
+    win = {
+      input = {
+        keys = {
+          ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
+          ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+        },
+      },
+      list = {
+        keys = {
+          ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+          ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
+        },
+      },
+      preview = {
+        keys = {
+          ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
+          ["<C-j>"] = { "do_nothing", mode = { "i", "n" } },
+        },
+      },
+    },
+  })
   vim.wait(100)
 end)
