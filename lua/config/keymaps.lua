@@ -434,6 +434,7 @@ vim.keymap.set("n", "", function()
 
   Snacks.explorer({
     focus = "list",
+    follow_file = false,
     diagnostics_open = false,
     cwd = utils.GetCWD(),
     win = { list = {
@@ -462,6 +463,13 @@ vim.keymap.set("n", "", function()
         end
       end,
     },
+    on_close = function(picker)
+      local item = picker:current()
+
+      if item then
+        last_explorer_file = item.file
+      end
+    end,
     on_show = function(picker)
       if not last_explorer_file then
         return
