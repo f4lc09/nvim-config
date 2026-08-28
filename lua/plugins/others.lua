@@ -1,3 +1,4 @@
+local utils = require("config.utils.keymaps")
 return {
   {
     "dense-analysis/ale",
@@ -178,7 +179,7 @@ return {
         return ""
       end
       local lazy_root = function()
-        return "" .. vim.fs.basename(vim.fn.getcwd())
+        return "" .. vim.fs.basename(utils.GetCWD(vim.api.nvim_buf_get_name(0)))
       end
       local relative_dir_path = function()
         local path = vim.fn.expand("%:.:h")
