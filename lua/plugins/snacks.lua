@@ -2,6 +2,9 @@ local cmd_utils = require("config.utils.autocmds")
 local key_utils = require("config.utils.keymaps")
 
 local grep_history = {}
+local grep_index
+local files_history = {}
+local other_history = {}
 local history_limit = 5
 
 local grep_source_cfg = {
@@ -22,23 +25,43 @@ local grep_source_cfg = {
       },
     },
   },
+  on_show = function(picker)
+    local picker_name = picker.opts.source
+    if picker_name == "grep" then
+      grep_index = nil
+    elseif picker_name == "files" then
+      return
+    else
+      return
+    end
+  end,
   confirm = function(picker, _)
     local current_input = picker:filter().search or ""
-    if grep_history[#grep_history] == current_input then
+
+    local history
+    local picker_name = picker.opts.source
+    if picker_name == "grep" then
+      history = grep_history
+    elseif picker_name == "files" then
+      history = files_history
+    else
+      history = other_history
+    end
+
+    if history[#history] == current_input then
       picker:action("edit")
       return
     end
 
-    table.insert(grep_history, current_input)
-    if #grep_history > history_limit then
-      local start_index = #grep_history - (history_limit - 1)
-      grep_history = table.move(grep_history, start_index, #grep_history, 1)
-      for i = (history_limit + 1), #grep_history do
-        grep_history[i] = nil
+    table.insert(history, current_input)
+    if #history > history_limit then
+      local start_index = #history - (history_limit - 1)
+      history = table.move(history, start_index, #history, 1)
+      for i = (history_limit + 1), #history do
+        history[i] = nil
       end
     end
 
-    print(table.concat(grep_history, " "))
     picker:action("edit")
   end,
   hidden = true,
@@ -87,6 +110,61 @@ return {
         },
       },
       actions = {
+        history_up = function(picker, _)
+          local history
+          local index
+          local picker_name = picker.opts.source
+          if picker_name == "grep" then
+            history = grep_history
+            if not grep_index then
+              grep_index = #history
+            elseif grep_index > 1 then
+              grep_index = grep_index - 1
+            end
+            index = grep_index
+          elseif picker_name == "files" then
+            return
+            -- history = files_history
+          else
+            return
+            -- history = other_history
+          end
+
+          if not picker.input or not index or not history then
+            return
+          end
+
+          picker.input:set("", history[index])
+        end,
+        history_down = function(picker, _)
+          local history
+          local index
+          local picker_name = picker.opts.source
+          if picker_name == "grep" then
+            history = grep_history
+            if not grep_index then
+              return
+            elseif grep_index < #history then
+              grep_index = grep_index + 1
+            elseif grep_index == #history then
+              grep_index = nil
+              picker.input:set("", "") -- туду: вовращать оригинальное значение?
+            end
+            index = grep_index
+          elseif picker_name == "files" then
+            return
+            -- history = files_history
+          else
+            return
+            -- history = other_history
+          end
+
+          if not picker.input or not index then
+            return
+          end
+
+          picker.input:set("", history[index])
+        end,
         do_nothing = function() end,
         cycle_win_backward = function(picker)
           local wins = { picker.input.win.win, picker.preview.win.win, picker.list.win.win }
@@ -298,7 +376,6 @@ return {
                 end
 
                 if vim.fn.fnamemodify(other_path, ":t") == vim.fn.fnamemodify(path, ":t") then
-                  print(vim.fn.fnamemodify(path, ":t"))
                   same_file_name = true
                   break
                 end
@@ -497,15 +574,25 @@ return {
         },
         input = {
           keys = {
+            ["<Up>"] = {
+              "history_up",
+              mode = { "i", "n" },
+              desc = "History Up",
+            },
+            ["<Down>"] = {
+              "history_down",
+              mode = { "i", "n" },
+              desc = "History Down",
+            },
             ["<C-p>"] = {
               "cycle_win",
               mode = { "i", "n" },
-              desc = "Cycle windows backwards",
+              desc = "Cycle windows forward",
             },
             ["<C-n>"] = {
               "cycle_win_backward",
               mode = { "i", "n" },
-              desc = "Cycle window forward",
+              desc = "Cycle window backwards",
             },
             ["<Tab>"] = { "list_down", mode = { "i", "n" } },
             ["<S-Tab>"] = { "list_up", mode = { "i", "n" } },

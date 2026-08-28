@@ -358,6 +358,7 @@ map({ "n" }, "<leader>lss", "<cmd>LspStop<cr>", { noremap = true, silent = true 
 -- map({ "n", "v", "x" }, "g_", "$", { noremap = true, desc = "Go to the end of line" })
 map({ "n" }, "<leader>rn", utils.SetTmuxWindowName, { desc = "Rename Tmux Window" })
 map({ "n" }, "a", utils.SmartInsertOnEmptyLine, { noremap = true, expr = true, desc = "Auto indent" })
+map({ "n" }, "A", utils.SmartInsertOnEmptyLine2, { noremap = true, expr = true, desc = "Auto indent" })
 map({ "n", "v", "x" }, "<leader>rs", utils.ReplaceWithSubstituteCommand, { desc = "Replace with /s command" })
 map({ "v" }, "<leader>ra", utils.ReplaceSelectionAcrossFile, { desc = "Substitute current selection" })
 map({ "n" }, "<leader>op", utils.OpenFromClipboard, { desc = "Open file from clipboard" })

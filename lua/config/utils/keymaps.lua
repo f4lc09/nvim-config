@@ -46,6 +46,14 @@ function M.SmartInsertOnEmptyLine()
     return "a"
   end
 end
+function M.SmartInsertOnEmptyLine2()
+  local line = vim.api.nvim_get_current_line()
+  if line:match("^%s*$") then
+    return [["_cc]]
+  else
+    return "A"
+  end
+end
 
 function M.GetShortName()
   local git_dir = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
