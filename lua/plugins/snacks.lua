@@ -76,7 +76,9 @@ local grep_source_cfg = {
 
 return {
   "folke/snacks.nvim",
-  ---@type snacks.Config
+  keys = {
+    { "<leader>fp", false }, ---@type snacks.Config
+  },
   opts = {
     dashboard = {
       preset = {
