@@ -77,7 +77,36 @@ local grep_source_cfg = {
 return {
   "folke/snacks.nvim",
   keys = {
-    { "<leader>fp", false }, ---@type snacks.Config
+    -- { "<leader>fp", false }, ---@type snacks.Config
+    {
+      "<leader>fp",
+      function()
+        Snacks.picker.projects({
+          win = {
+            input = {
+              keys = {
+                ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
+                ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+              },
+            },
+            list = {
+              keys = {
+                ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+                ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
+              },
+            },
+            preview = {
+              keys = {
+                ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
+                ["<C-j>"] = { "do_nothing", mode = { "i", "n" } },
+              },
+            },
+          },
+        })
+        vim.wait(100)
+      end,
+      desc = "Projects",
+    },
   },
   opts = {
     dashboard = {

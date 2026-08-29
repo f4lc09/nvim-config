@@ -410,31 +410,6 @@ end, { desc = "Focus Kulala Scratchpad" })
 map({ "n" }, "<leader>ks", function()
   require("kulala").set_selected_env()
 end, { desc = "Select Enviroment" })
-map({ "n" }, "<leader>fp", function()
-  Snacks.picker.projects({
-    win = {
-      input = {
-        keys = {
-          ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
-          ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
-        },
-      },
-      list = {
-        keys = {
-          ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
-          ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
-        },
-      },
-      preview = {
-        keys = {
-          ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
-          ["<C-j>"] = { "do_nothing", mode = { "i", "n" } },
-        },
-      },
-    },
-  })
-  vim.wait(100)
-end)
 
 local last_explorer_file
 vim.keymap.set("n", "", function()
