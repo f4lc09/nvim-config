@@ -32,33 +32,3 @@ vim.api.nvim_create_autocmd("User", {
     })
   end,
 })
--- TODO: починить <space>fp vim.wait()
--- local input_buffer = {}
--- local is_loading_snacks = true
--- local ns_id = vim.api.nvim_create_namespace("snacks_delay_buffer")
---
--- -- Перехватываем клавиши и складываем их в очередь
--- vim.on_key(function(key)
---   if is_loading_snacks and key and key ~= "" then
---     table.insert(input_buffer, key)
---     return "" -- «Гасим» немедленное выполнение, чтобы оно не сработало раньше времени
---   end
--- end, ns_id)
---
--- -- Слушаем загрузку snacks.nvim
--- vim.api.nvim_create_autocmd("User", {
---   pattern = "LazyLoad",
---   callback = function(event)
---     if event.data == "snacks.nvim" then
---       is_loading_snacks = false
---       vim.on_key(nil, ns_id) -- Полностью отключаем перехватчик
---
---       -- Если во время загрузки были нажатия, воспроизводим их по очереди
---       if #input_buffer > 0 then
---         local full_keys = table.concat(input_buffer)
---         -- 'm' означает запуск маппингов, 't' обрабатывает клавиши как прямой ввод пользователя
---         vim.api.nvim_feedkeys(full_keys, "mt", true)
---       end
---     end
---   end,
--- })
