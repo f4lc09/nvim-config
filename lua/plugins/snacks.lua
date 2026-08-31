@@ -107,6 +107,13 @@ return {
       end,
       desc = "Projects",
     },
+    { "<leader>sR", false },
+    {
+      "<leader>sr",
+      function()
+        Snacks.picker.resume()
+      end,
+    },
   },
   opts = {
     dashboard = {

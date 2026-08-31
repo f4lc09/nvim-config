@@ -2,8 +2,9 @@ return {
   {
     "MagicDuck/grug-far.nvim",
     keys = {
+      { "<leader>sr", false },
       {
-        "<leader>sr",
+        "<leader>sR",
         function()
           local buf = vim.api.nvim_create_buf(false, true)
 
