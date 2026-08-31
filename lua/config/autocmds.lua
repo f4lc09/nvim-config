@@ -258,6 +258,10 @@ vim.api.nvim_create_autocmd("BufAdd", {
       return
     end
 
+    if #Snacks.picker.get({ source = "explorer" }) > 0 then
+      return
+    end
+
     vim.schedule(function()
       Snacks.explorer()
     end)

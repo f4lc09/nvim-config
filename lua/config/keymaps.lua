@@ -296,7 +296,10 @@ map(
   "<cmd>bufdo if &buftype == '' || &buftype == 'acwrite' | bd | endif<cr>",
   { silent = true, desc = "Close all buffers" }
 )
-map({ "n" }, "<leader>td", "<cmd>tabclose<CR>", { desc = "Close tab" })
+map({ "n" }, "<leader>td", function()
+  vim.cmd("%bd")
+  vim.cmd("tabclose")
+end, { desc = "Close tab" })
 map({ "n" }, "<leader>tn", "<cmd>tabnew<CR>", { desc = "New tab" })
 map({ "n" }, "<leader>rf", "<cmd>e<cr>", { desc = "Reload buffer" })
 map({ "n" }, "<leader>ts", function()
