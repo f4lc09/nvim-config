@@ -32,33 +32,3 @@ vim.api.nvim_create_autocmd("User", {
     })
   end,
 })
-local buffers = {}
-local initialized = false
-
-vim.api.nvim_create_autocmd("BufAdd", {
-  callback = function(args)
-    if not initialized then
-      buffers = vim.api.nvim_list_bufs()
-      initialized = true
-      return
-    end
-
-    for _, buf in ipairs(buffers) do
-      if buf == args.buf then
-        return
-      end
-    end
-
-    buffers = vim.api.nvim_list_bufs()
-
-    local file = vim.api.nvim_buf_get_name(args.buf)
-
-    if file == "" or vim.fn.filereadable(file) == 0 then
-      return
-    end
-
-    vim.schedule(function()
-      Snacks.explorer()
-    end)
-  end,
-})
