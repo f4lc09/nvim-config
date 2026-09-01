@@ -30,7 +30,6 @@ return {
         trigger = {
           show_on_backspace = true,
           show_on_backspace_in_keyword = false,
-          show_on_insert = true,
         },
         list = {
           selection = {

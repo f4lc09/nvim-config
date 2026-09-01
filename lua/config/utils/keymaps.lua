@@ -54,6 +54,42 @@ function M.SmartInsertOnEmptyLine2()
     return "A"
   end
 end
+function M.SmartTabOnEmptyLine()
+  local line = vim.api.nvim_get_current_line()
+  if line:match("^%s*$") then
+    return [[<Esc>"_cc]]
+  else
+    return "	"
+  end
+end
+function M.SmartTabOnEmptyLine2()
+  local win = vim.api.nvim_get_current_win()
+  local buf = vim.api.nvim_get_current_buf()
+  local row, _ = unpack(vim.api.nvim_win_get_cursor(win))
+  local line = vim.api.nvim_buf_get_lines(buf, row, row + 1, false)[1]
+  if not line then
+    return [[<Down>]]
+  end
+  if line:match("^%s*$") then
+    return [[<Down><Esc>"_cc]]
+  else
+    return [[<Down>]]
+  end
+end
+function M.SmartTabOnEmptyLine3()
+  local win = vim.api.nvim_get_current_win()
+  local buf = vim.api.nvim_get_current_buf()
+  local row, _ = unpack(vim.api.nvim_win_get_cursor(win))
+  local line = vim.api.nvim_buf_get_lines(buf, row - 2, row - 1, false)[1]
+  if not line then
+    return [[<Up>]]
+  end
+  if line:match("^%s*$") then
+    return [[<Up><Esc>"_cc]]
+  else
+    return [[<Up>]]
+  end
+end
 
 function M.GetShortName()
   local git_dir = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
