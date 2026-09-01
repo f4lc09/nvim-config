@@ -35,7 +35,7 @@ return {
         list = {
           selection = {
             preselect = false,
-            auto_insert = true,
+            auto_insert = false,
           },
         },
       },
@@ -131,8 +131,8 @@ return {
       enabled = false,
       heading = {
         enabled = true,
-        sign = false, -- Убирает иконки на полях
-        background = false, -- Выключает фоновую заливку строки
+        sign = false,
+        background = false,
       },
     },
   },

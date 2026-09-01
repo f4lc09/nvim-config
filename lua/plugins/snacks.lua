@@ -553,9 +553,10 @@ return {
               box = "vertical",
               position = "float",
               row = 1,
-              col = function()
-                return vim.o.columns - math.floor(vim.o.columns * 0.45)
-              end,
+              col = 0,
+              -- col = function()
+              --   return vim.o.columns - math.floor(vim.o.columns * 0.45)
+              -- end,
               height = function()
                 return vim.o.lines - 4
               end,
