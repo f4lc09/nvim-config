@@ -148,6 +148,7 @@ map({ "x", "n", "v" }, "c", '"_c', { noremap = true, desc = "Change without yank
 map({ "x", "n", "v" }, "C", 'V"_dO', { noremap = true, desc = "Change without yanking", nowait = true })
 map({ "n" }, "Y", "Vy", { noremap = true })
 map({ "n" }, "yy", "m`_yg_``", { noremap = true })
+map({ "n" }, "vv", "_vg_", { noremap = true })
 
 --
 -- SNACKS

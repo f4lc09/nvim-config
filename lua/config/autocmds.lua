@@ -263,7 +263,7 @@ vim.api.nvim_create_autocmd("BufAdd", {
     end
 
     vim.schedule(function()
-      Snacks.explorer()
+      Snacks.explorer({ cwd = keymap_utils.GetCWD(file) })
     end)
   end,
 })
