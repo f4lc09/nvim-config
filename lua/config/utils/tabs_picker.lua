@@ -49,6 +49,7 @@ end
 function M.tabs_picker()
   local items = get_tabs()
   Snacks.picker({
+    focus = "list",
     title = "Tabs",
     items = items,
     format = "text",

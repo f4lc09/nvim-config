@@ -161,6 +161,12 @@ map({ "n" }, "<leader>,", function()
   })
   picker:action("list_down")
 end, { desc = "Toggle Explorer Root" })
+map({ "n" }, "<leader>,", function()
+  local picker = Snacks.picker.buffers({
+    cwd = utils.GetCWD(),
+  })
+  picker:action("list_down")
+end, { desc = "Toggle Explorer Root" })
 map({ "n" }, "<leader>_", function()
   local picker = Snacks.picker.buffers({
     cwd = utils.GetCWD(),
@@ -287,7 +293,7 @@ map({ "n", "v", "i" }, "<", function()
   end
   vim.cmd("tabprev")
 end, { silent = true, desc = "Previous buffer" })
-map({ "n", "v", "i" }, "w", function()
+map({ "n", "v", "i", "t" }, "w", function()
   utils.BufferDelete()
 end, { silent = true, desc = "Delete buffer" })
 map({ "n" }, "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
@@ -298,14 +304,68 @@ map(
   { silent = true, desc = "Close all buffers" }
 )
 map({ "n" }, "<leader>td", function()
-  vim.cmd("%bd")
+  local tab = vim.api.nvim_get_current_tabpage()
+  local current = {}
+
+  for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tab)) do
+    current[vim.api.nvim_win_get_buf(win)] = true
+  end
+
+  for bufnr in pairs(current) do
+    local used_elsewhere = false
+
+    for _, other_tab in ipairs(vim.api.nvim_list_tabpages()) do
+      if other_tab ~= tab then
+        for _, win in ipairs(vim.api.nvim_tabpage_list_wins(other_tab)) do
+          if vim.api.nvim_win_get_buf(win) == bufnr then
+            used_elsewhere = true
+            break
+          end
+        end
+      end
+
+      if used_elsewhere then
+        break
+      end
+    end
+
+    if not used_elsewhere then
+      if not utils.BufferDelete(bufnr) then
+        return
+      end
+    end
+  end
+
   vim.cmd("tabclose")
 end, { desc = "Close tab" })
 map({ "n" }, "<leader>tn", "<cmd>tabnew<CR>", { desc = "New tab" })
 map({ "n" }, "<leader>rf", "<cmd>e<cr>", { desc = "Reload buffer" })
-map({ "n" }, "<leader>ts", function()
+map({ "n" }, "<leader>[", function()
   require("config.utils.tabs_picker").tabs_picker()
 end, { desc = "Snacks: Tabs Picker" })
+map({ "n" }, "<leader>]", function()
+  Snacks.scratch()
+end, { desc = "Snacks: Tabs Picker" })
+vim.keymap.set("i", "<CR>", function()
+  local line = vim.api.nvim_get_current_line()
+  local col = vim.api.nvim_win_get_cursor(0)[2]
+
+  local pairs = {
+    ["{"] = "}",
+    ["["] = "]",
+    ["("] = ")",
+    ["<"] = ">",
+  }
+
+  local left = line:sub(col, col)
+  local right = line:sub(col + 1, col + 1)
+
+  if pairs[left] == right then
+    return "<CR><CR><Up><End><Esc>cc"
+  end
+
+  return "<CR>"
+end, { expr = true })
 
 --
 -- GIT Comannds

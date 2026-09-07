@@ -334,8 +334,10 @@ function M.BufferCycle(num)
   end
 end
 
-function M.BufferDelete()
-  local bufnr = vim.api.nvim_get_current_buf()
+function M.BufferDelete(bufnr)
+  if not bufnr then
+    bufnr = vim.api.nvim_get_current_buf()
+  end
   local is_terminal = vim.api.nvim_get_option_value("buftype", { buf = bufnr }) == "terminal"
 
   if is_terminal and vim.api.nvim_get_mode().mode == "nt" then
@@ -380,10 +382,11 @@ function M.BufferDelete()
       force_delete()
     end
 
-    return
+    return false
   end
 
   force_delete()
+  return true
 end
 
 function M.DelMarks()
@@ -435,5 +438,30 @@ function M.GetCWD(file)
 
   return cwd
 end
+function M.NoBuffs()
+  -- 1. Получаем список всех существующих буферов
+  local buffers = vim.api.nvim_list_bufs()
 
+  -- Считаем только загруженные и отображаемые буферы
+  local loaded_buffers_count = 0
+  for _, buf in ipairs(buffers) do
+    if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buflisted then
+      loaded_buffers_count = loaded_buffers_count + 1
+    end
+  end
+
+  -- 2. Получаем имя и состояние текущего буфера
+  local current_buf = vim.api.nvim_get_current_buf()
+  local buf_name = vim.api.nvim_buf_get_name(current_buf)
+  local is_empty = (buf_name == "")
+  local is_modified = vim.bo[current_buf].modified
+
+  -- 3. Проверяем условия
+  -- Буфер один, он без имени и в нем нет несохраненных изменений
+  if loaded_buffers_count == 1 and is_empty and not is_modified then
+    return true
+  else
+    return false
+  end
+end
 return M
