@@ -361,7 +361,7 @@ vim.keymap.set("i", "<CR>", function()
   local right = line:sub(col + 1, col + 1)
 
   if pairs[left] == right then
-    return "<CR><CR><Up><End><Esc>cc"
+    return '<CR><CR><Up><End><Esc>"_cc'
   end
 
   return "<CR>"
