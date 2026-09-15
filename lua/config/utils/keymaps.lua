@@ -264,6 +264,12 @@ function M.OpenRepository()
   end
 end
 
+local function is_cursor_at_last_symbol()
+  local col = vim.api.nvim_win_get_cursor(0)[2]
+  local line = vim.api.nvim_get_current_line()
+  return col == #line - 1
+end
+
 function M.Wrap(key1, key2)
   return function()
     local mode = vim.api.nvim_get_mode().mode
@@ -273,8 +279,12 @@ function M.Wrap(key1, key2)
 
     vim.cmd('normal! "yd')
     if mode == "v" then
+      local ins_action = "i"
+      if is_cursor_at_last_symbol() then
+        ins_action = "a"
+      end
       vim.api.nvim_feedkeys(
-        vim.api.nvim_replace_termcodes("i" .. key1 .. key2 .. '<Esc>"yP', true, false, true),
+        vim.api.nvim_replace_termcodes(ins_action .. key1 .. key2 .. '<Esc>"yP', true, false, true),
         "n",
         false
       )
