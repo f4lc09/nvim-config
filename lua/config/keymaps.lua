@@ -184,7 +184,21 @@ map("n", "<leader>e", function()
   pcall(vim.api.nvim_set_current_dir, session_dir)
   vim.opt.eventignore = save_ignore
 
-  Snacks.picker.explorer()
+  Snacks.picker.explorer({
+    cwd = session_dir,
+    follow_file = false,
+    on_show = function(picker)
+      vim.defer_fn(function()
+        if not picker then
+          return
+        end
+        if not picker.closed then
+          picker:action("explorer_close_all")
+        end
+      end, 20)
+    end,
+  })
+
   vim.wait(10)
 end, { desc = "Snacks Picker Explorer" })
 map("n", "<leader><space>", function()

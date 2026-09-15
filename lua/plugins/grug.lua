@@ -16,7 +16,7 @@ return {
             },
             prefills = {
               filesFilter = nil,
-              flags = "-F --multiline",
+              flags = "--fixed-strings --multiline --ignore-case",
             },
           })
           vim.bo.buflisted = true
