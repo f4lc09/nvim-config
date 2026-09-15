@@ -83,7 +83,12 @@ end, { silent = true })
 map({ "n", "v" }, "<leader>p", function()
   local reg = vim.v.register
   vim.cmd("normal! o")
-  vim.cmd('normal! 0v$"_d')
+
+  local line = vim.api.nvim_get_current_line()
+  if #line ~= 0 then
+    vim.cmd('normal! 0v$"_d')
+  end
+
   vim.cmd('normal! "' .. reg .. "P")
   LazyVim.format()
 end, { silent = true, desc = "Paste in new line" })
@@ -567,3 +572,16 @@ vim.keymap.set("n", "", function()
   })
   vim.wait(10)
 end, { desc = "Toggle Explorer" })
+
+-- local function is_cursor_at_last_symbol()
+--   local col = vim.api.nvim_win_get_cursor(0)[2]
+--   local line = vim.api.nvim_get_current_line()
+--   return col == #line - 1
+-- end
+-- map({ "v", "V" }, "r", function()
+--   vim.api.nvim_feedkeys(
+--     vim.api.nvim_replace_termcodes(ins_action .. key1 .. key2 .. '<Esc>"yP', true, false, true),
+--     "n",
+--     false
+--   )
+-- end, { desc = "replace from visual" })
