@@ -189,6 +189,16 @@ map("n", "<leader>e", function()
   pcall(vim.api.nvim_set_current_dir, session_dir)
   vim.opt.eventignore = save_ignore
 
+  local target_cwd = vim.fs.normalize(session_dir)
+  for _, picker in ipairs(Snacks.picker.get()) do
+    if picker.opts.source == "explorer" and not picker.closed then
+      local picker_cwd = vim.fs.normalize(picker.opts.cwd or "")
+      if picker_cwd ~= target_cwd then
+        picker:close()
+      end
+    end
+  end
+
   Snacks.picker.explorer({
     cwd = session_dir,
     follow_file = false,
@@ -498,7 +508,7 @@ map({ "n" }, "<leader>ks", function()
 end, { desc = "Select Enviroment" })
 
 local last_explorer_file
-vim.keymap.set("n", "", function()
+vim.keymap.set({ "n", "t" }, "", function()
   local pickers = Snacks.picker.get({ source = "explorer" })
 
   if #pickers > 0 then

@@ -7,6 +7,35 @@ local files_history = {}
 local other_history = {}
 local history_limit = 5
 
+local function get_snacks_terminal_wins_by_cwd(target_cwd)
+  local terminal_wins = {}
+  local target_path = vim.fs.normalize(target_cwd)
+  for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+    local bufnr = vim.api.nvim_win_get_buf(winid)
+    if vim.bo[bufnr].filetype == "snacks_terminal" then
+      local buf_name = vim.api.nvim_buf_get_name(bufnr)
+      local term_cwd = buf_name:match("^term://(.*)//")
+      if term_cwd then
+        local normalized_term_cwd = vim.fs.normalize(term_cwd)
+        if normalized_term_cwd == target_path then
+          table.insert(terminal_wins, winid)
+        end
+      end
+    end
+  end
+
+  return terminal_wins
+end
+
+local function has_value(tab, val)
+  for _, value in ipairs(tab) do
+    if value == val then
+      return true
+    end
+  end
+  return false
+end
+
 local grep_source_cfg = {
   layout = {
     layout = {
@@ -347,7 +376,7 @@ return {
           vim.fn.setreg("+", name)
           Snacks.notify.info("Copied name: " .. name)
         end,
-        open_term_in_folder = function(picker)
+        terminal = function(picker)
           local item = picker:current()
           if not item then
             return
@@ -360,6 +389,11 @@ return {
           end
 
           picker:close()
+          local winids = get_snacks_terminal_wins_by_cwd(path)
+          if #winids > 0 then
+            vim.api.nvim_set_current_win(winids[1])
+            return
+          end
 
           Snacks.terminal.toggle(nil, {
             cwd = path,
@@ -610,7 +644,8 @@ return {
             ["<C-f>"] = { "cd_to_folder", mode = { "n", "i" } },
             ["<C-y>"] = { "copy_file_name", mode = { "n", "i" } },
             ["<M-t>"] = { "open_tmux_term_in_folder", mode = { "n", "i" } },
-            ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
+            -- ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
+            -- ["<C-t>"] = { "open_term_in_folder", mode = { "n", "i" } },
             ["<C-g>"] = { "lazygit", mode = { "n", "i" } },
             ["<leader>ba"] = { "close_buffers", mode = { "n" } },
             ["<C-r>"] = { "restore_session_cwd", mode = { "n" } },
@@ -646,7 +681,8 @@ return {
               desc = "Focus file tree with",
             },
             ["<C-\\>"] = { "open_tmux_term_in_folder", mode = { "n", "i" } },
-            ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
+            -- ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
+            -- ["<C-t>"] = { "open_term_in_folder", mode = { "n", "i" } },
             ["<C-g>"] = { "lazygit", mode = { "n", "i" } },
             ["<leader>ba"] = { "close_buffers", mode = { "n" } },
           },
