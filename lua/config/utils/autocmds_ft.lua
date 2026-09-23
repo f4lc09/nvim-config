@@ -4,6 +4,7 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = "http",
   callback = function(args)
     utils.SetupKulalaKeymaps(args.buf)
+    vim.lsp.inlay_hint.enable(false, { bufnr = 0 })
   end,
 })
 vim.api.nvim_create_autocmd("FileType", {
