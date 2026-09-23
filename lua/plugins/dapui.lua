@@ -34,7 +34,7 @@ return {
       })
       require("dap-go").setup({
         delve = {
-          path = vim.fn.expand("$HOME/go/bin/dlv"), -- Явный путь к свежему билду
+          path = vim.fn.expand("$HOME/.local/share/nvim/mason/bin/dlv"), -- Явный путь к свежему билду
         },
       })
 
