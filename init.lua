@@ -7,7 +7,6 @@ require("config.utils.jar_definition")
 local node_bin_path = "/home/falcon/.nvm/versions/node/v24.15.0/bin/node"
 vim.env.PATH = node_bin_path .. ":" .. vim.env.PATH
 
-vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "/lazy/nvim-treesitter")
 vim.o.tabstop = 4
 vim.opt.listchars = { tab = "  ", trail = "·", nbsp = "␣" }
 vim.o.showtabline = 0

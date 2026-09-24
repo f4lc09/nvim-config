@@ -11,6 +11,12 @@ return {
       global_keymaps = false,
       global_keymaps_prefix = "<leader>R",
       kulala_keymaps_prefix = "",
+      ui = {
+        split_direction = "below",
+        -- display_mode = "float",
+        show_variable_info_text = false,
+        default_view = "body",
+      },
     },
   },
 }

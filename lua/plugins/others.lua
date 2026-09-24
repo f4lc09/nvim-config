@@ -72,12 +72,6 @@ return {
   },
   {
     "nvim-treesitter/nvim-treesitter",
-    ensure_installed = {
-      "go",
-      "gomod",
-      "gowork",
-      "gosum",
-    },
     opts = {
       highlight = {
         disable = { "markdown" },
