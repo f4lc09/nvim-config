@@ -86,7 +86,7 @@ map({ "n", "v" }, "<leader>p", function()
 
   local line = vim.api.nvim_get_current_line()
   if #line ~= 0 then
-    vim.cmd('normal! 0v$"_d')
+    vim.cmd('normal! 0v$h"_d')
   end
 
   vim.cmd('normal! "' .. reg .. "P")
@@ -151,8 +151,8 @@ map({ "n" }, "<delete>", '"_x', { noremap = true, desc = "Удалить сим�
 
 map({ "x", "n", "v" }, "c", '"_c', { noremap = true, desc = "Change without yanking", nowait = true })
 map({ "x", "n", "v" }, "C", 'V"_dO', { noremap = true, desc = "Change without yanking", nowait = true })
-map({ "n" }, "Y", "Vy", { noremap = true })
-map({ "n" }, "yy", "m`_yg_``", { noremap = true })
+map({ "n" }, "Y", "Vy", { noremap = true }) -- TODO: не работает с регистрами
+map({ "n" }, "yy", "m`_yg_``", { noremap = true }) -- TODO: не работает с регистрами
 map({ "n" }, "vv", "_vg_", { noremap = true })
 
 --

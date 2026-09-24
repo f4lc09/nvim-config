@@ -29,6 +29,7 @@ return {
         gopls = {
           settings = {
             gopls = {
+              semanticTokens = true,
               usePlaceholders = false,
               analyses = {
                 efaceany = false,
@@ -53,6 +54,7 @@ return {
                 compositeLiteralTypes = false,
                 assignVariableTypes = false,
                 functionTypeParameters = false,
+                constantValues = false,
               },
             },
           },

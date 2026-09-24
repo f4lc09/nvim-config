@@ -158,15 +158,6 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
     utils.ReadJar(args)
   end,
 })
--- vim.api.nvim_create_autocmd("LspAttach", {
---   callback = function(args)
---     local name = vim.api.nvim_buf_get_name(args.buf)
---
---     if name:match("^diffview://") then
---       vim.lsp.buf_detach_client(args.buf, args.data.client_id)
---     end
---   end,
--- })
 vim.api.nvim_create_autocmd("TextYankPost", {
   callback = function()
     if vim.bo.buftype ~= "terminal" then
@@ -266,4 +257,96 @@ vim.api.nvim_create_autocmd("BufAdd", {
       Snacks.explorer({ cwd = keymap_utils.GetCWD(file) })
     end)
   end,
+})
+local function reset_go_colors()
+  local go_groups = {
+    "@function.go",
+    "@function.call.go",
+    "@method.go",
+    "@method.call.go",
+    -- "@type.go",
+    -- "@module.go",
+    "@type.builtin.go",
+    "@variable.go",
+    "@variable.parameter.go",
+    "@variable.member.go",
+    "@property.go",
+    "@constant.go",
+    -- "@operator.go",
+    -- "@punctuation.bracket.go",
+    "@punctuation.delimiter.go",
+    "@comment.go",
+    -- "@string.go",
+    -- "@number.go",
+    "@spell.go",
+    "@function.method.call.go",
+    "@function.method.go",
+    "@constant.builtin.go",
+    "@function.builtin.go",
+    "@lsp.typemod.function.defaultLibrary.go",
+    "@character.printf",
+
+    "@lsp.string.go",
+    "@lsp.type.function.go",
+    "@lsp.type.method.go",
+    "@lsp.type.number.go",
+    "@lsp.type.variable.go",
+    "@lsp.type.property.go",
+    "@lsp.type.type.go",
+    "@lsp.type.interface.go",
+    "@lsp.type.struct.go",
+    "@lsp.type.parameter.go",
+    "@lsp.type.macro.go",
+    "@lsp.type.namespace.go",
+    "@lsp.type.keyword.go",
+    -- "@keyword.go",
+    -- "@keyword.return.go",
+    -- "@keyword.switch.go",
+    -- "@keyword.import.go",
+    -- "@keyword.package.go",
+    -- "@keyword.chan.go",
+    -- "@keyword.struct.go",
+    -- "@keyword.type.go",
+    -- "@keyword.new.go",
+    -- "@keyword.for.go",
+    -- "@keyword.if.go",
+    -- "@keyword.conditional.go",
+    -- "@keyword.repeat.go",
+    -- "@keyword.function.go",
+
+    "@lsp.type.comment.go",
+    "@type.definition.go",
+    "@lsp.typemod.variable.definition.go",
+    "@lsp.typemod.variable.interface.go",
+    "@lsp.typemod.variable.static.go",
+    "@lsp.typemod.variable.defaultLibrary.go",
+    "@lsp.typemod.method.defaultLibrary.go",
+    "@lsp.mod.static.go",
+    "@lsp.mod.interface.go",
+    "@lsp.mod.definition.go",
+    "@lsp.type.variable.go",
+    "@lsp.type.string.go",
+  }
+  -- vim.hl.priorities.semantic_tokens = 95
+
+  for _, group in ipairs(go_groups) do
+    vim.api.nvim_set_hl(0, group, { fg = "NONE", bg = "NONE", ctermfg = "NONE", ctermbg = "NONE", force = true })
+  end
+
+  -- "@keyword.type.go",
+  vim.api.nvim_set_hl(0, "@type.builtin.go", { fg = "#e5c07b", force = true })
+  vim.api.nvim_set_hl(0, "@type.definition.go", { fg = "NONE", force = true })
+  vim.api.nvim_set_hl(0, "@lsp.type.namespace.go", { fg = "#e5c07b", force = true })
+  -- vim.api.nvim_set_hl(0, "@string", { fg = "#d19a66", force = true })
+  vim.api.nvim_set_hl(0, "@number.go", { fg = "#98c379", force = true })
+  -- vim.api.nvim_set_hl(0, "@lsp.type.interface.go", { link = "@type.go" })
+  -- vim.api.nvim_set_hl(0, "@lsp.type.interface.go", { fg = "#8be9fd", bold = true })
+  -- vim.api.nvim_set_hl(0, "@lsp.type.struct.go", { fg = "#bd93f9" })
+  -- vim.api.nvim_set_hl(0, "@string.go", { fg = "#f1fa8c" })
+  -- vim.api.nvim_set_hl(0, "@comment.go", { fg = "#6272a4" })
+end
+
+reset_go_colors()
+vim.api.nvim_create_autocmd("ColorScheme", {
+  callback = reset_go_colors,
 })

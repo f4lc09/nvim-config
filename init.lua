@@ -7,6 +7,7 @@ require("config.utils.jar_definition")
 local node_bin_path = "/home/falcon/.nvm/versions/node/v24.15.0/bin/node"
 vim.env.PATH = node_bin_path .. ":" .. vim.env.PATH
 
+vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "/lazy/nvim-treesitter")
 vim.o.tabstop = 4
 vim.opt.listchars = { tab = "  ", trail = "·", nbsp = "␣" }
 vim.o.showtabline = 0
@@ -33,3 +34,5 @@ vim.api.nvim_create_autocmd("User", {
     })
   end,
 })
+-- TODO: если регистры слишком быстро вызывать, то не "a -> a игнорируется, слишком рано нажимается, не успевает обработаться
+vim.api.nvim_set_hl(0, "MatchParen", { fg = "#ff9e3b", bold = true })
