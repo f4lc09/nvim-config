@@ -235,26 +235,26 @@ return {
     end,
   },
   { "tiagovla/scope.nvim", config = true },
-  -- {
-  --   "saghen/blink.pairs",
-  --   dependencies = "saghen/blink.lib",
-  --   build = function()
-  --     require("blink.pairs").build():pwait(60000)
-  --   end,
-  --   -- build = function()
-  --   --   require("blink.pairs").download():pwait(60000)
-  --   -- end,
-  --   --- @module 'blink.pairs'
-  --   --- @type blink.pairs.Config
-  --   opts = {
-  --     highlights = {
-  --       matchparen = {
-  --         include_surrounding = true,
-  --         group = "BlinkPairsMatchParen",
-  --         priority = 250,
-  --       },
-  --     },
-  --     debug = false,
-  --   },
-  -- },
+  {
+    "saghen/blink.pairs",
+    dependencies = "saghen/blink.lib",
+    build = function()
+      require("blink.pairs").build():pwait(60000)
+    end,
+    -- build = function()
+    --   require("blink.pairs").download():pwait(60000)
+    -- end,
+    --- @module 'blink.pairs'
+    --- @type blink.pairs.Config
+    opts = {
+      highlights = {
+        matchparen = {
+          include_surrounding = true,
+          group = "BlinkPairsMatchParen",
+          priority = 250,
+        },
+      },
+      debug = false,
+    },
+  },
 }
