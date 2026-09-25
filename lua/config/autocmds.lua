@@ -373,7 +373,9 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
       local win = vim.fn.bufwinid(args.buf)
       if win ~= -1 then
         vim.schedule(function()
-          vim.api.nvim_set_current_win(win)
+          vim.defer_fn(function()
+            vim.api.nvim_set_current_win(win)
+          end, 5)
         end)
       end
     end
