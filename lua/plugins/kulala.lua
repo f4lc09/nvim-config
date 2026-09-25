@@ -25,7 +25,7 @@ return {
         -- "headers"
         -- "script_output"
         -- "report"
-        split_direction = "right",
+        split_direction = "above",
         -- display_mode = "float",
         show_variable_info_text = false,
         default_view = "body",
