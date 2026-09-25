@@ -247,6 +247,9 @@ return {
     --- @module 'blink.pairs'
     --- @type blink.pairs.Config
     opts = {
+      mappings = {
+        enabled = false,
+      },
       highlights = {
         matchparen = {
           include_surrounding = true,
