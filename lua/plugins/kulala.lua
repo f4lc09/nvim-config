@@ -19,7 +19,12 @@ return {
       global_keymaps = false,
       global_keymaps_prefix = "<leader>R",
       kulala_keymaps_prefix = "",
+      kulala_keymaps = false,
       ui = {
+        default_winbar_panes = { "body", "verbose" },
+        -- "headers"
+        -- "script_output"
+        -- "report"
         split_direction = "right",
         -- display_mode = "float",
         show_variable_info_text = false,

@@ -350,3 +350,15 @@ reset_go_colors()
 vim.api.nvim_create_autocmd("ColorScheme", {
   callback = reset_go_colors,
 })
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "http", "kulala_ui" }, -- срабатывает в окнах Kulala
+  callback = function()
+    -- vim.keymap.set("n", "<C-h>", "<Cmd>wincmd h<CR>", { buffer = true, desc = "Go to Left Window" })
+    -- vim.keymap.set("n", "<C-l>", "<Cmd>wincmd l<CR>", { buffer = true, desc = "Go to Right Window" })
+    -- vim.keymap.set("n", "V", function()
+    --   vim.cmd("normal! V")
+    -- end, { buffer = true, desc = "V" })
+    vim.keymap.set("n", "tn", require("kulala.ui").show_next_tab, { buffer = true, desc = "Next Tab" })
+    vim.keymap.set("n", "tp", require("kulala.ui").show_previous_tab, { buffer = true, desc = "Next Tab" })
+  end,
+})
