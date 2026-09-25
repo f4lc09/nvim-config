@@ -12,11 +12,15 @@ return {
       treesitter = {
         enable = false, -- Отключает встроенную сборку парсера силами kulala (после перехода на nvim12 была ошибка сборки)
       },
+      session = {
+        restore = false,
+      },
+      default_env = "dev",
       global_keymaps = false,
       global_keymaps_prefix = "<leader>R",
       kulala_keymaps_prefix = "",
       ui = {
-        split_direction = "below",
+        split_direction = "right",
         -- display_mode = "float",
         show_variable_info_text = false,
         default_view = "body",

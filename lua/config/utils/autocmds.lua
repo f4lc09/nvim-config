@@ -106,17 +106,10 @@ function M.RestoreCWDFromSessionForce()
   vim.opt.eventignore = save_ignore
 end
 
-local kulalaSuccess, kulala_module = pcall(require, "kulala")
 function M.SetupKulalaKeymaps(bufnr)
   local map = vim.keymap.set
   map("n", "<Enter>", function()
-    if kulalaSuccess and kulala_module then
-      kulala_module.run()
-      kulala_module.open()
-      vim.defer_fn(function()
-        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-w>l", true, false, true), "n", true)
-      end, 10)
-    end
+    require("kulala").run()
   end, {
     desc = "Run HTTP request",
     buffer = bufnr,
