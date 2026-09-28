@@ -326,7 +326,11 @@ map({ "n", "v", "i" }, "<", function()
   vim.cmd("bprev")
 end, { silent = true, desc = "Previous buffer" })
 map({ "n", "v", "i", "t" }, "w", function()
-  utils.BufferDelete()
+  if vim.bo.buftype == "terminal" then
+    vim.cmd("bd!")
+    return
+  end
+  vim.cmd("bd %")
 end, { silent = true, desc = "Delete buffer" })
 map({ "n" }, "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
 map(

@@ -2,6 +2,9 @@ local M = {}
 
 local float_buf = nil
 local float_win = nil
+-- Флаг, указывающий, что окно было скрыто именно из-за наведения курсора
+local hidden_by_cursor = false
+
 -- Создаем namespace для нашей кастомной подсветки
 local ns_id = vim.api.nvim_create_namespace("BufferListHighlight")
 
@@ -36,8 +39,7 @@ local function get_buffer_lines()
       end
 
       local is_current = (buf == current_buf)
-      -- local prefix = is_current and "● " or "  "
-      local prefix = ""
+      local prefix = " "
 
       -- Формируем строку
       local line_text = prefix .. icon .. " " .. name
@@ -57,7 +59,23 @@ local function get_buffer_lines()
       })
     end
   end
-  return lines, max_width + 4 -- Добавили чуть больше отступа справа, чтобы фон не обрывался вплотную к тексту
+  return lines, max_width + 1
+end
+
+-- Функция проверки: находится ли курсор внутри координат окна
+local function is_cursor_over_win(opts)
+  -- Получаем абсолютное положение курсора на экране редактора
+  -- vim.fn.screenrow() и screencol() возвращают 1-indexed координаты
+  local cursor_row = vim.fn.screenrow()
+  local cursor_col = vim.fn.screencol()
+
+  -- Границы окна с учетом рамки (border = "rounded" добавляет по 1 символу со всех сторон)
+  local top = opts.row
+  local bottom = opts.row + opts.height + 2
+  local left = opts.col
+  local right = opts.col + opts.width + 2
+
+  return cursor_row >= top and cursor_row <= bottom and cursor_col >= left and cursor_col <= right
 end
 
 -- Единая функция для умного создания и обновления окна
@@ -65,8 +83,6 @@ function M.update_window()
   -- Настройки базовой подсветки окна
   vim.api.nvim_set_hl(0, "BufferListNormal", { bg = "none", blend = 0 })
   vim.api.nvim_set_hl(0, "BufferListBorder", { bg = "none", fg = "#7aa2f7" })
-
-  -- Наследуем фоновое выделение от текущей строки темы (CursorLine) и добавляем жирный шрифт
   vim.api.nvim_set_hl(0, "BufferListCurrent", { link = "CursorLine", bold = true })
 
   local buffer_info, max_width = get_buffer_lines()
@@ -77,13 +93,13 @@ function M.update_window()
     end
     float_win = nil
     float_buf = nil
+    hidden_by_cursor = false
     return
   end
 
   -- Заполняем массив строк текстом
   local lines = {}
   for _, info in ipairs(buffer_info) do
-    -- Добиваем строки пробелами до max_width, чтобы фоновое выделение было ровным на всю ширину окна
     local current_width = vim.fn.strdisplaywidth(info.text)
     local padding = string.rep(" ", max_width - current_width)
     table.insert(lines, info.text .. padding)
@@ -96,12 +112,25 @@ function M.update_window()
     relative = "editor",
     width = max_width,
     height = height,
-    row = vim.o.lines - height - 3,
+    row = vim.o.lines / 4 - height - 3,
     col = vim.o.columns - max_width - 2,
     style = "minimal",
     border = "rounded",
     focusable = false,
   }
+
+  -- ПРОВЕРКА КУРСОРА: Если курсор зашел под будущие координаты окна
+  if is_cursor_over_win(opts) then
+    if float_win and vim.api.nvim_win_is_valid(float_win) then
+      vim.api.nvim_win_close(float_win, true)
+      float_win = nil
+    end
+    hidden_by_cursor = true -- Запоминаем, что окно скрыто принудительно
+    return
+  end
+
+  -- Если курсор вышел из зоны, а окно было скрыто — сбрасываем флаг и рисуем заново
+  hidden_by_cursor = false
 
   if not (float_win and vim.api.nvim_win_is_valid(float_win)) then
     float_buf = vim.api.nvim_create_buf(false, true)
@@ -116,13 +145,9 @@ function M.update_window()
 
   for idx, info in ipairs(buffer_info) do
     local line_idx = idx - 1
-
-    -- 1. Сначала применяем выделение строки для текущего буфера (весь ряд от 0 до -1)
     if info.is_current then
       vim.api.nvim_buf_add_highlight(float_buf, ns_id, "BufferListCurrent", line_idx, 0, -1)
     end
-
-    -- 2. Поверх накладываем цвет иконки, чтобы фоновое выделение не сбивало её родной цвет
     if info.icon_hl then
       vim.api.nvim_buf_add_highlight(float_buf, ns_id, info.icon_hl, line_idx, info.icon_start, info.icon_end)
     end
@@ -131,10 +156,13 @@ end
 
 -- Переключатель для горячей клавиши
 function M.toggle_buffer_list()
-  if float_win and vim.api.nvim_win_is_valid(float_win) then
-    vim.api.nvim_win_close(float_win, true)
+  if (float_win and vim.api.nvim_win_is_valid(float_win)) or hidden_by_cursor then
+    if float_win and vim.api.nvim_win_is_valid(float_win) then
+      vim.api.nvim_win_close(float_win, true)
+    end
     float_win = nil
     float_buf = nil
+    hidden_by_cursor = false
   else
     M.update_window()
   end
@@ -144,7 +172,9 @@ function M.setup()
   vim.api.nvim_create_user_command("ToggleBufferList", M.toggle_buffer_list, {})
 
   local group = vim.api.nvim_create_augroup("BufferListAutoUpdate", { clear = true })
-  vim.api.nvim_create_autocmd({ "BufEnter", "BufDelete", "VimResized", "WinEnter" }, {
+
+  -- Добавлено событие "CursorMoved" для отслеживания движения курсора
+  vim.api.nvim_create_autocmd({ "BufEnter", "BufDelete", "VimResized", "WinEnter", "CursorMoved" }, {
     group = group,
     callback = function()
       vim.schedule(function()

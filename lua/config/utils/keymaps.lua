@@ -344,60 +344,61 @@ function M.BufferCycle(num)
   end
 end
 
-function M.BufferDelete(bufnr)
-  if not bufnr then
-    bufnr = vim.api.nvim_get_current_buf()
-  end
-  local is_terminal = vim.api.nvim_get_option_value("buftype", { buf = bufnr }) == "terminal"
-
-  if is_terminal and vim.api.nvim_get_mode().mode == "nt" then
-    vim.api.nvim_buf_delete(bufnr, { force = true })
-    return
-  end
-
-  local listed = vim.tbl_filter(function(b)
-    return vim.bo[b].buflisted
-  end, vim.api.nvim_list_bufs())
-
-  if #listed == 0 then
-    return
-  end
-
-  local function force_delete()
-    if vim.api.nvim_get_mode().mode == "i" then
-      vim.cmd("stopinsert")
-    end
-
-    if #listed == 1 and listed[1] == vim.api.nvim_get_current_buf() then
-      vim.api.nvim_buf_delete(bufnr, { force = true })
-      vim.cmd("enew")
-      return
-    end
-
-    local origin = bufnr
-
-    if vim.api.nvim_buf_is_valid(origin) then
-      vim.api.nvim_buf_delete(origin, { force = true })
-    end
-  end
-
-  if vim.bo[bufnr].modified then
-    local choice = vim.fn.confirm("File is modified! Save?", "&Yes\n&No\n&Cancel", 1)
-
-    if choice == 1 then
-      vim.cmd("write")
-      force_delete()
-    elseif choice == 2 then
-      vim.cmd("setlocal nomodified")
-      force_delete()
-    end
-
-    return false
-  end
-
-  force_delete()
-  return true
-end
+-- УДАЛЯЕТ ВСЕ БУФЕРЫ (БАГ)
+-- function M.BufferDelete(bufnr)
+--   if not bufnr then
+--     bufnr = vim.api.nvim_get_current_buf()
+--   end
+--   local is_terminal = vim.api.nvim_get_option_value("buftype", { buf = bufnr }) == "terminal"
+--
+--   if is_terminal and vim.api.nvim_get_mode().mode == "nt" then
+--     vim.api.nvim_buf_delete(bufnr, { force = true })
+--     return
+--   end
+--
+--   local listed = vim.tbl_filter(function(b)
+--     return vim.bo[b].buflisted
+--   end, vim.api.nvim_list_bufs())
+--
+--   if #listed == 0 then
+--     return
+--   end
+--
+--   local function force_delete()
+--     if vim.api.nvim_get_mode().mode == "i" then
+--       vim.cmd("stopinsert")
+--     end
+--
+--     if #listed == 1 and listed[1] == vim.api.nvim_get_current_buf() then
+--       vim.api.nvim_buf_delete(bufnr, { force = true })
+--       vim.cmd("enew")
+--       return
+--     end
+--
+--     local origin = bufnr
+--
+--     if vim.api.nvim_buf_is_valid(origin) then
+--       vim.api.nvim_buf_delete(origin, { force = true })
+--     end
+--   end
+--
+--   if vim.bo[bufnr].modified then
+--     local choice = vim.fn.confirm("File is modified! Save?", "&Yes\n&No\n&Cancel", 1)
+--
+--     if choice == 1 then
+--       vim.cmd("write")
+--       force_delete()
+--     elseif choice == 2 then
+--       vim.cmd("setlocal nomodified")
+--       force_delete()
+--     end
+--
+--     return false
+--   end
+--
+--   force_delete()
+--   return true
+-- end
 
 function M.DelMarks()
   local current_line = vim.api.nvim_win_get_cursor(0)[1]
