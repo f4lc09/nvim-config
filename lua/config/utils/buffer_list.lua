@@ -7,6 +7,7 @@ local float_win = nil
 local function get_buffer_lines()
   local lines = {}
   local bufs = vim.api.nvim_list_bufs()
+  local max_width = 0
 
   local visible_bufs = {}
   for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -18,8 +19,14 @@ local function get_buffer_lines()
       local name = vim.api.nvim_buf_get_name(buf)
       if name == "" then
         name = "[No Name]"
+        if max_width < #name + 2 then
+          max_width = #name + 3
+        end
       else
         name = vim.fs.basename(name)
+        if max_width < #name + 2 then
+          max_width = #name + 3
+        end
       end
 
       local status = "  "
@@ -32,7 +39,7 @@ local function get_buffer_lines()
       table.insert(lines, status .. name)
     end
   end
-  return lines
+  return lines, max_width
 end
 
 -- Единая функция для умного создания и обновления окна
@@ -40,7 +47,7 @@ function M.update_window()
   vim.api.nvim_set_hl(0, "BufferListNormal", { bg = "none", blend = 0 })
   vim.api.nvim_set_hl(0, "BufferListBorder", { bg = "none", fg = "#7aa2f7" })
 
-  local lines = get_buffer_lines()
+  local lines, max_width = get_buffer_lines()
   if #lines == 0 then
     if float_win and vim.api.nvim_win_is_valid(float_win) then
       vim.api.nvim_win_close(float_win, true)
@@ -49,14 +56,6 @@ function M.update_window()
     float_buf = nil
     return
   end
-
-  local max_width = 0
-  for _, line in ipairs(lines) do
-    if #line > max_width then
-      max_width = #line
-    end
-  end
-  max_width = max_width + 2
   local height = #lines
 
   -- Динамический расчет координат для ПРАВОГО НИЖНЕГО угла
