@@ -331,6 +331,13 @@ map({ "n", "v", "i", "t" }, "w", function()
     return
   end
   vim.cmd("BufDel")
+  -- Use this if BufDel is bad. Можно просто связным списком скрафтить из какого буфера в какой я пришел
+  -- local status_ok, bufdelete = pcall(require, "bufdelete")
+  -- if status_ok then
+  --   bufdelete.bufdelete(0, false)
+  -- else
+  --   vim.cmd("bp | bd #")
+  -- end
 end, { silent = true, desc = "Delete buffer" })
 map({ "n" }, "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
 map(
