@@ -5,6 +5,27 @@ local lazygit = require("config.utils.lazygit")
 local map = vim.keymap.set
 local unmap = vim.keymap.del
 
+local defaultVerticalView = {
+  input = {
+    keys = {
+      ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
+      ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+    },
+  },
+  list = {
+    keys = {
+      ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+      ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
+    },
+  },
+  preview = {
+    keys = {
+      ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
+      ["<C-j>"] = { "do_nothing", mode = { "i", "n" } },
+    },
+  },
+}
+
 -- Dap Key Bindings
 map("n", "<F5>", utils.DapToggleDebug, { desc = "Dap Run/Stop Debug" })
 map("n", "<F9>", dap.toggle_breakpoint, { desc = "Dap Breakpoint" })
@@ -166,15 +187,17 @@ map({ "n" }, "<leader>,", function()
   })
   picker:action("list_down")
 end, { desc = "Toggle Explorer Root" })
-map({ "n" }, "<leader>,", function()
+map({ "n" }, "<C-f>", function()
   local picker = Snacks.picker.buffers({
     cwd = utils.GetCWD(),
+    win = defaultVerticalView,
   })
   picker:action("list_down")
 end, { desc = "Toggle Explorer Root" })
-map({ "n" }, "<leader>_", function()
+map({ "n" }, "<C-f>", function()
   local picker = Snacks.picker.buffers({
     cwd = utils.GetCWD(),
+    win = defaultVerticalView,
   })
   picker:action("list_down")
 end, { desc = "Toggle Buffers" })
@@ -223,27 +246,7 @@ end, { desc = "find files (cwd)" })
 map("n", "<leader>sg", function()
   Snacks.picker.grep({
     cwd = utils.GetCWD(),
-    -- Default Vertical View
-    win = {
-      input = {
-        keys = {
-          ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
-          ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
-        },
-      },
-      list = {
-        keys = {
-          ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
-          ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
-        },
-      },
-      preview = {
-        keys = {
-          ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
-          ["<C-j>"] = { "do_nothing", mode = { "i", "n" } },
-        },
-      },
-    },
+    win = defaultVerticalView,
   })
 end, { desc = "Grep (cwd)" })
 map("n", "<leader>sw", function()
@@ -486,11 +489,14 @@ map(
 )
 
 Snacks.config.picker.actions = vim.tbl_deep_extend("force", Snacks.config.picker.actions or {}, {
-  lazygit = function()
-    local explorer = Snacks.picker.get({ source = "explorer" })[1]
-    if explorer then
-      explorer:close()
+  lazygit = function(picker)
+    if picker then
+      picker:close()
     end
+    -- local explorer = Snacks.picker.get({ source = "explorer" })[1]
+    -- if explorer then
+    --   explorer:close()
+    -- end
     lazygit.ToggleLazygit()
   end,
 })

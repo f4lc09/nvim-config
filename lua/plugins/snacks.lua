@@ -26,6 +26,26 @@ local function get_snacks_terminal_wins_by_cwd(target_cwd)
 
   return terminal_wins
 end
+local defaultVerticalView = {
+  input = {
+    keys = {
+      ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
+      ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+    },
+  },
+  list = {
+    keys = {
+      ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+      ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
+    },
+  },
+  preview = {
+    keys = {
+      ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
+      ["<C-j>"] = { "do_nothing", mode = { "i", "n" } },
+    },
+  },
+}
 
 local function has_value(tab, val)
   for _, value in ipairs(tab) do
@@ -177,6 +197,17 @@ return {
         },
       },
       actions = {
+        open_buffers = function(picker)
+          if picker then
+            picker:close()
+          end
+
+          local newpicker = Snacks.picker.buffers({
+            cwd = key_utils.GetCWD(),
+            win = defaultVerticalView,
+          })
+          newpicker:action("list_down")
+        end,
         history_up = function(picker, _)
           local history
           local index
@@ -485,6 +516,17 @@ return {
               height = 0.55,
             },
           },
+          win = {
+            input = {
+              keys = {
+                ["<Esc>"] = {
+                  "cancel",
+                  mode = { "i", "n" },
+                  desc = "Focus file tree with",
+                },
+              },
+            },
+          },
         },
         projects = {
           on_show = function(picker)
@@ -641,7 +683,8 @@ return {
               mode = { "i", "n" },
               desc = "Cycle window forward",
             },
-            ["<C-f>"] = { "cd_to_folder", mode = { "n", "i" } },
+            ["<leader>f"] = { "cd_to_folder", mode = { "n", "i" } },
+            ["<C-f>"] = { "open_buffers", mode = { "n", "i" } },
             ["<C-y>"] = { "copy_file_name", mode = { "n", "i" } },
             ["<M-t>"] = { "open_tmux_term_in_folder", mode = { "n", "i" } },
             -- ["<C-_>"] = { "open_term_in_folder", mode = { "n", "i" } },
