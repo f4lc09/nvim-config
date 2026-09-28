@@ -37,7 +37,7 @@ linters:
     - forcetypeassert
     - funcorder
     - gocognit
-    - lll
+    # - lll
     - mnd
     - nestif
     - nilnil

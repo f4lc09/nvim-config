@@ -35,3 +35,7 @@ vim.api.nvim_create_autocmd("User", {
 })
 -- TODO: если регистры слишком быстро вызывать, то не "a -> a игнорируется, слишком рано нажимается, не успевает обработаться
 vim.api.nvim_set_hl(0, "MatchParen", { fg = "#ff9e3b", bold = true })
+
+local buf_list = require("config.utils.buffer_list")
+buf_list.setup()
+vim.keymap.set("n", "<leader>bl", buf_list.toggle_buffer_list, { desc = "Toggle Buffer List" })
