@@ -59,6 +59,7 @@ end
 local grep_source_cfg = {
   layout = {
     layout = {
+      zindex = 200,
       box = "horizontal",
       fulscreen = true,
       {
@@ -569,6 +570,7 @@ return {
                 { win = "list", border = "none" },
                 { win = "preview", height = 0.5, border = "top" },
               },
+              zindex = 200,
             },
           },
           confirm = function(picker, item)
@@ -603,6 +605,7 @@ return {
             layout = {
               width = 0.95,
               height = 0.95,
+              zindex = 200,
             },
           },
           hidden = true,
@@ -631,6 +634,7 @@ return {
           layout = {
             preset = "default",
             layout = {
+              zindex = 200,
               box = "vertical",
               position = "float",
               row = 1,
@@ -652,6 +656,7 @@ return {
           layout = {
             preset = "vertical",
             layout = {
+              zindex = 200,
               width = 0.95,
               height = 0.95,
             },
