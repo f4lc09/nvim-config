@@ -373,7 +373,8 @@ map({ "n" }, "<leader>td", function()
     end
 
     if not used_elsewhere then
-      vim.api.nvim_buf_delete(bufnr, { force = false })
+      vim.cmd(string.format("BufDel %d", bufnr))
+      -- vim.api.nvim_buf_delete(bufnr, { force = false })
       -- if not utils.BufferDelete(bufnr) then
       --   return
       -- end
