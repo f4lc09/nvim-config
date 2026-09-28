@@ -16,6 +16,7 @@ function M.ToggleLazygit()
       direction = "float",
       float_opts = {
         border = "none",
+        zindex = 1000,
         height = function()
           return vim.o.lines
         end,
