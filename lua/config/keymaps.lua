@@ -313,14 +313,14 @@ map({ "n", "v", "i" }, ">", function()
   if mode == "i" or mode == "t" then
     vim.cmd("silent! stopinsert")
   end
-  vim.cmd("tabnext")
+  vim.cmd("bnext")
 end, { silent = true, desc = "Next buffer" })
 map({ "n", "v", "i" }, "<", function()
   local mode = vim.api.nvim_get_mode().mode
   if mode == "i" or mode == "t" then
     vim.cmd("silent! stopinsert")
   end
-  vim.cmd("tabprev")
+  vim.cmd("bprev")
 end, { silent = true, desc = "Previous buffer" })
 map({ "n", "v", "i", "t" }, "w", function()
   utils.BufferDelete()
