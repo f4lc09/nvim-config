@@ -126,7 +126,8 @@ local grep_source_cfg = {
 return {
   "folke/snacks.nvim",
   keys = {
-    -- { "<leader>fp", false }, ---@type snacks.Config
+    -- { "<leader>fp", false },
+    ---@type snacks.Config
     {
       "<leader>fp",
       function()
@@ -511,9 +512,13 @@ return {
           end,
           layout = {
             preset = "vertical",
+            -- preview = "main",
             layout = {
-              width = 0.70,
-              height = 0.55,
+              width = 3, -- Minimalka поставилась, ну ладно
+              height = 1,
+              row = 5,
+              col = vim.o.columns,
+              zindex = 200,
             },
           },
           win = {

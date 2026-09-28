@@ -25,6 +25,20 @@ local defaultVerticalView = {
     },
   },
 }
+local defaultVerticalViewOfTwo = {
+  input = {
+    keys = {
+      ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
+      ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+    },
+  },
+  list = {
+    keys = {
+      ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
+      ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
+    },
+  },
+}
 
 -- Dap Key Bindings
 map("n", "<F5>", utils.DapToggleDebug, { desc = "Dap Run/Stop Debug" })
@@ -197,9 +211,9 @@ end, { desc = "Toggle Explorer Root" })
 map({ "n" }, "<C-f>", function()
   local picker = Snacks.picker.buffers({
     cwd = utils.GetCWD(),
-    win = defaultVerticalView,
+    win = defaultVerticalViewOfTwo,
   })
-  picker:action("list_down")
+  -- picker:action("list_down")
 end, { desc = "Toggle Buffers" })
 map("n", "<leader>e", function()
   local session_file = vim.v.this_session
@@ -505,9 +519,9 @@ map(
 
 Snacks.config.picker.actions = vim.tbl_deep_extend("force", Snacks.config.picker.actions or {}, {
   lazygit = function(picker)
-    if picker then
-      picker:close()
-    end
+    -- if picker then
+    --   picker:close()
+    -- end
     -- local explorer = Snacks.picker.get({ source = "explorer" })[1]
     -- if explorer then
     --   explorer:close()
