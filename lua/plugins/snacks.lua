@@ -522,7 +522,7 @@ return {
                 ["<Esc>"] = {
                   "cancel",
                   mode = { "i", "n" },
-                  desc = "Focus file tree with",
+                  desc = "Quit",
                 },
               },
             },
@@ -673,6 +673,11 @@ return {
             wrap = true,
           },
           keys = {
+            ["w"] = {
+              "cancel",
+              mode = { "i", "n" },
+              desc = "Quit",
+            },
             ["<C-p>"] = {
               "cycle_win",
               mode = { "i", "n" },
@@ -696,6 +701,11 @@ return {
         },
         input = {
           keys = {
+            ["w"] = {
+              "cancel",
+              mode = { "i", "n" },
+              desc = "Quit",
+            },
             ["<Up>"] = {
               "history_up",
               mode = { "i", "n" },

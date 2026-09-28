@@ -260,4 +260,11 @@ return {
       debug = false,
     },
   },
+  {
+    "ojroques/nvim-bufdel",
+    opts = {
+      quit = false,
+      next = "cycle",
+    },
+  },
 }

@@ -330,7 +330,7 @@ map({ "n", "v", "i", "t" }, "w", function()
     vim.cmd("bd!")
     return
   end
-  vim.cmd("bd %")
+  vim.cmd("BufDel")
 end, { silent = true, desc = "Delete buffer" })
 map({ "n" }, "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
 map(
@@ -366,15 +366,18 @@ map({ "n" }, "<leader>td", function()
     end
 
     if not used_elsewhere then
-      if not utils.BufferDelete(bufnr) then
-        return
-      end
+      vim.api.nvim_buf_delete(bufnr, { force = false })
+      -- if not utils.BufferDelete(bufnr) then
+      --   return
+      -- end
     end
   end
 
   vim.cmd("tabclose")
 end, { desc = "Close tab" })
-map({ "n" }, "<leader>tn", "<cmd>tabnew<CR>", { desc = "New tab" })
+map({ "n" }, "<leader>tn", "<cmd>tabnext<CR>", { desc = "Tab Next" })
+map({ "n" }, "<leader>tp", "<cmd>tabprevious<CR>", { desc = "Tab Previous" })
+map({ "n" }, "<leader>tt", "<cmd>tabnew<CR>", { desc = "New Tab" })
 map({ "n" }, "<leader>rf", "<cmd>e<cr>", { desc = "Reload buffer" })
 map({ "n" }, "<leader>[", function()
   require("config.utils.tabs_picker").tabs_picker()

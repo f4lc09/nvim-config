@@ -117,6 +117,7 @@ function M.update_window()
     style = "minimal",
     border = "rounded",
     focusable = false,
+    zindex = 150, -- Гарантирует, что окно будет поверх других элементов интерфейса на любых табах
   }
 
   -- ПРОВЕРКА КУРСОРА: Если курсор зашел под будущие координаты окна
@@ -132,8 +133,22 @@ function M.update_window()
   -- Если курсор вышел из зоны, а окно было скрыто — сбрасываем флаг и рисуем заново
   hidden_by_cursor = false
 
+  -- Если мы переключили таб, nvim_win_is_valid(float_win) может вернуть true,
+  -- но окно физически останется на старом табе. Поэтому для надежности пересоздаем его,
+  -- если изменился контекст табпейджа.
+  if float_win and vim.api.nvim_win_is_valid(float_win) then
+    local win_tab = vim.api.nvim_win_get_tabpage(float_win)
+    local current_tab = vim.api.nvim_get_current_tabpage()
+    if win_tab ~= current_tab then
+      vim.api.nvim_win_close(float_win, true)
+      float_win = nil
+    end
+  end
+
   if not (float_win and vim.api.nvim_win_is_valid(float_win)) then
-    float_buf = vim.api.nvim_create_buf(false, true)
+    if not float_buf or not vim.api.nvim_buf_is_valid(float_buf) then
+      float_buf = vim.api.nvim_create_buf(false, true)
+    end
     float_win = vim.api.nvim_open_win(float_buf, false, opts)
     vim.api.nvim_set_option_value("winhl", "Normal:BufferListNormal,FloatBorder:BufferListBorder", { win = float_win })
   else
@@ -173,15 +188,18 @@ function M.setup()
 
   local group = vim.api.nvim_create_augroup("BufferListAutoUpdate", { clear = true })
 
-  -- Добавлено событие "CursorMoved" для отслеживания движения курсора
-  vim.api.nvim_create_autocmd({ "BufEnter", "BufDelete", "VimResized", "WinEnter", "CursorMoved" }, {
-    group = group,
-    callback = function()
-      vim.schedule(function()
-        M.update_window()
-      end)
-    end,
-  })
+  -- Добавлены события TabEnter и TabNew для отслеживания смены вкладок
+  vim.api.nvim_create_autocmd(
+    { "BufEnter", "BufDelete", "VimResized", "WinEnter", "CursorMoved", "TabEnter", "TabNew" },
+    {
+      group = group,
+      callback = function()
+        vim.schedule(function()
+          M.update_window()
+        end)
+      end,
+    }
+  )
 
   M.update_window()
 end
