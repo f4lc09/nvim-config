@@ -39,7 +39,20 @@ local function get_buffer_lines()
       end
 
       local is_current = (buf == current_buf)
-      local prefix = " "
+      local prefix = "   "
+      local prefix_hl
+      if is_current then
+        prefix = " * "
+        prefix_hl = "ModeMsg"
+      end
+      if vim.bo[buf].modified then
+        prefix = " ● "
+        prefix_hl = "Macro"
+      end
+      if vim.bo[buf].modified and is_current then
+        prefix = "*● "
+        prefix_hl = "Macro"
+      end
 
       -- Формируем строку
       local line_text = prefix .. icon .. " " .. name
@@ -56,6 +69,7 @@ local function get_buffer_lines()
         icon_start = #prefix,
         icon_end = #prefix + #icon,
         icon_hl = icon_hl,
+        prefix_hl = prefix_hl,
       })
     end
   end
@@ -120,7 +134,6 @@ function M.update_window()
     zindex = 150, -- Гарантирует, что окно будет поверх других элементов интерфейса на любых табах
   }
 
-  -- ПРОВЕРКА КУРСОРА: Если курсор зашел под будущие координаты окна
   if is_cursor_over_win(opts) then
     if float_win and vim.api.nvim_win_is_valid(float_win) then
       vim.api.nvim_win_close(float_win, true)
@@ -166,6 +179,9 @@ function M.update_window()
     if info.icon_hl then
       vim.api.nvim_buf_add_highlight(float_buf, ns_id, info.icon_hl, line_idx, info.icon_start, info.icon_end)
     end
+    if info.prefix_hl then
+      vim.api.nvim_buf_add_highlight(float_buf, ns_id, info.prefix_hl, line_idx, 0, 3)
+    end
   end
 end
 
@@ -190,7 +206,7 @@ function M.setup()
 
   -- Добавлены события TabEnter и TabNew для отслеживания смены вкладок
   vim.api.nvim_create_autocmd(
-    { "BufEnter", "BufDelete", "VimResized", "WinEnter", "CursorMoved", "TabEnter", "TabNew" },
+    { "BufEnter", "BufDelete", "VimResized", "WinEnter", "CursorMoved", "TabEnter", "TabNew", "BufWrite" },
     {
       group = group,
       callback = function()
