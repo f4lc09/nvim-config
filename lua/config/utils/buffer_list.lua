@@ -18,7 +18,7 @@ local function get_buffer_lines()
   local max_width = 0
   local current_buf = vim.api.nvim_get_current_buf()
 
-  for _, buf in ipairs(bufs) do
+  for i, buf in ipairs(bufs) do
     if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buflisted then
       local full_name = vim.api.nvim_buf_get_name(buf)
       local name = "[No Name]"
@@ -112,7 +112,7 @@ function M.update_window()
     relative = "editor",
     width = max_width,
     height = height,
-    row = vim.o.lines / 4 - height - 3,
+    row = 9,
     col = vim.o.columns - max_width - 2,
     style = "minimal",
     border = "rounded",

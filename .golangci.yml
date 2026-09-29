@@ -33,11 +33,11 @@ linters:
   default: all
   disable:
     - err113
+    - exhaustruct_v5
     - exhaustruct
     - forcetypeassert
     - funcorder
     - gocognit
-    # - lll
     - mnd
     - nestif
     - nilnil
