@@ -135,7 +135,7 @@ local items = {}
 for _, line in ipairs(myprojects) do
   local args = vim.split(line, "%s+", { trimempty = true })
   table.insert(items, {
-    text = #args > 2 and args[3] or string.match(args[1], "[^/]+$"),
+    text = args[1],
     file = args[1],
     name = #args > 2 and args[3] or string.match(args[1], "[^/]+$"),
     project_priority = #args > 1 and tonumber(args[2]) or 100,
