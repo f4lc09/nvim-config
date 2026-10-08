@@ -381,3 +381,18 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
     end
   end,
 })
+vim.api.nvim_create_autocmd("BufDelete", {
+  group = vim.api.nvim_create_augroup("PreserveOldfiles", { clear = true }),
+  callback = function(args)
+    local file = vim.api.nvim_buf_get_name(args.buf)
+    -- Проверяем, что это реальный файл, а не служебное окно (Telescope, NvimTree и т.д.)
+    if file ~= "" and vim.bo[args.buf].buftype == "" then
+      -- Нормализуем путь к файлу
+      file = vim.fn.fnamemodify(file, ":p")
+      -- Добавляем в начало списка oldfiles, если его там еще нет
+      if not vim.tbl_contains(vim.v.oldfiles, file) then
+        table.insert(vim.v.oldfiles, 1, file)
+      end
+    end
+  end,
+})

@@ -2,35 +2,31 @@ local M = {}
 
 local float_buf = nil
 local float_win = nil
--- Флаг, указывающий, что окно было скрыто именно из-за наведения курсора
+
 local hidden_by_cursor = false
 
--- Создаем namespace для нашей кастомной подсветки
 local ns_id = vim.api.nvim_create_namespace("BufferListHighlight")
 
--- Пытаемся безопасно подключить nvim-web-devicons
 local has_devicons, devicons = pcall(require, "nvim-web-devicons")
 
--- Функция получения списка имен открытых буферов и информации о них
 local function get_buffer_lines()
   local lines = {}
   local bufs = vim.api.nvim_list_bufs()
   local max_width = 0
   local current_buf = vim.api.nvim_get_current_buf()
 
-  for i, buf in ipairs(bufs) do
+  for _, buf in ipairs(bufs) do
     if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buflisted then
       local full_name = vim.api.nvim_buf_get_name(buf)
       local name = "[No Name]"
       local ext = ""
-      local icon = "📄" -- Дефолтная иконка, если nvim-web-devicons не установлен
+      local icon = "📄"
       local icon_hl = nil
 
       if full_name ~= "" then
         name = vim.fs.basename(full_name)
         ext = vim.fn.fnamemodify(name, ":e")
 
-        -- Получаем иконку, если плагин доступен
         if has_devicons then
           local i, hl = devicons.get_icon(name, ext, { default = true })
           icon = i or icon
@@ -54,10 +50,7 @@ local function get_buffer_lines()
         prefix_hl = "Macro"
       end
 
-      -- Формируем строку
       local line_text = prefix .. icon .. " " .. name
-
-      -- Расчет ширины с учетом отображения символов на экране
       local width = vim.fn.strdisplaywidth(line_text)
       if max_width < width then
         max_width = width
@@ -76,25 +69,17 @@ local function get_buffer_lines()
   return lines, max_width + 1
 end
 
--- Функция проверки: находится ли курсор внутри координат окна
 local function is_cursor_over_win(opts)
-  -- Получаем абсолютное положение курсора на экране редактора
-  -- vim.fn.screenrow() и screencol() возвращают 1-indexed координаты
   local cursor_row = vim.fn.screenrow()
   local cursor_col = vim.fn.screencol()
-
-  -- Границы окна с учетом рамки (border = "rounded" добавляет по 1 символу со всех сторон)
   local top = opts.row
   local bottom = opts.row + opts.height + 2
   local left = opts.col
   local right = opts.col + opts.width + 2
-
   return cursor_row >= top and cursor_row <= bottom and cursor_col >= left and cursor_col <= right
 end
 
--- Единая функция для умного создания и обновления окна
 function M.update_window()
-  -- Настройки базовой подсветки окна
   vim.api.nvim_set_hl(0, "BufferListNormal", { bg = "none", blend = 0 })
   vim.api.nvim_set_hl(0, "BufferListBorder", { bg = "none", fg = "#7aa2f7" })
   vim.api.nvim_set_hl(0, "BufferListCurrent", { link = "CursorLine", bold = true })
@@ -111,7 +96,6 @@ function M.update_window()
     return
   end
 
-  -- Заполняем массив строк текстом
   local lines = {}
   for _, info in ipairs(buffer_info) do
     local current_width = vim.fn.strdisplaywidth(info.text)
@@ -121,7 +105,6 @@ function M.update_window()
 
   local height = #lines
 
-  -- Настройки плавающего окна (правый нижний угол)
   local opts = {
     relative = "editor",
     width = max_width,
@@ -131,7 +114,7 @@ function M.update_window()
     style = "minimal",
     border = "rounded",
     focusable = false,
-    zindex = 150, -- Гарантирует, что окно будет поверх других элементов интерфейса на любых табах
+    zindex = 150,
   }
 
   if is_cursor_over_win(opts) then
@@ -139,16 +122,11 @@ function M.update_window()
       vim.api.nvim_win_close(float_win, true)
       float_win = nil
     end
-    hidden_by_cursor = true -- Запоминаем, что окно скрыто принудительно
+    hidden_by_cursor = true
     return
   end
-
-  -- Если курсор вышел из зоны, а окно было скрыто — сбрасываем флаг и рисуем заново
   hidden_by_cursor = false
 
-  -- Если мы переключили таб, nvim_win_is_valid(float_win) может вернуть true,
-  -- но окно физически останется на старом табе. Поэтому для надежности пересоздаем его,
-  -- если изменился контекст табпейджа.
   if float_win and vim.api.nvim_win_is_valid(float_win) then
     local win_tab = vim.api.nvim_win_get_tabpage(float_win)
     local current_tab = vim.api.nvim_get_current_tabpage()

@@ -104,9 +104,14 @@ map({ "v", "x" }, "p", function()
 end, { silent = true })
 
 map({ "n" }, "p", function()
+  if not vim.bo.modifiable then
+    return
+  end
   local reg = vim.v.register
   vim.cmd('normal! "' .. reg .. "p")
-  LazyVim.format()
+  if vim.bo.filetype == "json" then
+    LazyVim.format()
+  end
 end, { silent = true })
 
 map({ "n", "v", "x" }, "P", function()
@@ -145,16 +150,16 @@ map({ "n", "v", "x" }, "K", "k", { noremap = true })
 
 --
 -- Wrappers
-map("v", 'gw"', utils.Wrap('"', '"'), { noremap = true, desc = "Wrap" })
-map("v", "gw'", utils.Wrap("'", "'"), { noremap = true, desc = "Wrap" })
-map("v", "gw`", utils.Wrap("`", "`"), { noremap = true, desc = "Wrap" })
-map("v", "gw{", utils.Wrap("{", "}"), { noremap = true, desc = "Wrap" })
-map("v", "gw[", utils.Wrap("[", "]"), { noremap = true, desc = "Wrap" })
-map("v", "gw(", utils.Wrap("(", ")"), { noremap = true, desc = "Wrap" })
-map("v", "gw|", utils.Wrap("|", "|"), { noremap = true, desc = "Wrap" })
-map("v", "gw@", utils.Wrap("@", "@"), { noremap = true, desc = "Wrap" })
-map("v", "gw:", utils.Wrap(":", ":"), { noremap = true, desc = "Wrap" })
-map("v", "gw;", utils.Wrap(";", ";"), { noremap = true, desc = "Wrap" })
+map("v", 'n"', utils.Wrap('"', '"'), { noremap = true, desc = "Wrap" })
+map("v", "n'", utils.Wrap("'", "'"), { noremap = true, desc = "Wrap" })
+map("v", "n`", utils.Wrap("`", "`"), { noremap = true, desc = "Wrap" })
+map("v", "n{", utils.Wrap("{", "}"), { noremap = true, desc = "Wrap" })
+map("v", "n[", utils.Wrap("[", "]"), { noremap = true, desc = "Wrap" })
+map("v", "n(", utils.Wrap("(", ")"), { noremap = true, desc = "Wrap" })
+map("v", "n|", utils.Wrap("|", "|"), { noremap = true, desc = "Wrap" })
+map("v", "n@", utils.Wrap("@", "@"), { noremap = true, desc = "Wrap" })
+map("v", "n:", utils.Wrap(":", ":"), { noremap = true, desc = "Wrap" })
+map("v", "n;", utils.Wrap(";", ";"), { noremap = true, desc = "Wrap" })
 
 --
 -- Fix yanking
@@ -175,9 +180,7 @@ map({ "n" }, "dj", function()
   vim.api.nvim_win_set_cursor(0, cursor_pos)
 end, { silent = true, desc = "Delete line below without moving cursor" })
 map({ "n" }, "dk", function()
-  local cursor_pos = vim.api.nvim_win_get_cursor(0)
   vim.cmd("-1delete")
-  vim.api.nvim_win_set_cursor(0, cursor_pos)
 end, { silent = true, desc = "Delete line below without moving cursor" })
 
 map({ "i" }, "<C-BS>", "<C-w>", { noremap = true, silent = true })
@@ -344,7 +347,7 @@ map({ "n", "v", "i", "t" }, "w", function()
     vim.cmd("bd!")
     return
   end
-  vim.cmd("BufDel")
+  vim.cmd("bd")
   -- Use this if BufDel is bad. Можно просто связным списком скрафтить из какого буфера в какой я пришел
   -- local status_ok, bufdelete = pcall(require, "bufdelete")
   -- if status_ok then

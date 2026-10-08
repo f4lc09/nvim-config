@@ -123,36 +123,34 @@ local grep_source_cfg = {
     "**/.venv",
   },
 }
+local filepath = vim.fn.stdpath("config") .. "/myprojects.txt"
+
+local myprojects = {}
+if vim.fn.filereadable(filepath) == 1 then
+  myprojects = vim.fn.readfile(filepath)
+else
+  print("Файл не найден: " .. filepath)
+end
+local items = {}
+for _, line in ipairs(myprojects) do
+  local args = vim.split(line, "%s+", { trimempty = true })
+  table.insert(items, {
+    text = args[1],
+    file = args[1],
+    name = #args > 1 and args[2] or string.match(args[1], "[^/]+$"),
+  })
+end
 
 return {
   "folke/snacks.nvim",
   keys = {
-    -- { "<leader>fp", false },
-    ---@type snacks.Config
     {
       "<leader>fp",
       function()
-        Snacks.picker.projects({
-          win = {
-            input = {
-              keys = {
-                ["<C-k>"] = { "do_nothing", mode = { "i", "n" } },
-                ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
-              },
-            },
-            list = {
-              keys = {
-                ["<C-j>"] = { "cycle_win_backward", mode = { "i", "n" } },
-                ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
-              },
-            },
-            preview = {
-              keys = {
-                ["<C-k>"] = { "cycle_win", mode = { "i", "n" } },
-                ["<C-j>"] = { "do_nothing", mode = { "i", "n" } },
-              },
-            },
-          },
+        Snacks.picker({
+          source = "myprojects",
+          items = items,
+          win = defaultVerticalView,
         })
         vim.wait(100)
       end,
@@ -162,10 +160,11 @@ return {
     {
       "<leader>sr",
       function()
-        Snacks.picker.resume()
+        Snacks.picker.resume({ source = "files" })
       end,
     },
   },
+  ---@type snacks.Config
   opts = {
     dashboard = {
       preset = {
@@ -534,7 +533,7 @@ return {
             },
           },
         },
-        projects = {
+        myprojects = {
           on_show = function(picker)
             local bufnr = picker.input.win.buf
             vim.keymap.set({ "i", "n", "v" }, "<C-w>", function()
