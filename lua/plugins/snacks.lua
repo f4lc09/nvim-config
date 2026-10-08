@@ -133,13 +133,23 @@ else
 end
 local items = {}
 for _, line in ipairs(myprojects) do
-  local args = vim.split(line, "%s+", { trimempty = true })
-  table.insert(items, {
-    text = args[1],
-    file = args[1],
-    name = #args > 2 and args[3] or string.match(args[1], "[^/]+$"),
-    project_priority = #args > 1 and tonumber(args[2]) or 100,
-  })
+  if line ~= "" and not string.match(line, "^%s*#") then
+    local args = vim.split(line, "%s+", { trimempty = true })
+    if #args >= 1 then
+      local path = args[1]
+      local priority = #args >= 2 and tonumber(args[2]) or 100
+      local name = #args >= 3 and args[3] or string.match(path, "[^/]+$")
+
+      table.insert(items, {
+        -- СЕКРЕТ ЗДЕСЬ: ставим имя В НАЧАЛО строки поиска.
+        -- Теперь точное совпадение по имени всегда побеждает путь!
+        text = name .. " " .. path,
+        file = path,
+        name = name,
+        project_priority = priority,
+      })
+    end
+  end
 end
 
 vim.api.nvim_create_user_command("Projects", function(args)
@@ -163,7 +173,7 @@ return {
           items = items,
           win = defaultVerticalView,
           sort = {
-            fields = { "project_priority:desc", "score:desc", "#text", "idx" },
+            fields = { "project_priority:desc", "score:desc", "#text" },
           },
         })
         vim.wait(100)
