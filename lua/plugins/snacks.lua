@@ -142,6 +142,16 @@ for _, line in ipairs(myprojects) do
   })
 end
 
+vim.api.nvim_create_user_command("Projects", function(args)
+  if #args > 1 then
+    return
+  end
+  vim.cmd("edit /home/falcon/.config/nvim/myprojects.txt")
+end, {
+  nargs = "*",
+  desc = "Редактирование проектов",
+})
+
 return {
   "folke/snacks.nvim",
   keys = {

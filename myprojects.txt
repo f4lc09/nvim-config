@@ -161,12 +161,12 @@
 /home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/configs-alpha
 /home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/goods-identification/goods-identification-services 1000 goods-ident/srv
 /home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/goods-identification/infrastructure 500 goods-ident/inf
-/home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/goods-identification/goods-identification-db
+/home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/goods-identification/goods-identification-db 100 goods-ident/db
 /home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/modules
 /home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/claims/claims-services 1000 claims/srv
-/home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/claims/claims-db
-/home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/claims/infrastructure
-/home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/claims/infrastructure-alpha
+/home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/claims/infrastructure 500 claims/inf
+/home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/claims/infrastructure-alpha 400 claims-alpha/inf
+/home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/claims/claims-db 100 claims/db
 /home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/vavilon-reports/olap/wh-vavilon-reports-airflow
 /home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/vavilon-reports/olap/infrastructure
 /home/falcon/go/src/gitlab.wildberries.ru/wbwh/defectation/vavilon-reports/olap/vavilon_clickhousestoredproc
