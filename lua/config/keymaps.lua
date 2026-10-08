@@ -347,7 +347,8 @@ map({ "n", "v", "i", "t" }, "w", function()
     vim.cmd("bd!")
     return
   end
-  vim.cmd("bp | bd #")
+  Snacks.bufdelete()
+  -- vim.cmd("bp | bd #")
 end, { silent = true, desc = "Delete buffer" })
 map({ "n" }, "<leader>bn", "<cmd>enew<cr>", { desc = "New Buffer" })
 map(
