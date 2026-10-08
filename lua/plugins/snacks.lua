@@ -614,6 +614,7 @@ return {
         grep = grep_source_cfg,
         grep_word = grep_source_cfg,
         files = {
+          win = defaultVerticalView,
           layout = {
             preset = "vertical",
             layout = {
