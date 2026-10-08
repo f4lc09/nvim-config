@@ -135,9 +135,10 @@ local items = {}
 for _, line in ipairs(myprojects) do
   local args = vim.split(line, "%s+", { trimempty = true })
   table.insert(items, {
-    text = args[1],
+    text = #args > 2 and args[3] or string.match(args[1], "[^/]+$"),
     file = args[1],
-    name = #args > 1 and args[2] or string.match(args[1], "[^/]+$"),
+    name = #args > 2 and args[3] or string.match(args[1], "[^/]+$"),
+    project_priority = #args > 1 and tonumber(args[2]) or 100,
   })
 end
 
@@ -151,6 +152,9 @@ return {
           source = "myprojects",
           items = items,
           win = defaultVerticalView,
+          sort = {
+            fields = { "project_priority:desc", "score:desc", "#text", "idx" },
+          },
         })
         vim.wait(100)
       end,
@@ -451,6 +455,7 @@ return {
           vim.api.nvim_input(vim.g.mapleader .. "bo")
         end,
       },
+
       sources = {
         buffers = {
           format = function(item, picker)
