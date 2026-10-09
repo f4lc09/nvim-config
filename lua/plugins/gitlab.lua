@@ -14,7 +14,7 @@ return {
   config = function()
     require("gitlab").setup({
       auth_provider = function()
-        return "gitlab-GzQm9Qj6HotuonysJosy", "https://gitlab.wildberries.ru", nil
+        return "gitlab-JZPwd4_4F7tVuRlOUUhRcW86MQp1OmJkaQk.01.0z0rcau60", "https://gitlab.wildberries.ru", nil
       end,
     })
   end,

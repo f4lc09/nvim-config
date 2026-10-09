@@ -474,6 +474,15 @@ return {
         close_buffers = function(_)
           vim.api.nvim_input(vim.g.mapleader .. "bo")
         end,
+        open_files = function(picker)
+          local cwd = key_utils.GetCWD()
+          if picker then
+            cwd = picker.opts.cwd
+            picker:close()
+          end
+          Snacks.picker.files({ cwd = cwd })
+          vim.wait(10)
+        end,
       },
 
       sources = {
@@ -732,6 +741,7 @@ return {
             ["<C-g>"] = { "lazygit", mode = { "n", "i" } },
             ["<leader>ba"] = { "close_buffers", mode = { "n" } },
             ["<C-r>"] = { "restore_session_cwd", mode = { "n" } },
+            ["<leader><space>"] = { "open_files", mode = { "n" } },
           },
         },
         input = {
@@ -773,6 +783,7 @@ return {
             -- ["<C-t>"] = { "open_term_in_folder", mode = { "n", "i" } },
             ["<C-g>"] = { "lazygit", mode = { "n", "i" } },
             ["<leader>ba"] = { "close_buffers", mode = { "n" } },
+            ["<leader><space>"] = { "open_files", mode = { "n" } },
           },
         },
       },
