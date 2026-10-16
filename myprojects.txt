@@ -213,3 +213,5 @@
 /home/falcon/go/src/gitlab.wildberries.ru/content/content-card/uploadphoto
 /home/falcon/go/src/gitlab.wildberries.ru/content/content-core/lib/app2app
 /home/falcon/.config/nvim
+/home/falcon/go/src/gitlab.wildberries.ru/wbwh/devops/ci/deploy_service_cicd
+/home/falcon/go/src/gitlab.wildberries.ru/wbwh/models/sprut-streams/wh-models-sku
