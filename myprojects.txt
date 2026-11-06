@@ -1,4 +1,3 @@
-/home/falcon/go/src/gitlab.wildberries.ru/kulpin.evgeniy/sprutpg
 /home/falcon/go/src/gitlab.wildberries.ru/wbwh/finance/penalties/services
 /home/falcon/go/src/gitlab.wildberries.ru/wbwh/finance/employee-salary-assignment/db
 /home/falcon/go/src/gitlab.wildberries.ru/wbwh/finance/employee-salary-assignment/services
@@ -215,3 +214,6 @@
 /home/falcon/.config/nvim
 /home/falcon/go/src/gitlab.wildberries.ru/wbwh/devops/ci/deploy_service_cicd
 /home/falcon/go/src/gitlab.wildberries.ru/wbwh/models/sprut-streams/wh-models-sku
+/home/falcon/Desktop/things/1 100 playground
+/home/falcon/go/src/gitlab.wildberries.ru/wbwh/sku-saas/infrastructure-alpha
+/home/falcon/go/src/gitlab.wildberries.ru/wbwh/localization/backend/docs
